@@ -1,5 +1,8 @@
+vendor/
+/vendor
 /laravel/vendor
 /laravel/node_modules
+node_modules/
 /laravel/.env
 .env
 .env.backup
