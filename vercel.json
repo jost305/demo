@@ -1,6 +1,5 @@
 {
   "version": 2,
-  "buildCommand": "composer install --working-dir=laravel --no-dev --optimize-autoloader --no-interaction",
   "functions": {
     "api/index.php": {
       "runtime": "vercel-php@0.9.0"
