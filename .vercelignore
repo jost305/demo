@@ -1,6 +1,5 @@
-vendor/
-!laravel/vendor/**
-node_modules/
+/vendor/
+/node_modules/
 .git/
 *.log
 error_log
