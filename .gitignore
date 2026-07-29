@@ -13,3 +13,5 @@ node_modules/
 *.log
 error_log
 .vercel
+
+.vercel

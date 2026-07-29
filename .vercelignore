@@ -1,0 +1,9 @@
+vendor/
+laravel/vendor/
+node_modules/
+laravel/node_modules/
+.git/
+*.log
+error_log
+.env
+.env.*
