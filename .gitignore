@@ -1,0 +1,12 @@
+/laravel/vendor
+/laravel/node_modules
+/laravel/.env
+.env
+.env.backup
+.env.production
+.idea
+.vscode
+.fleet
+*.log
+error_log
+.vercel

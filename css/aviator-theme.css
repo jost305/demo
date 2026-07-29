@@ -1,0 +1,1771 @@
+/* ==========================================================================
+   AVIATORX ULTRA-COMPACT & MODERN CASINO DESIGN SYSTEM (aviator-theme.css)
+   ========================================================================== */
+
+:root {
+  /* AviatorX Theme Colors */
+  --ax-bg-main: #0a0b0e;
+  --ax-bg-card: #121318;
+  --ax-bg-card-hover: #191b22;
+  --ax-bg-input: #08090c;
+  --ax-border: #1f212a;
+  --ax-border-light: rgba(255, 255, 255, 0.08);
+
+  /* Primary Brand Red & Accents */
+  --ax-red: #ff1e46;
+  --ax-red-dark: #cc1436;
+  --ax-red-glow: rgba(255, 30, 70, 0.35);
+
+  /* Green Cashout & Deposit Accents */
+  --ax-green: #00e676;
+  --ax-green-dark: #00b050;
+  --ax-green-glow: rgba(0, 230, 118, 0.3);
+
+  /* Multiplier Badge Colors */
+  --ax-mult-blue: #1e88e5;
+  --ax-mult-purple: #8e24aa;
+  --ax-mult-red: #ff1e46;
+  --ax-mult-gold: #ffd700;
+
+  /* Text Colors */
+  --ax-text-white: #ffffff;
+  --ax-text-gray: #8a8d9b;
+  --ax-text-muted: #545766;
+
+  /* Typography */
+  --ax-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ax-radius-sm: 6px;
+  --ax-radius-md: 10px;
+  --ax-radius-lg: 14px;
+  --ax-radius-pill: 9999px;
+
+  --ax-transition: 0.15s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Body Resets */
+body,
+body.dark-bg-main {
+  background-color: var(--ax-bg-main) !important;
+  color: var(--ax-text-white) !important;
+  font-family: var(--ax-font-family) !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* Global Image Containment & Resizing Fixes */
+img {
+  max-width: 100% !important;
+  height: auto !important;
+}
+
+.logo1,
+.footer-logo img,
+.side_logo {
+  max-height: 28px !important;
+  width: auto !important;
+  object-fit: contain !important;
+}
+
+/* Custom Thin Scrollbar */
+::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--ax-bg-main);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--ax-border);
+  border-radius: var(--ax-radius-pill);
+}
+
+/* ==========================================================================
+   TOP BAR HEADER (Desktop & Mobile)
+   ========================================================================== */
+.ax-header {
+  height: 50px !important;
+  min-height: 50px !important;
+  background: var(--ax-bg-card) !important;
+  border-bottom: 1px solid var(--ax-border) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  padding: 0 16px !important;
+  position: sticky !important;
+  top: 0 !important;
+  z-index: 1050 !important;
+}
+
+.ax-header-left {
+  display: flex !important;
+  align-items: center !important;
+  gap: 12px !important;
+  height: 100% !important;
+}
+
+.ax-menu-btn {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--ax-text-white) !important;
+  cursor: pointer !important;
+  display: flex !important;
+  align-items: center !important;
+  padding: 4px !important;
+}
+
+.ax-logo {
+  display: flex !important;
+  align-items: center !important;
+  height: 100% !important;
+  text-decoration: none !important;
+}
+
+.ax-logo-img,
+.ax-header-left img.ax-logo-img,
+img.ax-logo-img {
+  height: 92px !important;
+  max-height: 100px !important;
+  width: auto !important;
+  object-fit: contain !important;
+  filter: drop-shadow(0 3px 10px rgba(0, 0, 0, 0.7)) !important;
+  transition: transform 0.15s ease !important;
+}
+
+.ax-logo:hover .ax-logo-img {
+  transform: scale(1.05) !important;
+}
+
+.ax-logo-text {
+  font-size: 18px !important;
+  font-weight: 900 !important;
+  color: var(--ax-red) !important;
+  letter-spacing: -0.5px !important;
+  font-style: italic !important;
+}
+
+.ax-logo-text span {
+  color: var(--ax-text-white) !important;
+}
+
+.ax-header-right {
+  display: flex !important;
+  align-items: center !important;
+  gap: 10px !important;
+}
+
+/* Wallet Balance Pill */
+.ax-wallet-pill {
+  background: var(--ax-bg-input) !important;
+  border: 1px solid var(--ax-border) !important;
+  border-radius: var(--ax-radius-pill) !important;
+  padding: 3px 4px 3px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+}
+
+.ax-wallet-amount {
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  color: var(--ax-text-white) !important;
+}
+
+.ax-deposit-btn {
+  background: var(--ax-green) !important;
+  color: #000000 !important;
+  border: 0 !important;
+  border-radius: var(--ax-radius-pill) !important;
+  width: 26px !important;
+  height: 26px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-weight: 900 !important;
+  font-size: 16px !important;
+  cursor: pointer !important;
+  transition: var(--ax-transition) !important;
+}
+
+.ax-deposit-btn:hover {
+  background: #12ef80 !important;
+  transform: scale(1.05) !important;
+}
+
+/* Icon Buttons (Bell & Avatar) */
+.ax-icon-btn {
+  background: var(--ax-bg-input) !important;
+  border: 1px solid var(--ax-border) !important;
+  color: var(--ax-text-gray) !important;
+  width: 32px !important;
+  height: 32px !important;
+  border-radius: var(--ax-radius-pill) !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  position: relative !important;
+  cursor: pointer !important;
+}
+
+.ax-icon-btn:hover {
+  color: var(--ax-text-white) !important;
+  border-color: var(--ax-text-gray) !important;
+}
+
+.ax-badge-dot {
+  position: absolute !important;
+  top: 3px !important;
+  right: 3px !important;
+  width: 8px !important;
+  height: 8px !important;
+  background: var(--ax-red) !important;
+  border-radius: 50% !important;
+  border: 1px solid var(--ax-bg-card) !important;
+}
+
+/* ==========================================================================
+   MULTIPLIER HISTORY STRIP
+   ========================================================================== */
+.ax-history-strip {
+  background: var(--ax-bg-card) !important;
+  border-bottom: 1px solid var(--ax-border) !important;
+  padding: 6px 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  gap: 8px !important;
+}
+
+.ax-history-pills {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  overflow-x: auto !important;
+  white-space: nowrap !important;
+  flex: 1 !important;
+  scrollbar-width: none !important;
+}
+
+.ax-history-pills::-webkit-scrollbar {
+  display: none !important;
+}
+
+.ax-mult-pill {
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  padding: 3px 10px !important;
+  border-radius: var(--ax-radius-pill) !important;
+  background: var(--ax-bg-input) !important;
+  border: 1px solid var(--ax-border) !important;
+  color: var(--ax-mult-blue) !important;
+  flex-shrink: 0 !important;
+}
+
+.ax-mult-pill.purple {
+  color: var(--ax-mult-purple) !important;
+  border-color: rgba(142, 36, 170, 0.3) !important;
+  background: rgba(142, 36, 170, 0.1) !important;
+}
+
+.ax-mult-pill.red {
+  color: var(--ax-mult-red) !important;
+  border-color: rgba(255, 30, 70, 0.3) !important;
+  background: rgba(255, 30, 70, 0.1) !important;
+}
+
+.ax-mult-pill.gold {
+  color: var(--ax-mult-gold) !important;
+  border-color: rgba(255, 215, 0, 0.4) !important;
+  background: rgba(255, 215, 0, 0.1) !important;
+}
+
+.ax-history-icon-btn {
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--ax-text-gray) !important;
+  cursor: pointer !important;
+  padding: 2px !important;
+}
+
+/* ==========================================================================
+   GAME STAGE & CANVAS SECTION
+   ========================================================================== */
+.ax-stage-container {
+  background: #050608 !important;
+  border: 1px solid var(--ax-border) !important;
+  border-radius: var(--ax-radius-md) !important;
+  position: relative !important;
+  overflow: hidden !important;
+  min-height: 240px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  margin: 8px !important;
+}
+
+.ax-stage-top-bar {
+  position: absolute !important;
+  top: 10px !important;
+  left: 12px !important;
+  right: 12px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: space-between !important;
+  z-index: 10 !important;
+}
+
+.ax-stage-stat {
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  color: var(--ax-text-gray) !important;
+  background: rgba(18, 19, 24, 0.7) !important;
+  padding: 4px 8px !important;
+  border-radius: var(--ax-radius-pill) !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.ax-stage-stat.green {
+  color: var(--ax-green) !important;
+}
+
+.ax-stage-center {
+  position: absolute !important;
+  top: 50% !important;
+  left: 50% !important;
+  transform: translate(-50%, -50%) !important;
+  text-align: center !important;
+  z-index: 10 !important;
+  width: 100% !important;
+}
+
+.ax-flew-away-pill {
+  background: rgba(255, 30, 70, 0.15) !important;
+  border: 1px solid var(--ax-red) !important;
+  color: var(--ax-text-white) !important;
+  font-size: 12px !important;
+  font-weight: 800 !important;
+  padding: 4px 14px !important;
+  border-radius: var(--ax-radius-pill) !important;
+  display: inline-block !important;
+  margin-bottom: 6px !important;
+  text-transform: uppercase !important;
+  letter-spacing: 1px !important;
+}
+
+.ax-multiplier-display {
+  font-size: 54px !important;
+  font-weight: 900 !important;
+  color: var(--ax-red) !important;
+  line-height: 1 !important;
+  letter-spacing: -1px !important;
+  text-shadow: 0 0 20px rgba(255, 30, 70, 0.4) !important;
+}
+
+.ax-multiplier-display.win {
+  color: var(--ax-green) !important;
+  text-shadow: 0 0 20px rgba(0, 230, 118, 0.4) !important;
+}
+
+.ax-win-message {
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--ax-green) !important;
+  margin-top: 4px !important;
+}
+
+.ax-stage-bottom-overlay {
+  position: absolute !important;
+  bottom: 8px !important;
+  left: 10px !important;
+  right: 10px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 8px !important;
+  overflow-x: auto !important;
+  z-index: 10 !important;
+  scrollbar-width: none !important;
+}
+
+.ax-stage-bottom-overlay::-webkit-scrollbar {
+  display: none !important;
+}
+
+.ax-cashout-chip {
+  background: rgba(18, 19, 24, 0.85) !important;
+  border: 1px solid var(--ax-border) !important;
+  border-radius: var(--ax-radius-pill) !important;
+  padding: 3px 8px !important;
+  display: flex !important;
+  align-items: center !important;
+  gap: 6px !important;
+  flex-shrink: 0 !important;
+  backdrop-filter: blur(4px) !important;
+}
+
+.ax-chip-avatar {
+  width: 18px !important;
+  height: 18px !important;
+  border-radius: 50% !important;
+}
+
+.ax-chip-name {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--ax-text-gray) !important;
+}
+
+.ax-chip-mult {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: var(--ax-green) !important;
+  background: rgba(0, 230, 118, 0.1) !important;
+  padding: 1px 4px !important;
+  border-radius: 4px !important;
+}
+
+.ax-chip-win {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: var(--ax-text-white) !important;
+}
+
+/* ==========================================================================
+   DUAL BETTING DECK
+   ========================================================================== */
+.ax-deck-card {
+  background: var(--ax-bg-card) !important;
+  border: 1px solid var(--ax-border) !important;
+  border-radius: var(--ax-radius-md) !important;
+  padding: 10px 12px !important;
+  margin: 8px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  gap: 8px !important;
+}
+
+/* Deck Header Tabs */
+.ax-deck-tabs {
+  display: flex !important;
+  border-bottom: 1px solid var(--ax-border) !important;
+  margin-bottom: 4px !important;
+}
+
+.ax-deck-tab {
+  flex: 1 !important;
+  text-align: center !important;
+  padding: 6px 0 !important;
+  font-size: 13px !important;
+  font-weight: 700 !important;
+  color: var(--ax-text-gray) !important;
+  background: transparent !important;
+  border: 0 !important;
+  border-bottom: 2px solid transparent !important;
+  cursor: pointer !important;
+  transition: var(--ax-transition) !important;
+}
+
+.ax-deck-tab.active {
+  color: var(--ax-text-white) !important;
+  border-bottom-color: var(--ax-red) !important;
+}
+
+/* Input Fields & Controls */
+.ax-label {
+  font-size: 10px !important;
+  font-weight: 800 !important;
+  color: var(--ax-text-muted) !important;
+  text-transform: uppercase !important;
+  letter-spacing: 0.5px !important;
+}
+
+.ax-input-group {
+  display: flex !important;
+  align-items: center !important;
+  background: var(--ax-bg-input) !important;
+  border: 1px solid var(--ax-border) !important;
+  border-radius: var(--ax-radius-sm) !important;
+  overflow: hidden !important;
+}
+
+.ax-input {
+  flex: 1 !important;
+  background: transparent !important;
+  border: 0 !important;
+  color: var(--ax-text-white) !important;
+  font-size: 16px !important;
+  font-weight: 800 !important;
+  padding: 8px 12px !important;
+  outline: none !important;
+}
+
+.ax-stepper-btn {
+  background: var(--ax-bg-card) !important;
+  border: 0 !important;
+  border-left: 1px solid var(--ax-border) !important;
+  color: var(--ax-text-gray) !important;
+  width: 38px !important;
+  height: 38px !important;
+  display: flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  font-size: 16px !important;
+  font-weight: 700 !important;
+  cursor: pointer !important;
+}
+
+.ax-stepper-btn:hover {
+  color: var(--ax-text-white) !important;
+  background: var(--ax-bg-card-hover) !important;
+}
+
+/* Preset Amount Pills */
+.ax-presets-grid {
+  display: grid !important;
+  grid-template-columns: repeat(4, 1fr) !important;
+  gap: 6px !important;
+}
+
+.ax-preset-btn {
+  background: var(--ax-bg-input) !important;
+  border: 1px solid var(--ax-border) !important;
+  color: var(--ax-text-gray) !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  padding: 6px 0 !important;
+  border-radius: var(--ax-radius-sm) !important;
+  text-align: center !important;
+  cursor: pointer !important;
+  transition: var(--ax-transition) !important;
+}
+
+.ax-preset-btn:hover {
+  background: var(--ax-bg-card-hover) !important;
+  color: var(--ax-text-white) !important;
+  border-color: var(--ax-text-gray) !important;
+}
+
+/* Auto Multiplier Slider Ticks */
+.ax-slider-ticks {
+  display: flex !important;
+  justify-content: space-between !important;
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  color: var(--ax-text-muted) !important;
+  margin-top: 2px !important;
+}
+
+/* Primary Action Button (PLACE BET / CASH OUT) */
+.ax-action-btn {
+  width: 100% !important;
+  min-height: 48px !important;
+  border-radius: var(--ax-radius-sm) !important;
+  border: 0 !important;
+  font-weight: 900 !important;
+  text-transform: uppercase !important;
+  cursor: pointer !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  line-height: 1.1 !important;
+  transition: var(--ax-transition) !important;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.4) !important;
+}
+
+.ax-action-btn.red {
+  background: var(--ax-red) !important;
+  color: var(--ax-text-white) !important;
+  box-shadow: var(--ax-red-glow) !important;
+}
+
+.ax-action-btn.red:hover {
+  background: #ff3358 !important;
+  transform: translateY(-1px) !important;
+}
+
+.ax-action-btn-title {
+  font-size: 16px !important;
+  letter-spacing: 0.5px !important;
+}
+
+.ax-action-btn-sub {
+  font-size: 14px !important;
+  opacity: 0.9 !important;
+  margin-top: 2px !important;
+}
+
+/* ==========================================================================
+   MOBILE BOTTOM NAVIGATION BAR (5 TABS)
+   ========================================================================== */
+
+/* Eliminate 300ms tap delay across all interactive elements */
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+a, button, [role="button"], .ax-nav-item {
+  touch-action: manipulation;
+}
+
+/* Body pad so content isn't hidden behind the fixed nav bar */
+@media (max-width: 991px) {
+  body {
+    padding-bottom: 60px !important;
+  }
+}
+
+.ax-bottom-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  right: 0 !important;
+  height: 56px !important;
+  background: var(--ax-bg-card) !important;
+  border-top: 1px solid var(--ax-border) !important;
+  display: flex !important;
+  align-items: stretch !important;
+  justify-content: space-around !important;
+  z-index: 1080 !important;
+  padding: 0 !important;
+  /* Safe area for notch/home bar on iOS */
+  padding-bottom: env(safe-area-inset-bottom, 0) !important;
+}
+
+/* Support both <button> and <a> tags in bottom nav */
+.ax-nav-item,
+.ax-bottom-nav a.ax-nav-item {
+  flex: 1 !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  gap: 2px !important;
+  color: var(--ax-text-muted) !important;
+  text-decoration: none !important;
+  background: transparent !important;
+  border: 0 !important;
+  cursor: pointer !important;
+  position: relative !important;
+  padding: 4px 0 !important;
+  /* Eliminate tap delay */
+  touch-action: manipulation !important;
+  -webkit-tap-highlight-color: transparent !important;
+  /* Instant click feedback */
+  transition: color 0.1s ease, opacity 0.1s ease !important;
+}
+
+.ax-nav-item:active,
+.ax-bottom-nav a.ax-nav-item:active {
+  opacity: 0.7 !important;
+}
+
+.ax-nav-item:hover,
+.ax-bottom-nav a.ax-nav-item:hover {
+  color: var(--ax-text-gray) !important;
+}
+
+.ax-nav-item.active,
+.ax-bottom-nav a.ax-nav-item.active {
+  color: var(--ax-red) !important;
+}
+
+.ax-nav-icon {
+  font-size: 20px !important;
+}
+
+.ax-nav-label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+}
+
+/* Desktop Grid Layout Adjustment */
+@media (min-width: 992px) {
+  .ax-desktop-grid {
+    display: grid !important;
+    grid-template-columns: 1fr 300px !important;
+    gap: 10px !important;
+    padding: 10px !important;
+    max-width: 1400px !important;
+    margin: 0 auto !important;
+  }
+
+  .ax-bottom-nav {
+    display: none !important;
+  }
+}
+
+/* ==========================================================================
+   WALLET MODALS — Deposit & Withdraw
+   ========================================================================== */
+
+/* Modal backdrop & container */
+.modal-content-compact {
+  background: #13141a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: var(--ax-radius-lg) !important;
+  color: var(--ax-text-white) !important;
+}
+
+.modal-header-compact {
+  background: #0d0e13 !important;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.07) !important;
+  padding: 12px 16px !important;
+  border-radius: var(--ax-radius-lg) var(--ax-radius-lg) 0 0 !important;
+}
+
+.modal-title-compact {
+  font-size: 13px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.08em !important;
+  color: var(--ax-text-white) !important;
+  margin: 0 !important;
+}
+
+.modal-body-compact {
+  padding: 16px !important;
+}
+
+/* Form inputs inside modals */
+.form-control-compact {
+  background: #08090c !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: var(--ax-radius-md) !important;
+  color: #fff !important;
+  font-size: 13px !important;
+  padding: 9px 12px !important;
+  width: 100% !important;
+  outline: none !important;
+  transition: border-color 0.15s;
+}
+
+.form-control-compact:focus {
+  border-color: var(--ax-green) !important;
+  box-shadow: 0 0 0 2px rgba(0, 230, 118, 0.12) !important;
+}
+
+.ax-label {
+  font-size: 10px !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.08em !important;
+  color: var(--ax-text-gray) !important;
+  display: block;
+}
+
+/* Pay tabs inside modal */
+.pay-tabs {
+  display: flex !important;
+  gap: 6px !important;
+  margin-bottom: 0 !important;
+}
+
+.custom-tabs-link {
+  flex: 1 !important;
+  text-align: center !important;
+  padding: 7px 10px !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  border-radius: var(--ax-radius-md) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  color: var(--ax-text-gray) !important;
+  background: transparent !important;
+  cursor: pointer !important;
+  transition: all var(--ax-transition);
+  text-decoration: none !important;
+  display: block !important;
+}
+
+.custom-tabs-link.active,
+.custom-tabs-link:hover {
+  color: #fff !important;
+  background: var(--ax-red) !important;
+  border-color: var(--ax-red) !important;
+}
+
+/* Payment method grid */
+.grid-view {
+  display: grid !important;
+  grid-template-columns: 1fr 1fr !important;
+  gap: 8px !important;
+}
+
+.payment-btn {
+  background: #08090c !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: var(--ax-radius-md) !important;
+  color: var(--ax-text-white) !important;
+  padding: 10px 8px !important;
+  width: 100% !important;
+  transition: all var(--ax-transition) !important;
+  cursor: pointer !important;
+}
+
+.payment-btn:hover,
+.payment-btn.active {
+  border-color: var(--ax-green) !important;
+  background: rgba(0, 230, 118, 0.06) !important;
+}
+
+.PaymentCard_limit {
+  font-size: 10px !important;
+  color: var(--ax-text-gray) !important;
+  font-weight: 600 !important;
+}
+
+/* Amount tooltips row */
+.amount-tooltips {
+  display: flex !important;
+  gap: 6px !important;
+  flex-wrap: wrap !important;
+}
+
+.amount-tooltips-btn {
+  flex: 1 !important;
+  min-width: 52px !important;
+  padding: 5px 4px !important;
+  font-size: 11px !important;
+  font-weight: 700 !important;
+  background: #08090c !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: var(--ax-radius-sm) !important;
+  color: var(--ax-text-gray) !important;
+  cursor: pointer !important;
+  transition: all var(--ax-transition);
+}
+
+.amount-tooltips-btn.active,
+.amount-tooltips-btn:hover {
+  background: rgba(0, 230, 118, 0.1) !important;
+  border-color: var(--ax-green) !important;
+  color: var(--ax-green) !important;
+}
+
+/* Red Withdraw CTA variant */
+.ax-action-btn.red {
+  background: linear-gradient(135deg, #ff1e46, #cc1436) !important;
+  box-shadow: 0 4px 16px rgba(255, 30, 70, 0.35) !important;
+}
+
+.ax-action-btn.red:hover {
+  background: linear-gradient(135deg, #ff3358, #e01540) !important;
+  box-shadow: 0 6px 22px rgba(255, 30, 70, 0.5) !important;
+}
+
+/* Balance display row inside withdraw modal */
+.bg-dark.rounded {
+  background: #08090c !important;
+  border-radius: var(--ax-radius-md) !important;
+}
+
+/* ==========================================================================
+   NOTIFICATION PANEL
+   ========================================================================== */
+
+.ax-notif-wrap {
+  position: relative;
+}
+
+/* Bell button */
+.ax-notif-trigger {
+  position: relative;
+}
+
+.ax-notif-badge {
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  font-size: 9px;
+  font-weight: 900;
+  line-height: 16px;
+  text-align: center;
+  border-radius: 99px;
+  background: var(--ax-red);
+  color: #fff;
+  border: 2px solid var(--ax-bg-main);
+  pointer-events: none;
+}
+
+/* Panel */
+.ax-notif-panel {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 300px;
+  background: #13141a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.7);
+  z-index: 9999;
+  overflow: hidden;
+
+  /* micro-animation */
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top right;
+}
+
+.ax-notif-panel.ax-notif-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+.ax-notif-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 11px 14px;
+  background: #0d0e13;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ax-notif-title {
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.08em;
+  color: #fff;
+  text-transform: uppercase;
+}
+
+.ax-notif-clear {
+  background: none;
+  border: none;
+  color: #545766;
+  cursor: pointer;
+  padding: 0;
+  line-height: 1;
+  transition: color 0.15s;
+}
+
+.ax-notif-clear:hover {
+  color: var(--ax-green);
+}
+
+.ax-notif-clear .material-symbols-outlined {
+  font-size: 16px;
+}
+
+.ax-notif-body {
+  max-height: 240px;
+  overflow-y: auto;
+  padding: 4px 0;
+}
+
+.ax-notif-body::-webkit-scrollbar {
+  width: 3px;
+}
+
+.ax-notif-body::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.ax-notif-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+}
+
+.ax-notif-empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 28px 20px;
+  color: #545766;
+  font-size: 11px;
+}
+
+.ax-notif-empty .material-symbols-outlined {
+  font-size: 28px;
+}
+
+/* Individual notification item (injected by notifications.js) */
+.ax-notif-item {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.04);
+  cursor: pointer;
+  transition: background 0.12s;
+}
+
+.ax-notif-item:hover {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ax-notif-item.unread {
+  border-left: 2px solid var(--ax-red);
+}
+
+.ax-notif-item-icon {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  background: rgba(255, 30, 70, 0.12);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ax-notif-item-icon .material-symbols-outlined {
+  font-size: 14px;
+  color: var(--ax-red);
+}
+
+.ax-notif-item-text {
+  flex: 1;
+}
+
+.ax-notif-item-msg {
+  font-size: 11px;
+  color: #d0d2dc;
+  line-height: 1.4;
+}
+
+.ax-notif-item-time {
+  font-size: 9px;
+  color: #545766;
+  margin-top: 2px;
+}
+
+.ax-notif-footer {
+  padding: 10px 14px;
+  border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ax-notif-enable {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.04);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 8px;
+  padding: 7px 10px;
+  font-size: 10px;
+  font-weight: 700;
+  letter-spacing: 0.05em;
+  color: #8a8d9b;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ax-notif-enable:hover {
+  background: rgba(0, 230, 118, 0.08);
+  border-color: var(--ax-green);
+  color: var(--ax-green);
+}
+
+.ax-notif-enable .material-symbols-outlined {
+  font-size: 14px;
+}
+
+/* ==========================================================================
+   PROFILE MENU PANEL
+   ========================================================================== */
+
+.ax-profile-dropdown {
+  position: relative;
+}
+
+.ax-profile-trigger {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 3px 6px !important;
+  border-radius: 99px !important;
+  background: rgba(255, 255, 255, 0.05) !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  transition: background 0.15s, border-color 0.15s !important;
+}
+
+.ax-profile-trigger:hover {
+  background: rgba(255, 255, 255, 0.1) !important;
+  border-color: rgba(255, 255, 255, 0.16) !important;
+}
+
+.ax-avatar-sm {
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 1.5px solid rgba(255, 255, 255, 0.15);
+}
+
+.ax-caret {
+  font-size: 15px !important;
+  color: #545766;
+  transition: transform 0.2s, color 0.15s;
+}
+
+.ax-profile-trigger:hover .ax-caret {
+  color: #8a8d9b;
+}
+
+/* Panel */
+.ax-profile-menu {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  width: 230px;
+  background: #13141a;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 14px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.75);
+  z-index: 9999;
+  overflow: hidden;
+
+  /* micro-animation */
+  opacity: 0;
+  transform: translateY(-8px) scale(0.97);
+  pointer-events: none;
+  transition: opacity 0.18s cubic-bezier(0.4, 0, 0.2, 1),
+    transform 0.18s cubic-bezier(0.4, 0, 0.2, 1);
+  transform-origin: top right;
+}
+
+.ax-profile-menu.ax-pm-open {
+  opacity: 1;
+  transform: translateY(0) scale(1);
+  pointer-events: auto;
+}
+
+/* User card */
+.ax-pm-user {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 13px 14px;
+  background: #0d0e13;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.ax-pm-avatar {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  object-fit: cover;
+  border: 2px solid rgba(255, 30, 70, 0.4);
+  flex-shrink: 0;
+}
+
+.ax-pm-info {
+  flex: 1;
+  min-width: 0;
+}
+
+.ax-pm-email {
+  font-size: 10px;
+  font-weight: 700;
+  color: #d0d2dc;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ax-pm-id {
+  font-size: 9px;
+  color: #545766;
+  margin-top: 1px;
+}
+
+.ax-pm-balance {
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.ax-pm-bal-label {
+  font-size: 8px;
+  color: #545766;
+  font-weight: 700;
+  text-transform: uppercase;
+}
+
+.ax-pm-bal-amount {
+  font-size: 12px;
+  font-weight: 900;
+  color: var(--ax-green);
+}
+
+/* Toggles section */
+.ax-pm-section {
+  padding: 10px 14px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.ax-pm-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.ax-pm-toggle-label {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 10px;
+  font-weight: 700;
+  color: #8a8d9b;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+
+.ax-pm-toggle-label .material-symbols-outlined {
+  font-size: 14px;
+  color: #545766;
+}
+
+/* Custom compact switch */
+.ax-switch {
+  position: relative;
+  display: inline-block;
+  width: 30px;
+  height: 16px;
+  flex-shrink: 0;
+}
+
+.ax-switch input {
+  opacity: 0;
+  width: 0;
+  height: 0;
+}
+
+.ax-slider {
+  position: absolute;
+  inset: 0;
+  background: rgba(255, 255, 255, 0.1);
+  border-radius: 99px;
+  cursor: pointer;
+  transition: background 0.2s;
+}
+
+.ax-slider:before {
+  content: '';
+  position: absolute;
+  width: 10px;
+  height: 10px;
+  left: 3px;
+  top: 3px;
+  background: #545766;
+  border-radius: 50%;
+  transition: transform 0.2s, background 0.2s;
+}
+
+.ax-switch input:checked+.ax-slider {
+  background: rgba(0, 230, 118, 0.25);
+}
+
+.ax-switch input:checked+.ax-slider:before {
+  transform: translateX(14px);
+  background: var(--ax-green);
+}
+
+/* Nav links */
+.ax-pm-links {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1px;
+  padding: 8px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.ax-pm-link {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 6px;
+  border-radius: 10px;
+  color: #8a8d9b;
+  text-decoration: none;
+  font-size: 9px;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ax-pm-link:hover {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+}
+
+.ax-pm-link .material-symbols-outlined {
+  font-size: 18px;
+  color: inherit;
+}
+
+/* Sign out */
+.ax-pm-signout {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 11px 14px;
+  font-size: 10px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: #ff1e46;
+  text-decoration: none;
+  transition: background 0.15s;
+}
+
+.ax-pm-signout:hover {
+  background: rgba(255, 30, 70, 0.08);
+  color: #ff1e46;
+}
+
+.ax-pm-signout .material-symbols-outlined {
+  font-size: 15px;
+}
+
+/* Auth buttons (logged out) */
+.ax-auth-btn {
+  padding: 6px 14px;
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.06em;
+  border-radius: 99px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.ax-auth-register {
+  background: var(--ax-red);
+  color: #fff;
+  margin-right: 6px;
+}
+
+.ax-auth-register:hover {
+  background: var(--ax-red-dark);
+}
+
+.ax-auth-login {
+  background: transparent;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.2) !important;
+}
+
+.ax-auth-login:hover {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+/* ==========================================================================
+   UNIFIED TABBED AUTH MODAL (Reference Design Implementation)
+   ========================================================================== */
+
+.ax-auth-card {
+  background: #13141a !important;
+  border: 1px solid rgba(255, 255, 255, 0.08) !important;
+  border-radius: 20px !important;
+  color: #fff !important;
+  box-shadow: 0 24px 64px rgba(0, 0, 0, 0.85) !important;
+  position: relative !important;
+  overflow: hidden !important;
+}
+
+.ax-auth-close {
+  position: absolute !important;
+  top: 16px !important;
+  right: 16px !important;
+  z-index: 10 !important;
+  opacity: 0.6 !important;
+  transition: opacity 0.15s !important;
+}
+.ax-auth-close:hover {
+  opacity: 1 !important;
+}
+
+.ax-auth-emblem {
+  display: flex !important;
+  justify-content: center !important;
+  align-items: center !important;
+  margin-top: 24px !important;
+  margin-bottom: 6px !important;
+}
+
+.ax-emblem-img {
+  width: 52px !important;
+  height: 52px !important;
+  border-radius: 50% !important;
+  object-fit: contain !important;
+  padding: 4px !important;
+  background: #08090c !important;
+  border: 2px solid rgba(255, 30, 70, 0.35) !important;
+  box-shadow: 0 0 20px rgba(255, 30, 70, 0.25) !important;
+}
+
+.ax-auth-title {
+  font-size: 18px !important;
+  font-weight: 800 !important;
+  color: #ffffff !important;
+  letter-spacing: -0.2px !important;
+  margin: 0 !important;
+}
+
+.ax-auth-subtitle {
+  font-size: 12px !important;
+  color: #8a8d9b !important;
+  margin-top: 3px !important;
+  margin-bottom: 0 !important;
+}
+
+.ax-auth-tabs-wrap {
+  display: flex !important;
+  justify-content: center !important;
+}
+
+.ax-auth-tabs {
+  display: flex !important;
+  width: 100% !important;
+  background: #08090c !important;
+  padding: 4px !important;
+  border-radius: 12px !important;
+  border: 1px solid rgba(255, 255, 255, 0.06) !important;
+}
+
+.ax-auth-tab {
+  flex: 1 !important;
+  border: none !important;
+  background: transparent !important;
+  color: #8a8d9b !important;
+  font-size: 11px !important;
+  font-weight: 800 !important;
+  letter-spacing: 0.06em !important;
+  padding: 8px 12px !important;
+  border-radius: 8px !important;
+  cursor: pointer !important;
+  transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.ax-auth-tab.active {
+  background: var(--ax-red) !important;
+  color: #ffffff !important;
+  box-shadow: 0 4px 14px rgba(255, 30, 70, 0.35) !important;
+}
+
+.ax-auth-input-wrapper {
+  display: flex !important;
+  align-items: center !important;
+  background: #08090c !important;
+  border: 1px solid rgba(255, 255, 255, 0.1) !important;
+  border-radius: 12px !important;
+  overflow: hidden !important;
+  transition: border-color 0.15s, box-shadow 0.15s !important;
+}
+
+.ax-auth-input-wrapper:focus-within {
+  border-color: var(--ax-red) !important;
+  box-shadow: 0 0 0 2px rgba(255, 30, 70, 0.15) !important;
+}
+
+.ax-auth-input-icon {
+  padding-left: 12px !important;
+  padding-right: 4px !important;
+  color: #545766 !important;
+  font-size: 18px !important;
+  flex-shrink: 0 !important;
+}
+
+.ax-auth-input {
+  flex: 1 !important;
+  background: transparent !important;
+  border: none !important;
+  color: #ffffff !important;
+  font-size: 13px !important;
+  padding: 10px 12px 10px 4px !important;
+  outline: none !important;
+  width: 100% !important;
+}
+
+.ax-auth-input::placeholder {
+  color: #454759 !important;
+}
+
+.ax-pw-toggle {
+  background: transparent !important;
+  border: none !important;
+  color: #545766 !important;
+  padding: 0 12px !important;
+  cursor: pointer !important;
+  line-height: 1 !important;
+  display: flex !important;
+  align-items: center !important;
+  transition: color 0.15s !important;
+}
+.ax-pw-toggle:hover {
+  color: #ffffff !important;
+}
+.ax-pw-toggle .material-symbols-outlined {
+  font-size: 18px !important;
+}
+
+.ax-auth-forgot {
+  font-size: 11px !important;
+  color: #8a8d9b !important;
+  text-decoration: none !important;
+  transition: color 0.15s !important;
+}
+.ax-auth-forgot:hover {
+  color: var(--ax-red) !important;
+}
+
+.ax-auth-submit-btn {
+  width: 100% !important;
+  padding: 12px !important;
+  font-size: 12px !important;
+  font-weight: 900 !important;
+  letter-spacing: 0.08em !important;
+  color: #ffffff !important;
+  background: linear-gradient(135deg, #ff1e46, #cc1436) !important;
+  border: none !important;
+  border-radius: 12px !important;
+  cursor: pointer !important;
+  transition: all 0.15s !important;
+  box-shadow: 0 4px 16px rgba(255, 30, 70, 0.35) !important;
+  margin-top: 4px !important;
+}
+.ax-auth-submit-btn:hover {
+  box-shadow: 0 6px 22px rgba(255, 30, 70, 0.5) !important;
+  transform: translateY(-1px) !important;
+}
+
+.ax-auth-submit-btn.green {
+  background: linear-gradient(135deg, #00e676, #00b050) !important;
+  box-shadow: 0 4px 16px rgba(0, 230, 118, 0.35) !important;
+}
+.ax-auth-submit-btn.green:hover {
+  box-shadow: 0 6px 22px rgba(0, 230, 118, 0.5) !important;
+}
+
+.ax-auth-switch-link {
+  color: var(--ax-red) !important;
+  text-decoration: none !important;
+  transition: color 0.15s !important;
+}
+.ax-auth-switch-link:hover {
+  color: #ffffff !important;
+}
+
+/* ==========================================================================
+   LEADERBOARD MODAL STYLES (MOBILE)
+   ========================================================================== */
+#leaderboard-modal .modal-dialog {
+  max-width: 480px !important;
+  margin: 1rem auto !important;
+}
+
+#leaderboard-modal .left-sidebar {
+  width: 100% !important;
+  min-width: 100% !important;
+  max-width: 100% !important;
+  padding: 0 !important;
+  margin: 0 !important;
+  background: transparent !important;
+}
+
+#leaderboard-modal .tabs-navs {
+  display: none !important;
+}
+
+#leaderboard-modal #pills-allbets {
+  display: block !important;
+  opacity: 1 !important;
+}
+
+#leaderboard-modal #pills-mybets {
+  display: none !important;
+}
+
+#leaderboard-modal .contents-blocks {
+  background: transparent !important;
+}
+
+#leaderboard-modal .list-body {
+  max-height: 55vh !important;
+  overflow-y: auto !important;
+}
+
+/* ==========================================================================
+   LIVE CHATROOM & RIGHT SIDEBAR STYLES
+   ========================================================================== */
+
+/* Base styles — no display set here so Bootstrap d-none can work on mobile */
+.ax-chat-sidebar {
+  min-width: 300px;
+  max-width: 320px;
+  width: 310px;
+  background: #13141a;
+  border-left: 1px solid rgba(255, 255, 255, 0.08);
+  flex-direction: column;
+  flex-shrink: 0;
+}
+
+/* Mobile: fully hidden — use /chat page */
+@media (max-width: 991.98px) {
+  .ax-chat-sidebar,
+  .ax-chatroom-panel {
+    display: none !important;
+  }
+}
+
+.ax-chatroom-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  width: 100%;
+  background: #13141a;
+  position: relative;
+  overflow: hidden;
+}
+
+.ax-chat-header {
+  background: #0d0e13 !important;
+  flex-shrink: 0 !important;
+}
+
+.ax-online-badge {
+  display: inline-flex !important;
+  align-items: center !important;
+  gap: 5px !important;
+  font-size: 11px !important;
+  color: #00e676 !important;
+  background: rgba(0, 230, 118, 0.1) !important;
+  border: 1px solid rgba(0, 230, 118, 0.25) !important;
+  padding: 2px 8px !important;
+  border-radius: 12px !important;
+}
+
+.ax-online-dot {
+  width: 6px !important;
+  height: 6px !important;
+  border-radius: 50% !important;
+  background: #00e676 !important;
+  box-shadow: 0 0 6px #00e676 !important;
+}
+
+.ax-chat-body {
+  flex: 1 1 auto !important;
+  overflow-y: auto !important;
+  height: 100% !important;
+  max-height: none !important;
+  min-height: 200px !important;
+}
+
+.ax-chat-body::-webkit-scrollbar {
+  width: 4px !important;
+}
+
+.ax-chat-body::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15) !important;
+  border-radius: 4px !important;
+}
+
+.ax-chat-item.ax-chat-me {
+  flex-direction: row-reverse !important;
+}
+
+.ax-chat-item.ax-chat-me .ax-chat-bubble-wrap {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: flex-end !important;
+}
+
+.ax-chat-footer {
+  background: #0d0e13 !important;
+  flex-shrink: 0 !important;
+  position: sticky !important;
+  bottom: 0 !important;
+  z-index: 10 !important;
+  width: 100% !important;
+  box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.4) !important;
+}
+
+/* ==========================================================================
+   DESKTOP 3-COLUMN LAYOUT (Left Bets | Center Game | Right Chat)
+   ========================================================================== */
+@media (min-width: 992px) {
+  .main-container {
+    display: flex !important;
+    flex-direction: row !important;
+    width: 100% !important;
+    box-sizing: border-box !important;
+    align-items: stretch !important;
+    min-height: calc(100vh - 80px) !important;
+  }
+
+  .left-sidebar {
+    min-width: 320px !important;
+    max-width: 330px !important;
+    width: 320px !important;
+    flex-shrink: 0 !important;
+  }
+
+  .right-sidebar {
+    flex: 1 1 auto !important;
+    width: auto !important;
+    min-width: 0 !important;
+    max-width: none !important;
+  }
+
+  .ax-chat-sidebar {
+    min-width: 320px !important;
+    max-width: 350px !important;
+    width: 330px !important;
+    flex-shrink: 0 !important;
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    min-height: calc(100vh - 80px) !important;
+  }
+
+  .ax-chatroom-panel {
+    display: flex !important;
+    flex-direction: column !important;
+    height: 100% !important;
+    min-height: calc(100vh - 80px) !important;
+    flex: 1 1 auto !important;
+  }
+
+  /* Desktop section minimal rounded corners override */
+  .left-sidebar,
+  .right-sidebar,
+  .ax-chat-sidebar,
+  .contents-blocks,
+  .game-play,
+  .stage-board,
+  .betting-block,
+  .ax-chatroom-panel,
+  .card,
+  .tabs-navs,
+  .tabs-navs .nav.nav-pills,
+  .nav-pills .nav-link.active,
+  .list-data-tbl,
+  .deposite-container .card,
+  .modal-content {
+    border-radius: 4px !important;
+  }
+
+  .left-sidebar,
+  .ax-chat-sidebar,
+  .ax-chatroom-panel,
+  .contents-blocks {
+    border-radius: 0 !important;
+  }
+}
