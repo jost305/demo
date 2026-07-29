@@ -1,5 +1,6 @@
 {
   "version": 2,
+  "buildCommand": "cd laravel && php -r \"copy('https://getcomposer.org/installer', 'composer-setup.php');\" && php composer-setup.php && php composer.phar install --no-dev --optimize-autoloader --no-interaction",
   "functions": {
     "api/index.php": {
       "runtime": "vercel-php@0.9.0"
@@ -7,7 +8,11 @@
   },
   "routes": [
     {
-      "src": "/(css|js|images|user|dist|unpkg.com|w|.*\\.mp3|.*\\.ico|.*\\.png|.*\\.gif|.*\\.txt)",
+      "src": "^/(css|js|images|user|dist|unpkg\\.com|w)/(.*)$",
+      "dest": "/$1/$2"
+    },
+    {
+      "src": "^/(.+\\.(ico|png|gif|mp3|txt|svg|woff2?|ttf|eot))$",
       "dest": "/$1"
     },
     {
