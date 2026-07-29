@@ -1,5 +1,8 @@
 <?php
 
+// Suppress deprecation notices from vendor libraries
+error_reporting(E_ALL & ~E_DEPRECATED & ~E_USER_DEPRECATED);
+
 // Vercel Serverless Storage Rebind for Laravel
 $storagePath = '/tmp/storage';
 if (!is_dir($storagePath)) {
