@@ -1,9 +1,12 @@
 vendor/
-laravel/vendor/
 node_modules/
-laravel/node_modules/
 .git/
 *.log
 error_log
 .env
 .env.*
+install/
+background*.mp3
+plane-crash*.mp3
+cashout*.mp3
+game-start.mp3
