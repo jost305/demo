@@ -3,8 +3,6 @@
 .git/
 *.log
 error_log
-.env
-.env.*
 install/
 background*.mp3
 plane-crash*.mp3
