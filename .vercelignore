@@ -8,3 +8,7 @@ background*.mp3
 plane-crash*.mp3
 cashout*.mp3
 game-start.mp3
+laravel/storage/logs/
+laravel/storage/framework/
+laravel/node_modules/
+laravel/tests/
