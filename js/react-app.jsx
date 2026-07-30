@@ -299,7 +299,10 @@ function Header({ user, wallet, currentView, onViewChange, onAuthClick, onWithdr
                     </button>
 
                     <a href="#" onClick={(e) => { e.preventDefault(); onViewChange('crash'); }} className="flex items-center gap-2">
-                        <img src="/images/flyboy-logo.png" alt="FlyBoy10x" className="h-6 md:h-6 w-auto object-contain" style={{ maxHeight: '24px', maxWidth: '130px' }} onError={(e) => { e.target.src = '/images/flyboy10x_logo.png'; }} />
+                        {/* Mobile Logo: Compact Icon */}
+                        <img src="/images/flyboy10x_icon.png" alt="FlyBoy10x" className="h-7 w-auto object-contain md:hidden" style={{ maxHeight: '28px' }} onError={(e) => { e.target.src = '/images/flyboy-logo.png'; }} />
+                        {/* Desktop Logo: Full Banner */}
+                        <img src="/images/flyboy-logo.png" alt="FlyBoy10x" className="hidden md:block h-6 w-auto object-contain" style={{ maxHeight: '24px', maxWidth: '130px' }} onError={(e) => { e.target.src = '/images/flyboy10x_logo.png'; }} />
                     </a>
 
                     <nav className="hidden md:flex items-center gap-2 ms-4">

@@ -531,7 +531,10 @@ function Header(_ref3) {
                     { href: '#', onClick: function (e) {
                             e.preventDefault();onViewChange('crash');
                         }, className: 'flex items-center gap-2' },
-                    React.createElement('img', { src: '/images/flyboy-logo.png', alt: 'FlyBoy10x', className: 'h-6 md:h-6 w-auto object-contain', style: { maxHeight: '24px', maxWidth: '130px' }, onError: function (e) {
+                    React.createElement('img', { src: '/images/flyboy10x_icon.png', alt: 'FlyBoy10x', className: 'h-7 w-auto object-contain md:hidden', style: { maxHeight: '28px' }, onError: function (e) {
+                            e.target.src = '/images/flyboy-logo.png';
+                        } }),
+                    React.createElement('img', { src: '/images/flyboy-logo.png', alt: 'FlyBoy10x', className: 'hidden md:block h-6 w-auto object-contain', style: { maxHeight: '24px', maxWidth: '130px' }, onError: function (e) {
                             e.target.src = '/images/flyboy10x_logo.png';
                         } })
                 ),
@@ -2072,4 +2075,4 @@ if (rootEl) {
     }
     ReactDOM.render(React.createElement(ReactAviatorApp, null), rootEl);
 }
-/* Left: Hamburger (mobile only) + Logo + Desktop Nav */ /* Hamburger - mobile only */ /* Right Section: Balance, Deposit & Auth */ /* Balance */ /* Deposit Button */ /* Account / User Menu */ /* Mobile Slide-out Drawer (triggered by hamburger) */ /* Tabs */ /* Total Bets Volume Header */ /* Previous Hand Trigger */ /* Table Headers */ /* Bets List Feed */ /* Toggles row */ /* Main controls row */ /* Left 50%: Spinner + Quick buttons */ /* Right 50%: BET Button */ /* Gloss highlight */ /* Unified Responsive Header */ /* Desktop View */ /* Mobile View */ /* React Auth Modal Component */ /* React Withdrawal Modal Component */
+/* Left: Hamburger (mobile only) + Logo + Desktop Nav */ /* Hamburger - mobile only */ /* Mobile Logo: Compact Icon */ /* Desktop Logo: Full Banner */ /* Right Section: Balance, Deposit & Auth */ /* Balance */ /* Deposit Button */ /* Account / User Menu */ /* Mobile Slide-out Drawer (triggered by hamburger) */ /* Tabs */ /* Total Bets Volume Header */ /* Previous Hand Trigger */ /* Table Headers */ /* Bets List Feed */ /* Toggles row */ /* Main controls row */ /* Left 50%: Spinner + Quick buttons */ /* Right 50%: BET Button */ /* Gloss highlight */ /* Unified Responsive Header */ /* Desktop View */ /* Mobile View */ /* React Auth Modal Component */ /* React Withdrawal Modal Component */
