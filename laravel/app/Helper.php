@@ -86,7 +86,7 @@ function wallet($userid, $type = "string")
 function setting($parameter)
 {
     $setting = Setting::where('category', $parameter)->first();
-    return $setting->value;
+    return $setting ? $setting->value : '';
 }
 
 function currentid()
