@@ -1,38 +1,55 @@
-<div class="ax-chatroom-panel">
-    <div class="ax-chat-header d-flex align-items-center justify-content-between px-3 py-2 border-bottom border-secondary">
-        <div class="d-flex align-items-center gap-2">
-            <span class="material-symbols-outlined text-danger">forum</span>
-            <span class="fw-bold text-white fs-6">Live Chat & Troll</span>
+<div class="ax-chatroom-panel d-flex flex-column h-100">
+    <!-- Chat Header & Room Selector -->
+    <div class="ax-chat-header px-3 py-2 border-bottom border-secondary bg-dark">
+        <div class="d-flex align-items-center justify-content-between mb-2">
+            <div class="d-flex align-items-center gap-2">
+                <span class="material-symbols-outlined text-danger fs-5">forum</span>
+                <span class="fw-bold text-white fs-6">Live Community</span>
+            </div>
+            <div class="d-flex align-items-center gap-1">
+                <span class="ax-online-badge badge bg-success bg-opacity-20 text-success border border-success border-opacity-30 rounded-pill px-2 py-1" style="font-size:10px;">
+                    <span class="ax-online-dot d-inline-block rounded-circle bg-success me-1" style="width:6px;height:6px;"></span>
+                    <span id="ax-online-count">142</span> Online
+                </span>
+            </div>
         </div>
-        <div class="d-flex align-items-center gap-1">
-            <span class="ax-online-badge">
-                <span class="ax-online-dot"></span>
-                <span id="ax-online-count">128</span> Online
-            </span>
+
+        <!-- Room Selector Pills -->
+        <div class="ax-chat-rooms d-flex gap-1 overflow-auto pb-1" style="scrollbar-width:none;">
+            <button type="button" class="ax-room-btn btn btn-xs btn-outline-danger active rounded-pill px-2 py-1 text-nowrap" data-room="general" onclick="axSwitchChatRoom('general')" style="font-size:11px;">
+                💬 General
+            </button>
+            <button type="button" class="ax-room-btn btn btn-xs btn-outline-secondary text-white rounded-pill px-2 py-1 text-nowrap" data-room="highrollers" onclick="axSwitchChatRoom('highrollers')" style="font-size:11px;">
+                💎 High Rollers
+            </button>
+            <button type="button" class="ax-room-btn btn btn-xs btn-outline-secondary text-white rounded-pill px-2 py-1 text-nowrap" data-room="telegram" onclick="axSwitchChatRoom('telegram')" style="font-size:11px;">
+                ✈️ Telegram Feed
+            </button>
         </div>
     </div>
 
-    <div class="ax-chat-body p-3" id="ax-chat-messages">
-        <!-- Messages loaded dynamically -->
+    <!-- Chat Messages Container -->
+    <div class="ax-chat-body p-3 flex-grow-1 overflow-auto" id="ax-chat-messages" style="min-height: 250px; max-height: 520px; background: #0f1117;">
         <div class="text-center py-4 text-muted small" id="ax-chat-loader">
-            <div class="spinner-border spinner-border-sm text-secondary me-1" role="status"></div>
-            Connecting to chat...
+            <div class="spinner-border spinner-border-sm text-danger me-1" role="status"></div>
+            Connecting to room...
         </div>
     </div>
 
-    <div class="ax-chat-footer p-2 border-top border-secondary">
+    <!-- Chat Footer / Send Form -->
+    <div class="ax-chat-footer p-2 border-top border-secondary bg-dark">
         @if(session()->has('userlogin'))
             <form id="ax-chat-form" class="d-flex align-items-center gap-2 m-0" onsubmit="axSendChatMessage(event);">
                 @csrf
-                <input type="text" id="ax-chat-input" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Type a message or troll..." maxlength="300" autocomplete="off" required style="border-radius: 20px; font-size: 13px;">
-                <button type="submit" class="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 34px; height: 34px; flex-shrink: 0;">
+                <input type="text" id="ax-chat-input" class="form-control form-control-sm bg-dark text-white border-secondary" placeholder="Say something..." maxlength="300" autocomplete="off" required style="border-radius: 20px; font-size: 12.5px;">
+                <button type="submit" class="btn btn-danger btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 34px; height: 34px; flex-shrink: 0;" title="Send Message">
                     <span class="material-symbols-outlined fs-5">send</span>
                 </button>
             </form>
         @else
-            <div class="text-center py-2">
-                <a href="#" class="btn btn-outline-danger btn-sm w-100" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="if(window.switchAuthTab) switchAuthTab('login')">
-                    Log in to Chat
+            <div class="text-center py-1">
+                <a href="#" class="btn btn-outline-danger btn-sm w-100 py-1" style="font-size:12px; border-radius: 20px;" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="if(window.switchAuthTab) switchAuthTab('login')">
+                    Log in to Chat & Troll
                 </a>
             </div>
         @endif
@@ -40,16 +57,26 @@
 </div>
 
 <script>
-    // Only activate chat polling on desktop (lg+) or on the /chat page itself
     (function() {
-        var isMobileSize = window.innerWidth < 992;
-        var isChatPage   = window.location.pathname === '/chat';
-
-        // On /crash on mobile → skip polling entirely (no chat section shown)
+        var isMobileSize  = window.innerWidth < 992;
+        var isChatPage    = window.location.pathname === '/chat';
         if (isMobileSize && !isChatPage) return;
 
-        var axLastChatId  = 0;
-        var axChatPollTimer = null;
+        var currentRoom    = 'general';
+        var axLastChatId   = 0;
+        var axChatPollTimer= null;
+
+        function axRenderBadge(badge, source) {
+            if (!badge && source === 'telegram') badge = 'Telegram';
+            if (!badge) return '';
+            
+            var bgClass = 'bg-secondary';
+            if (badge === 'Admin') bgClass = 'bg-danger';
+            if (badge === 'VIP') bgClass = 'bg-warning text-dark';
+            if (badge === 'Telegram') bgClass = 'bg-info text-dark';
+
+            return '<span class="badge ' + bgClass + ' ms-1" style="font-size:9px; padding: 2px 5px;">' + badge + '</span>';
+        }
 
         function axRenderChatMessage(msg) {
             var isMe   = msg.is_me;
@@ -57,31 +84,45 @@
             var name   = msg.username || 'Player';
             var time   = msg.time || '';
             var text   = msg.message || '';
+            var badge  = axRenderBadge(msg.badge, msg.source);
 
             return '<div class="ax-chat-item d-flex gap-2 mb-2" data-msg-id="' + msg.id + '"' + (isMe ? ' style="flex-direction:row-reverse"' : '') + '>' +
                 '<img src="' + avatar + '" class="rounded-circle" style="width:28px;height:28px;object-fit:cover;flex-shrink:0;" onerror="this.src=\'/images/avtar/av-1.png\'">' +
                 '<div class="ax-chat-bubble-wrap" style="max-width:85%;' + (isMe ? 'display:flex;flex-direction:column;align-items:flex-end' : '') + '">' +
                     '<div class="d-flex align-items-center gap-1 mb-1">' +
                         '<span class="fw-bold ' + (isMe ? 'text-danger' : 'text-light') + '" style="font-size:11px;">' + name + '</span>' +
-                        '<span class="text-muted" style="font-size:9.5px;">' + time + '</span>' +
+                        badge +
+                        '<span class="text-muted ms-1" style="font-size:9.5px;">' + time + '</span>' +
                     '</div>' +
-                    '<div class="ax-chat-bubble p-2 rounded-3 text-white" style="font-size:12.5px;background:' + (isMe ? 'rgba(255,30,70,0.2)' : '#1c1e27') + ';border:1px solid ' + (isMe ? 'rgba(255,30,70,0.35)' : 'rgba(255,255,255,0.06)') + ';word-break:break-word;">' +
+                    '<div class="ax-chat-bubble p-2 rounded-3 text-white" style="font-size:12.5px;background:' + (isMe ? 'rgba(255,30,70,0.25)' : '#1c1e27') + ';border:1px solid ' + (isMe ? 'rgba(255,30,70,0.4)' : 'rgba(255,255,255,0.06)') + ';word-break:break-word;">' +
                         text +
                     '</div>' +
                 '</div>' +
             '</div>';
         }
 
+        window.axSwitchChatRoom = function(room) {
+            currentRoom = room;
+            axLastChatId = 0;
+
+            $('.ax-room-btn').removeClass('btn-outline-danger active').addClass('btn-outline-secondary text-white');
+            $('.ax-room-btn[data-room="' + room + '"]').addClass('btn-outline-danger active').removeClass('btn-outline-secondary text-white');
+
+            $('#ax-chat-messages').html('<div class="text-center py-4 text-muted small" id="ax-chat-loader"><div class="spinner-border spinner-border-sm text-danger me-1" role="status"></div>Loading ' + room + ' room...</div>');
+
+            axFetchChatMessages();
+        };
+
         function axFetchChatMessages() {
             $.ajax({
-                url: '/chat/messages?last_id=' + axLastChatId,
+                url: '/chat/messages?room=' + currentRoom + '&last_id=' + axLastChatId,
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
                     $('#ax-chat-loader').remove();
                     if (res.messages && res.messages.length > 0) {
                         var container = $('#ax-chat-messages');
-                        var atBottom  = (container[0].scrollHeight - container.scrollTop() - container[0].clientHeight) < 80 || axLastChatId === 0;
+                        var atBottom  = (container[0].scrollHeight - container.scrollTop() - container[0].clientHeight) < 100 || axLastChatId === 0;
 
                         res.messages.forEach(function(msg) {
                             if ($('.ax-chat-item[data-msg-id="' + msg.id + '"]').length === 0) {
@@ -112,6 +153,7 @@
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
+                    room: currentRoom,
                     message: text
                 },
                 dataType: 'json',
@@ -134,7 +176,7 @@
 
         $(document).ready(function() {
             axFetchChatMessages();
-            axChatPollTimer = setInterval(axFetchChatMessages, 3000);
+            axChatPollTimer = setInterval(axFetchChatMessages, 2500);
         });
     })();
 </script>

@@ -12,12 +12,20 @@ use Carbon\Carbon;
 class Pages extends Controller
 {
     public function aviator() {
-        $allresults = Gameresult::where('created_at', '>=', Carbon::today()->toDateString())->orderBy('id','desc')->get();
-        $mybets = collect();
-        if (session()->has('userlogin')) {
-            $mybets = Userbit::where('userid', user('id'))->where('created_at', '>=', Carbon::today()->toDateString())->orderBy('id','desc')->get();
-        }
-        return view('crash', compact("allresults", "mybets"));
+        $user = session()->has('userlogin') ? user() : null;
+        $wallet = $user ? wallet($user->id) : 0;
+        
+        $page = [
+            'user' => $user ? [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image' => $user->image
+            ] : null,
+            'wallet' => $wallet
+        ];
+        
+        return view('app', compact('page'));
     }
 
     public function deposit() {
@@ -38,56 +46,21 @@ class Pages extends Controller
     }
 
     public function leaderboard() {
-        // Use leftJoin so bots/dummy users without a real DB user row don't break the query
-        $topbets = Userbit::where('userbits.cashout_multiplier', '>', 1)
-            ->where('userbits.status', 1)
-            ->leftJoin('users', 'users.id', '=', 'userbits.userid')
-            ->select(
-                'userbits.id',
-                'userbits.userid',
-                'userbits.amount',
-                'userbits.cashout_multiplier',
-                'userbits.created_at',
-                'users.name',
-                'users.image'
-            )
-            ->orderBy('userbits.cashout_multiplier', 'desc')
-            ->take(50)
-            ->get()
-            ->map(function($item) {
-                // Mask the userid: show only first 2 + stars + last 2 digits
-                $uid = (string) $item->userid;
-                if (strlen($uid) > 4) {
-                    $item->display_id = substr($uid, 0, 2) . str_repeat('*', strlen($uid) - 4) . substr($uid, -2);
-                } else {
-                    $item->display_id = $uid;
-                }
-                // Fallback avatar if no image stored
-                if (empty($item->image)) {
-                    $item->image = '/images/avtar/av-' . (($item->id % 72) + 1) . '.png';
-                }
-                return $item;
-            });
+        $user = session()->has('userlogin') ? user() : null;
+        $wallet = $user ? wallet($user->id) : 0;
+        
+        $page = [
+            'user' => $user ? [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image' => $user->image
+            ] : null,
+            'wallet' => $wallet,
+            'view' => 'leaderboard'
+        ];
 
-        $simulated = collect();
-        if ($topbets->count() < 10) {
-            for ($i = 1; $i <= 30; $i++) {
-                $uid = rand(10000, 99999);
-                $simulated->push((object)[
-                    'id' => $i,
-                    'userid' => $uid,
-                    'display_id' => substr((string)$uid, 0, 2) . '***' . substr((string)$uid, -2),
-                    'name' => null,
-                    'image' => '/images/avtar/av-' . rand(1, 72) . '.png',
-                    'amount' => rand(500, 25000),
-                    'cashout_multiplier' => number_format(rand(200, 50000) / 100, 2),
-                    'created_at' => now()->subMinutes(rand(1, 1440))
-                ]);
-            }
-            $simulated = $simulated->sortByDesc('cashout_multiplier')->values();
-        }
-
-        return view('leaderboard', compact('topbets', 'simulated'));
+        return view('app', compact('page'));
     }
 
     public function level_management() {

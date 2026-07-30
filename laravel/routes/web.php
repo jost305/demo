@@ -46,7 +46,9 @@ Route::get('/crash', [Pages::class, 'aviator']);
 // Chat - public read, authenticated write
 Route::get('/chat', [ChatController::class, 'index']);
 Route::get('/chat/messages', [ChatController::class, 'messages']);
-Route::post('/chat/send', [ChatController::class, 'store']);
+Route::post('/telegram/webhook', [ChatController::class, 'telegramWebhook']);
+Route::match(['get', 'post'], '/currentlybet', [Gamesetting::class, "currentlybet"]);
+Route::match(['get', 'post'], '/game/currentlybet', [Gamesetting::class, "currentlybet"]);
 
 Route::get('/register', function () {
     return view('register');
@@ -123,10 +125,12 @@ Route::group(['middleware' => ['isUser']], function () {
     Route::post('/game/game_over', [Gamesetting::class, "game_over"]);
     Route::post('/game/add_bet', [Gamesetting::class, "betNow"]);
 	Route::get('/cash_out', [Gamesetting::class, "cashout"]);
-    Route::post('/game/currentlybet', [Gamesetting::class, "currentlybet"]);
     Route::post('/game/my_bets_history', [Gamesetting::class, "my_bets_history"]);
     Route::get('/payment_gateway_details', [Adminapi::class, "payment_gateway"]);
     Route::post('/insert/withdrawal', [Adminapi::class, "withdrawal_query"]);
     Route::post('/depositNow', [Adminapi::class, "depositNow"]);
     Route::post('/wallet_transfer', [Userdetail::class, "wallet_transfer"]);
 });
+
+Route::match(['get', 'post'], '/currentlybet', [Gamesetting::class, "currentlybet"]);
+Route::match(['get', 'post'], '/game/currentlybet', [Gamesetting::class, "currentlybet"]);

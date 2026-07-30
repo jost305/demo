@@ -171,18 +171,59 @@ class Gamesetting extends Controller
     }
     public function currentlybet()
     {
-        $allbets = Userbit::where("gameid", currentid())->join('users','users.id','=','userbits.userid')->get();
-        $currentGameBet = $allbets;
-        for ($i=0; $i < rand(400,900); $i++) { 
-            $currentGameBet[]=array(
-                "userid" => rand(10000,50000),
-                "amount" => rand(999,9999),
-				"image"  => "/images/avtar/av-".rand(1,72).".png"
-            );
+        // Fetch real active bets placed by logged-in users for current game ID
+        $realBets = Userbit::where("gameid", currentid())
+            ->leftJoin('users', 'users.id', '=', 'userbits.userid')
+            ->select('userbits.id as bitid', 'userbits.userid', 'userbits.amount', 'users.name', 'users.image')
+            ->get();
+
+        // Fetch registered platform database users from Supabase DB
+        $dbUsers = \App\Models\User::select('id', 'name', 'email', 'image')->take(50)->get();
+
+        $currentGameBet = collect();
+
+        // Add real active bets first
+        foreach ($realBets as $b) {
+            $currentGameBet->push([
+                'userid' => $b->userid,
+                'name'   => $b->name ?? ('Player #' . $b->userid),
+                'amount' => floatval($b->amount),
+                'image'  => $b->image ?: ('/images/avtar/av-' . (($b->userid % 72) + 1) . '.png')
+            ]);
         }
-        $currentGame = array("id"=>currentid());
-        $currentGameBetCount = count($currentGameBet);
-        $response = array("currentGame" => $currentGame, "currentGameBet" => $currentGameBet, "currentGameBetCount" => $currentGameBetCount);
+
+        // Add registered DB users from platform database
+        foreach ($dbUsers as $u) {
+            if (!$currentGameBet->contains('userid', $u->id)) {
+                $currentGameBet->push([
+                    'userid' => $u->id,
+                    'name'   => $u->name ?? ($u->email ? explode('@', $u->email)[0] : ('Player #' . $u->id)),
+                    'amount' => rand(5, 50),
+                    'image'  => $u->image ?: ('/images/avtar/av-' . (($u->id % 72) + 1) . '.png')
+                ]);
+            }
+        }
+
+        // Fill remaining list if database has few registered users
+        if ($currentGameBet->count() < 30) {
+            for ($i = $currentGameBet->count() + 1; $i <= 35; $i++) {
+                $uid = rand(1000, 9999);
+                $currentGameBet->push([
+                    'userid' => $uid,
+                    'name'   => 'Player #' . $uid,
+                    'amount' => rand(5, 50),
+                    'image'  => '/images/avtar/av-' . rand(1, 72) . '.png'
+                ]);
+            }
+        }
+
+        $currentGame = array("id" => currentid());
+        $response = array(
+            "currentGame" => $currentGame,
+            "currentGameBet" => $currentGameBet->values(),
+            "currentGameBetCount" => $currentGameBet->count()
+        );
+
         return response()->json($response);
     }
     public function my_bets_history(){

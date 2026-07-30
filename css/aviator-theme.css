@@ -612,28 +612,12 @@ a, button, [role="button"], .ax-nav-item {
   touch-action: manipulation;
 }
 
-/* Body pad so content isn't hidden behind the fixed nav bar */
-@media (max-width: 991px) {
-  body {
-    padding-bottom: 60px !important;
-  }
-}
+
+/* Body pad removed — bottom nav replaced by header hamburger drawer */
+
 
 .ax-bottom-nav {
-  position: fixed !important;
-  bottom: 0 !important;
-  left: 0 !important;
-  right: 0 !important;
-  height: 56px !important;
-  background: var(--ax-bg-card) !important;
-  border-top: 1px solid var(--ax-border) !important;
-  display: flex !important;
-  align-items: stretch !important;
-  justify-content: space-around !important;
-  z-index: 1080 !important;
-  padding: 0 !important;
-  /* Safe area for notch/home bar on iOS */
-  padding-bottom: env(safe-area-inset-bottom, 0) !important;
+  display: none !important;
 }
 
 /* Support both <button> and <a> tags in bottom nav */

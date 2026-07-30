@@ -16,8 +16,21 @@ class Userdetail extends Controller
         return view('deposit_withdrawals',compact("deposit"));
     }
     public function mybets() {
-        $mybets = \App\Models\Userbit::where('userid', user('id'))->orderBy('id', 'desc')->paginate(50);
-        return view('mybets', compact('mybets'));
+        $user = session()->has('userlogin') ? user() : null;
+        $wallet = $user ? wallet($user->id) : 0;
+        
+        $page = [
+            'user' => $user ? [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'image' => $user->image
+            ] : null,
+            'wallet' => $wallet,
+            'view' => 'mybets'
+        ];
+
+        return view('app', compact('page'));
     }
     public function profile () {
         $bank = Bank_detail::where('userid',user('id'))->first();
