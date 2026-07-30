@@ -130,14 +130,71 @@ function WithdrawModal({ show, wallet, onClose, onSuccessWithdraw }) {
     );
 }
 
-// --- AUTH MODAL COMPONENT ---
+// --- NOTIFICATIONS MODAL COMPONENT ---
+function NotificationsModal({ show, onClose }) {
+    if (!show) return null;
+
+    const NOTIFICATIONS = [
+        { id: 1, type: 'win', message: 'You won ₦2,500! Game hit 8.4x', time: '2 min ago' },
+        { id: 2, type: 'cashout', message: 'Successfully cashed out ₦5,000', time: '15 min ago' },
+        { id: 3, type: 'bonus', message: 'Bonus credit of ₦500 added', time: '1 hour ago' },
+        { id: 4, type: 'promotion', message: 'New promotion: 50% bonus on next deposit', time: '3 hours ago' },
+    ];
+
+    return (
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
+            <div className="bg-slate-900 rounded-lg border border-slate-700 w-full max-w-xs shadow-2xl max-h-96 flex flex-col overflow-hidden">
+                {/* Header */}
+                <div className="px-3 py-2 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-900 z-10">
+                    <h2 className="text-sm font-semibold text-white flex items-center gap-1.5">
+                        <span>🔔</span> Notifications
+                    </h2>
+                    <button onClick={onClose} className="p-0.5 hover:bg-slate-800 rounded transition text-slate-400">
+                        ✕
+                    </button>
+                </div>
+
+                {/* Notifications List */}
+                <div className="flex-1 overflow-y-auto px-2 py-2 space-y-1.5">
+                    {NOTIFICATIONS.map((notif) => (
+                        <div key={notif.id} className="px-2.5 py-2 bg-slate-800/60 rounded border border-slate-700/80 hover:bg-slate-800 transition">
+                            <div className="flex items-start gap-2">
+                                <div className={`p-1 rounded flex-shrink-0 mt-0.5 text-xs ${
+                                    notif.type === 'win' ? 'bg-green-500/20 text-green-400' :
+                                    notif.type === 'cashout' ? 'bg-yellow-500/20 text-yellow-400' :
+                                    notif.type === 'bonus' ? 'bg-lime-400/20 text-lime-400' :
+                                    'bg-blue-500/20 text-blue-400'
+                                }`}>
+                                    ✓
+                                </div>
+                                <div className="flex-1 min-w-0">
+                                    <p className="text-xs text-white leading-tight font-medium">{notif.message}</p>
+                                    <p className="text-[10px] text-slate-400 mt-0.5">{notif.time}</p>
+                                </div>
+                            </div>
+                        </div>
+                    ))}
+                </div>
+
+                {/* Footer */}
+                <div className="px-3 py-2 border-t border-slate-700">
+                    <button onClick={onClose} className="w-full py-1 text-xs font-semibold text-slate-300 border border-slate-600 rounded hover:bg-slate-800 transition">
+                        Mark all as read
+                    </button>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+// --- AUTH MODAL COMPONENT (SIGN IN / REGISTER) ---
 function AuthModal({ show, initialTab, onClose, onSuccessLogin }) {
     const [tab, setTab] = useState(initialTab || 'login');
     const [loading, setLoading] = useState(false);
     const [errorMsg, setErrorMsg] = useState('');
 
     const [loginData, setLoginData] = useState({ email: '', password: '' });
-    const [regData, setRegData] = useState({ name: '', email: '', password: '', mobile: '' });
+    const [regData, setRegData] = useState({ name: '', email: '', password: '', confirmPassword: '', terms: false });
 
     useEffect(() => {
         setTab(initialTab || 'login');
@@ -179,6 +236,15 @@ function AuthModal({ show, initialTab, onClose, onSuccessLogin }) {
 
     const handleRegisterSubmit = (e) => {
         e.preventDefault();
+        if (regData.password !== regData.confirmPassword) {
+            setErrorMsg('Passwords do not match');
+            return;
+        }
+        if (!regData.terms) {
+            setErrorMsg('Please agree to the Terms of Service');
+            return;
+        }
+
         setLoading(true);
         setErrorMsg('');
 
@@ -187,10 +253,10 @@ function AuthModal({ show, initialTab, onClose, onSuccessLogin }) {
             type: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content') || '',
-                name: regData.name,
+                name: regData.name || regData.email.split('@')[0],
                 email: regData.email,
                 password: regData.password,
-                mobile: regData.mobile || ('080' + Math.floor(10000000 + Math.random() * 90000000))
+                mobile: '080' + Math.floor(10000000 + Math.random() * 90000000)
             },
             dataType: 'json',
             success: function (res) {
@@ -211,72 +277,155 @@ function AuthModal({ show, initialTab, onClose, onSuccessLogin }) {
     };
 
     return (
-        <div className="modal fade show d-block bg-black bg-opacity-75 z-3" style={{ backdropFilter: 'blur(4px)' }} tabIndex="-1">
-            <div className="modal-dialog modal-dialog-centered" style={{ maxWidth: '420px' }}>
-                <div className="modal-content bg-dark text-white border border-secondary border-opacity-50 rounded-4 shadow-lg overflow-hidden">
-                    <div className="modal-header border-secondary p-3 bg-black bg-opacity-30">
-                        <div className="d-flex align-items-center gap-2">
-                            <img src="/images/flyboy10x_logo.png" style={{ height: '24px' }} onError={(e) => { e.target.src = '/images/logo.png'; }} />
-                            <span className="fw-bold text-white fs-6">FlyBoy Community</span>
-                        </div>
-                        <button type="button" className="btn-close btn-close-white" onClick={onClose}></button>
+        <div className="fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3">
+            <div className="bg-slate-900 rounded-lg border border-slate-700 w-full max-w-sm shadow-2xl overflow-hidden">
+                {/* Header */}
+                <div className="px-3 py-2 border-b border-slate-700 flex items-center justify-between">
+                    <h2 className="text-sm font-semibold text-white">
+                        {tab === 'login' ? 'Sign In to FlyBoy10x' : 'Create Account'}
+                    </h2>
+                    <button onClick={onClose} className="p-0.5 hover:bg-slate-800 rounded transition text-slate-400">
+                        ✕
+                    </button>
+                </div>
+
+                {/* Tab Switcher */}
+                <div className="px-3 pt-3">
+                    <div className="flex bg-slate-800 p-0.5 rounded border border-slate-700">
+                        <button
+                            type="button"
+                            className={`flex-1 py-1 text-xs font-semibold rounded transition ${tab === 'login' ? 'bg-lime-400 text-black' : 'text-slate-400 hover:text-white'}`}
+                            onClick={() => { setTab('login'); setErrorMsg(''); }}
+                        >
+                            Sign In
+                        </button>
+                        <button
+                            type="button"
+                            className={`flex-1 py-1 text-xs font-semibold rounded transition ${tab === 'register' ? 'bg-lime-400 text-black' : 'text-slate-400 hover:text-white'}`}
+                            onClick={() => { setTab('register'); setErrorMsg(''); }}
+                        >
+                            Register
+                        </button>
                     </div>
+                </div>
 
-                    <div className="modal-body p-4">
-                        <div className="d-flex bg-black bg-opacity-50 p-1 rounded-pill mb-3">
-                            <button type="button" className={`btn btn-sm flex-fill rounded-pill fw-bold ${tab === 'login' ? 'btn-danger' : 'text-secondary'}`} onClick={() => { setTab('login'); setErrorMsg(''); }}>
-                                Sign In
-                            </button>
-                            <button type="button" className={`btn btn-sm flex-fill rounded-pill fw-bold ${tab === 'register' ? 'btn-danger' : 'text-secondary'}`} onClick={() => { setTab('register'); setErrorMsg(''); }}>
-                                Register
-                            </button>
+                {/* Form Body */}
+                <div className="px-3 py-3 space-y-2">
+                    {errorMsg && (
+                        <div className="p-2 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-xs text-center font-medium">
+                            {errorMsg}
                         </div>
+                    )}
 
-                        {errorMsg && (
-                            <div className="alert alert-danger border-0 p-2 small mb-3 text-center fw-bold">
-                                {errorMsg}
+                    {tab === 'login' ? (
+                        <form onSubmit={handleLoginSubmit} className="space-y-2">
+                            <div>
+                                <label className="text-xs text-slate-400 block mb-1">Email or Phone</label>
+                                <input
+                                    type="text"
+                                    value={loginData.email}
+                                    onChange={(e) => setLoginData({ ...loginData, email: e.target.value })}
+                                    placeholder="your@email.com"
+                                    required
+                                    className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition"
+                                />
                             </div>
-                        )}
 
-                        {tab === 'login' ? (
-                            <form onSubmit={handleLoginSubmit}>
-                                <div className="mb-3">
-                                    <label className="form-label text-secondary small mb-1 fw-bold">Email or Phone</label>
-                                    <input type="text" className="form-control form-control-sm bg-black text-white border-secondary rounded-3" placeholder="Enter email or mobile" value={loginData.email} onChange={(e) => setLoginData({ ...loginData, email: e.target.value })} required />
-                                </div>
+                            <div>
+                                <label className="text-xs text-slate-400 block mb-1">Password</label>
+                                <input
+                                    type="password"
+                                    value={loginData.password}
+                                    onChange={(e) => setLoginData({ ...loginData, password: e.target.value })}
+                                    placeholder="••••••"
+                                    required
+                                    className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition"
+                                />
+                            </div>
 
-                                <div className="mb-4">
-                                    <label className="form-label text-secondary small mb-1 fw-bold">Password</label>
-                                    <input type="password" className="form-control form-control-sm bg-black text-white border-secondary rounded-3" placeholder="Enter password" value={loginData.password} onChange={(e) => setLoginData({ ...loginData, password: e.target.value })} required />
-                                </div>
-
-                                <button type="submit" className="btn btn-danger w-100 fw-bold py-2 rounded-3 text-uppercase" disabled={loading}>
-                                    {loading ? <span className="spinner-border spinner-border-sm me-1"></span> : 'Sign In'}
+                            <div className="pt-1 flex gap-1">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="flex-1 py-1 text-xs font-semibold text-slate-300 border border-slate-600 rounded hover:bg-slate-800 transition"
+                                >
+                                    Cancel
                                 </button>
-                            </form>
-                        ) : (
-                            <form onSubmit={handleRegisterSubmit}>
-                                <div className="mb-2">
-                                    <label className="form-label text-secondary small mb-1 fw-bold">Full Name / Username</label>
-                                    <input type="text" className="form-control form-control-sm bg-black text-white border-secondary rounded-3" placeholder="Player Username" value={regData.name} onChange={(e) => setRegData({ ...regData, name: e.target.value })} required />
-                                </div>
-
-                                <div className="mb-2">
-                                    <label className="form-label text-secondary small mb-1 fw-bold">Email Address</label>
-                                    <input type="email" className="form-control form-control-sm bg-black text-white border-secondary rounded-3" placeholder="yourname@gmail.com" value={regData.email} onChange={(e) => setRegData({ ...regData, email: e.target.value })} required />
-                                </div>
-
-                                <div className="mb-3">
-                                    <label className="form-label text-secondary small mb-1 fw-bold">Password</label>
-                                    <input type="password" className="form-control form-control-sm bg-black text-white border-secondary rounded-3" placeholder="Choose a password" value={regData.password} onChange={(e) => setRegData({ ...regData, password: e.target.value })} required />
-                                </div>
-
-                                <button type="submit" className="btn btn-success w-100 fw-bold py-2 rounded-3 text-uppercase" disabled={loading}>
-                                    {loading ? <span className="spinner-border spinner-border-sm me-1"></span> : 'Create Account'}
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="flex-1 py-1 text-xs font-semibold bg-lime-400 text-black rounded hover:bg-lime-300 transition"
+                                >
+                                    {loading ? 'Signing In...' : 'Sign In'}
                                 </button>
-                            </form>
-                        )}
-                    </div>
+                            </div>
+                        </form>
+                    ) : (
+                        <form onSubmit={handleRegisterSubmit} className="space-y-2">
+                            <div>
+                                <label className="text-xs text-slate-400 block mb-1">Email</label>
+                                <input
+                                    type="email"
+                                    value={regData.email}
+                                    onChange={(e) => setRegData({ ...regData, email: e.target.value })}
+                                    placeholder="your@email.com"
+                                    required
+                                    className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-xs text-slate-400 block mb-1">Password</label>
+                                <input
+                                    type="password"
+                                    value={regData.password}
+                                    onChange={(e) => setRegData({ ...regData, password: e.target.value })}
+                                    placeholder="••••••"
+                                    required
+                                    className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition"
+                                />
+                            </div>
+
+                            <div>
+                                <label className="text-xs text-slate-400 block mb-1">Confirm Password</label>
+                                <input
+                                    type="password"
+                                    value={regData.confirmPassword}
+                                    onChange={(e) => setRegData({ ...regData, confirmPassword: e.target.value })}
+                                    placeholder="••••••"
+                                    required
+                                    className="w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition"
+                                />
+                            </div>
+
+                            <label className="flex items-center gap-2 mt-2 cursor-pointer">
+                                <input
+                                    type="checkbox"
+                                    checked={regData.terms}
+                                    onChange={(e) => setRegData({ ...regData, terms: e.target.checked })}
+                                    className="w-3 h-3 accent-lime-400 rounded"
+                                />
+                                <span className="text-xs text-slate-400">I agree to Terms of Service</span>
+                            </label>
+
+                            <div className="pt-1 flex gap-1">
+                                <button
+                                    type="button"
+                                    onClick={onClose}
+                                    className="flex-1 py-1 text-xs font-semibold text-slate-300 border border-slate-600 rounded hover:bg-slate-800 transition"
+                                >
+                                    Cancel
+                                </button>
+                                <button
+                                    type="submit"
+                                    disabled={loading}
+                                    className="flex-1 py-1 text-xs font-semibold bg-lime-400 text-black rounded hover:bg-lime-300 transition"
+                                >
+                                    {loading ? 'Creating...' : 'Sign Up'}
+                                </button>
+                            </div>
+                        </form>
+                    )}
                 </div>
             </div>
         </div>
@@ -318,8 +467,18 @@ function Header({ user, wallet, currentView, onViewChange, onAuthClick, onWithdr
                     </nav>
                 </div>
 
-                {/* Right Section: Balance, Deposit & Auth */}
-                <div className="flex items-center gap-2 md:gap-3">
+                {/* Right Section: Notification Bell, Balance, Deposit & Auth */}
+                <div className="flex items-center gap-1.5 md:gap-3">
+                    {/* Notification Bell */}
+                    <button
+                        onClick={onNotifClick}
+                        className="p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition relative"
+                        title="Notifications"
+                    >
+                        <span className="text-sm">🔔</span>
+                        <span className="absolute top-1 right-1 w-2 h-2 bg-lime-400 rounded-full animate-pulse" />
+                    </button>
+
                     {/* Balance */}
                     <div className="text-xs text-slate-300 font-mono font-bold whitespace-nowrap">
                         ₦ {Number(wallet || 0).toLocaleString('en-US', { minimumFractionDigits: 2, maximumFractionDigits: 2 })}
@@ -852,71 +1011,90 @@ function LeaderboardView() {
 
 // --- DEPOSIT VIEW COMPONENT ---
 function DepositView({ wallet }) {
-    const [amount, setAmount] = useState(1000);
-    const [paymentMethod, setPaymentMethod] = useState('bank');
+    const [amount, setAmount] = useState('1000');
+    const [method, setMethod] = useState('card');
     const [successMsg, setSuccessMsg] = useState('');
 
-    const presetAmounts = [500, 1000, 2000, 5000, 10000];
+    const quickAmounts = [500, 1000, 5000, 10000];
 
     const handleDepositSubmit = (e) => {
         e.preventDefault();
-        setSuccessMsg(`Deposit request for ₦${amount.toLocaleString()} initiated successfully via ${paymentMethod === 'bank' ? 'Instant Bank Transfer' : 'Card / Paystack'}!`);
+        const amtNum = Number(amount);
+        if (!amtNum || amtNum <= 0) return;
+
+        setSuccessMsg(`Deposit request for ₦${amtNum.toLocaleString()} initiated successfully via ${method === 'bank' ? 'Bank Transfer' : method === 'card' ? 'Credit/Debit Card' : 'Digital Wallet'}!`);
     };
 
     return (
-        <div className="bg-dark p-4 rounded-3 border border-secondary border-opacity-25 max-w-lg mx-auto" style={{ maxWidth: '580px' }}>
-            <div className="d-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary">
-                <span className="material-symbols-outlined text-warning fs-4">account_balance_wallet</span>
-                <h5 className="m-0 text-white fw-bold">Deposit Funds to Wallet</h5>
+        <div className="bg-slate-900 rounded-lg border border-slate-700 max-w-sm mx-auto my-6 shadow-2xl overflow-hidden">
+            {/* Header */}
+            <div className="px-3 py-2 border-b border-slate-700 flex items-center justify-between">
+                <h2 className="text-sm font-semibold text-white flex items-center gap-2">
+                    <span className="text-lime-400">💳</span> Deposit Funds
+                </h2>
+                <div className="text-xs font-mono font-bold text-lime-400">
+                    ₦{Number(wallet || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+                </div>
             </div>
 
-            {successMsg && (
-                <div className="alert alert-success border border-success mb-3 small fw-bold">
-                    {successMsg}
-                </div>
-            )}
-
-            <form onSubmit={handleDepositSubmit}>
-                <div className="mb-3">
-                    <label className="form-label text-muted small uppercase fw-bold">Current Balance</label>
-                    <div className="fs-4 fw-bold text-success bg-black bg-opacity-40 p-2 rounded-3 border border-secondary">
-                        ₦{Number(wallet || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })}
+            {/* Content */}
+            <div className="px-3 py-3 space-y-3">
+                {successMsg && (
+                    <div className="p-2 bg-emerald-500/10 border border-emerald-500/30 rounded text-emerald-400 text-xs text-center font-medium">
+                        {successMsg}
                     </div>
-                </div>
+                )}
 
-                <div className="mb-3">
-                    <label className="form-label text-muted small uppercase fw-bold">Select Deposit Amount (NGN)</label>
-                    <div className="input-group mb-2">
-                        <span className="input-group-text bg-black text-warning border-secondary fw-bold">₦</span>
-                        <input type="number" className="form-control bg-black text-white border-secondary fs-5 fw-bold" value={amount} onChange={(e) => setAmount(Number(e.target.value))} min="100" required />
+                <form onSubmit={handleDepositSubmit} className="space-y-3">
+                    {/* Payment Method */}
+                    <div>
+                        <label className="text-xs text-slate-400 block mb-1">Payment Method</label>
+                        <select
+                            value={method}
+                            onChange={(e) => setMethod(e.target.value)}
+                            className="w-full px-2 py-1.5 bg-slate-800 border border-slate-700 rounded text-xs text-white outline-none focus:border-lime-400 transition"
+                        >
+                            <option value="card">Credit/Debit Card</option>
+                            <option value="bank">Bank Transfer</option>
+                            <option value="wallet">Digital Wallet</option>
+                        </select>
                     </div>
-                    <div className="d-flex gap-1">
-                        {presetAmounts.map((amt) => (
-                            <button key={amt} type="button" className={`btn btn-xs flex-fill ${amount === amt ? 'btn-warning text-dark fw-bold' : 'btn-outline-secondary text-white'}`} style={{ fontSize: '11px', padding: '4px 0' }} onClick={() => setAmount(amt)}>
-                                +₦{amt.toLocaleString()}
+
+                    {/* Amount */}
+                    <div>
+                        <label className="text-xs text-slate-400 block mb-1">Amount (₦)</label>
+                        <input
+                            type="number"
+                            value={amount}
+                            onChange={(e) => setAmount(e.target.value)}
+                            placeholder="Enter amount"
+                            required
+                            className="w-full px-2 py-1.5 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition font-mono font-bold"
+                        />
+                    </div>
+
+                    {/* Quick Amount Buttons */}
+                    <div className="grid grid-cols-4 gap-1">
+                        {quickAmounts.map((amt) => (
+                            <button
+                                key={amt}
+                                type="button"
+                                onClick={() => setAmount(amt.toString())}
+                                className={`py-1 text-xs rounded transition font-medium ${amount === amt.toString() ? 'bg-lime-400 text-black font-bold' : 'bg-slate-800 hover:bg-slate-700 text-slate-300'}`}
+                            >
+                                {amt >= 1000 ? (amt / 1000) + 'K' : amt}
                             </button>
                         ))}
                     </div>
-                </div>
 
-                <div className="mb-4">
-                    <label className="form-label text-muted small uppercase fw-bold">Payment Channel</label>
-                    <div className="d-flex gap-2">
-                        <div className={`p-3 rounded-3 border flex-fill cursor-pointer text-center ${paymentMethod === 'bank' ? 'border-warning bg-warning bg-opacity-10 text-white' : 'border-secondary bg-black bg-opacity-20 text-muted'}`} onClick={() => setPaymentMethod('bank')}>
-                            <span className="material-symbols-outlined fs-3 d-block mb-1 text-warning">account_balance</span>
-                            <div className="fw-bold small">Instant Bank Transfer</div>
-                        </div>
-                        <div className={`p-3 rounded-3 border flex-fill cursor-pointer text-center ${paymentMethod === 'card' ? 'border-warning bg-warning bg-opacity-10 text-white' : 'border-secondary bg-black bg-opacity-20 text-muted'}`} onClick={() => setPaymentMethod('card')}>
-                            <span className="material-symbols-outlined fs-3 d-block mb-1 text-warning">credit_card</span>
-                            <div className="fw-bold small">Debit Card / Paystack</div>
-                        </div>
-                    </div>
-                </div>
-
-                <button type="submit" className="btn btn-warning w-100 fw-bold py-2 rounded-3 text-dark text-uppercase fs-6">
-                    Proceed to Pay ₦{amount.toLocaleString()}
-                </button>
-            </form>
+                    <button
+                        type="submit"
+                        className="w-full py-2 text-xs font-bold bg-lime-400 text-black rounded hover:bg-lime-300 transition shadow-sm uppercase tracking-wider"
+                    >
+                        Deposit {amount ? `₦${Number(amount).toLocaleString()}` : ''}
+                    </button>
+                </form>
+            </div>
         </div>
     );
 }
@@ -1006,6 +1184,7 @@ function ReactAviatorApp() {
     const [authModalShow, setAuthModalShow] = useState(false);
     const [authModalTab, setAuthModalTab] = useState('login');
     const [withdrawModalShow, setWithdrawModalShow] = useState(false);
+    const [notifModalShow, setNotifModalShow] = useState(false);
 
     const [gameId, setGameId] = useState(1);
     const [gameState, setGameState] = useState('FLYING');
@@ -1109,7 +1288,7 @@ function ReactAviatorApp() {
     return (
         <div className="bg-slate-950 text-white flex flex-col font-sans" style={{ height: '100dvh', overflow: 'hidden' }}>
             {/* Unified Responsive Header */}
-            <Header user={user} wallet={wallet} currentView={currentView} onViewChange={setCurrentView} onAuthClick={(tab) => { setAuthModalTab(tab); setAuthModalShow(true); }} onWithdrawClick={() => setWithdrawModalShow(true)} />
+            <Header user={user} wallet={wallet} currentView={currentView} onViewChange={setCurrentView} onAuthClick={(tab) => { setAuthModalTab(tab); setAuthModalShow(true); }} onWithdrawClick={() => setWithdrawModalShow(true)} onNotifClick={() => setNotifModalShow(true)} />
 
             <main className="flex-1 flex overflow-hidden">
                 {/* Desktop View */}
@@ -1167,6 +1346,9 @@ function ReactAviatorApp() {
                 </div>
             </main>
 
+
+            {/* React Notifications Modal Component */}
+            <NotificationsModal show={notifModalShow} onClose={() => setNotifModalShow(false)} />
 
             {/* React Auth Modal Component */}
             <AuthModal show={authModalShow} initialTab={authModalTab} onClose={() => setAuthModalShow(false)} onSuccessLogin={(userData) => { setUser(userData); setAuthModalShow(false); }} />

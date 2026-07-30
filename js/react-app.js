@@ -239,12 +239,92 @@ function WithdrawModal(_ref) {
     );
 }
 
-// --- AUTH MODAL COMPONENT ---
-function AuthModal(_ref2) {
+// --- NOTIFICATIONS MODAL COMPONENT ---
+function NotificationsModal(_ref2) {
     var show = _ref2.show;
-    var initialTab = _ref2.initialTab;
     var onClose = _ref2.onClose;
-    var onSuccessLogin = _ref2.onSuccessLogin;
+
+    if (!show) return null;
+
+    var NOTIFICATIONS = [{ id: 1, type: 'win', message: 'You won ₦2,500! Game hit 8.4x', time: '2 min ago' }, { id: 2, type: 'cashout', message: 'Successfully cashed out ₦5,000', time: '15 min ago' }, { id: 3, type: 'bonus', message: 'Bonus credit of ₦500 added', time: '1 hour ago' }, { id: 4, type: 'promotion', message: 'New promotion: 50% bonus on next deposit', time: '3 hours ago' }];
+
+    return React.createElement(
+        'div',
+        { className: 'fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3' },
+        React.createElement(
+            'div',
+            { className: 'bg-slate-900 rounded-lg border border-slate-700 w-full max-w-xs shadow-2xl max-h-96 flex flex-col overflow-hidden' },
+            React.createElement(
+                'div',
+                { className: 'px-3 py-2 border-b border-slate-700 flex items-center justify-between sticky top-0 bg-slate-900 z-10' },
+                React.createElement(
+                    'h2',
+                    { className: 'text-sm font-semibold text-white flex items-center gap-1.5' },
+                    React.createElement(
+                        'span',
+                        null,
+                        '🔔'
+                    ),
+                    ' Notifications'
+                ),
+                React.createElement(
+                    'button',
+                    { onClick: onClose, className: 'p-0.5 hover:bg-slate-800 rounded transition text-slate-400' },
+                    '✕'
+                )
+            ),
+            React.createElement(
+                'div',
+                { className: 'flex-1 overflow-y-auto px-2 py-2 space-y-1.5' },
+                NOTIFICATIONS.map(function (notif) {
+                    return React.createElement(
+                        'div',
+                        { key: notif.id, className: 'px-2.5 py-2 bg-slate-800/60 rounded border border-slate-700/80 hover:bg-slate-800 transition' },
+                        React.createElement(
+                            'div',
+                            { className: 'flex items-start gap-2' },
+                            React.createElement(
+                                'div',
+                                { className: 'p-1 rounded flex-shrink-0 mt-0.5 text-xs ' + (notif.type === 'win' ? 'bg-green-500/20 text-green-400' : notif.type === 'cashout' ? 'bg-yellow-500/20 text-yellow-400' : notif.type === 'bonus' ? 'bg-lime-400/20 text-lime-400' : 'bg-blue-500/20 text-blue-400') },
+                                '✓'
+                            ),
+                            React.createElement(
+                                'div',
+                                { className: 'flex-1 min-w-0' },
+                                React.createElement(
+                                    'p',
+                                    { className: 'text-xs text-white leading-tight font-medium' },
+                                    notif.message
+                                ),
+                                React.createElement(
+                                    'p',
+                                    { className: 'text-[10px] text-slate-400 mt-0.5' },
+                                    notif.time
+                                )
+                            )
+                        )
+                    );
+                })
+            ),
+            React.createElement(
+                'div',
+                { className: 'px-3 py-2 border-t border-slate-700' },
+                React.createElement(
+                    'button',
+                    { onClick: onClose, className: 'w-full py-1 text-xs font-semibold text-slate-300 border border-slate-600 rounded hover:bg-slate-800 transition' },
+                    'Mark all as read'
+                )
+            )
+        )
+    );
+}
+
+// --- AUTH MODAL COMPONENT (SIGN IN / REGISTER) ---
+function AuthModal(_ref3) {
+    var show = _ref3.show;
+    var initialTab = _ref3.initialTab;
+    var onClose = _ref3.onClose;
+    var onSuccessLogin = _ref3.onSuccessLogin;
 
     var _useState8 = useState(initialTab || 'login');
 
@@ -274,7 +354,7 @@ function AuthModal(_ref2) {
     var loginData = _useState112[0];
     var setLoginData = _useState112[1];
 
-    var _useState12 = useState({ name: '', email: '', password: '', mobile: '' });
+    var _useState12 = useState({ name: '', email: '', password: '', confirmPassword: '', terms: false });
 
     var _useState122 = _slicedToArray(_useState12, 2);
 
@@ -321,6 +401,15 @@ function AuthModal(_ref2) {
 
     var handleRegisterSubmit = function handleRegisterSubmit(e) {
         e.preventDefault();
+        if (regData.password !== regData.confirmPassword) {
+            setErrorMsg('Passwords do not match');
+            return;
+        }
+        if (!regData.terms) {
+            setErrorMsg('Please agree to the Terms of Service');
+            return;
+        }
+
         setLoading(true);
         setErrorMsg('');
 
@@ -329,10 +418,10 @@ function AuthModal(_ref2) {
             type: 'POST',
             data: {
                 _token: $('meta[name="csrf-token"]').attr('content') || '',
-                name: regData.name,
+                name: regData.name || regData.email.split('@')[0],
                 email: regData.email,
                 password: regData.password,
-                mobile: regData.mobile || '080' + Math.floor(10000000 + Math.random() * 90000000)
+                mobile: '080' + Math.floor(10000000 + Math.random() * 90000000)
             },
             dataType: 'json',
             success: function success(res) {
@@ -354,131 +443,222 @@ function AuthModal(_ref2) {
 
     return React.createElement(
         'div',
-        { className: 'modal fade show d-block bg-black bg-opacity-75 z-3', style: { backdropFilter: 'blur(4px)' }, tabIndex: '-1' },
+        { className: 'fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center z-50 p-3' },
         React.createElement(
             'div',
-            { className: 'modal-dialog modal-dialog-centered', style: { maxWidth: '420px' } },
+            { className: 'bg-slate-900 rounded-lg border border-slate-700 w-full max-w-sm shadow-2xl overflow-hidden' },
             React.createElement(
                 'div',
-                { className: 'modal-content bg-dark text-white border border-secondary border-opacity-50 rounded-4 shadow-lg overflow-hidden' },
+                { className: 'px-3 py-2 border-b border-slate-700 flex items-center justify-between' },
                 React.createElement(
-                    'div',
-                    { className: 'modal-header border-secondary p-3 bg-black bg-opacity-30' },
-                    React.createElement(
-                        'div',
-                        { className: 'd-flex align-items-center gap-2' },
-                        React.createElement('img', { src: '/images/flyboy10x_logo.png', style: { height: '24px' }, onError: function (e) {
-                                e.target.src = '/images/logo.png';
-                            } }),
-                        React.createElement(
-                            'span',
-                            { className: 'fw-bold text-white fs-6' },
-                            'FlyBoy Community'
-                        )
-                    ),
-                    React.createElement('button', { type: 'button', className: 'btn-close btn-close-white', onClick: onClose })
+                    'h2',
+                    { className: 'text-sm font-semibold text-white' },
+                    tab === 'login' ? 'Sign In to FlyBoy10x' : 'Create Account'
                 ),
                 React.createElement(
+                    'button',
+                    { onClick: onClose, className: 'p-0.5 hover:bg-slate-800 rounded transition text-slate-400' },
+                    '✕'
+                )
+            ),
+            React.createElement(
+                'div',
+                { className: 'px-3 pt-3' },
+                React.createElement(
                     'div',
-                    { className: 'modal-body p-4' },
+                    { className: 'flex bg-slate-800 p-0.5 rounded border border-slate-700' },
+                    React.createElement(
+                        'button',
+                        {
+                            type: 'button',
+                            className: 'flex-1 py-1 text-xs font-semibold rounded transition ' + (tab === 'login' ? 'bg-lime-400 text-black' : 'text-slate-400 hover:text-white'),
+                            onClick: function () {
+                                setTab('login');setErrorMsg('');
+                            }
+                        },
+                        'Sign In'
+                    ),
+                    React.createElement(
+                        'button',
+                        {
+                            type: 'button',
+                            className: 'flex-1 py-1 text-xs font-semibold rounded transition ' + (tab === 'register' ? 'bg-lime-400 text-black' : 'text-slate-400 hover:text-white'),
+                            onClick: function () {
+                                setTab('register');setErrorMsg('');
+                            }
+                        },
+                        'Register'
+                    )
+                )
+            ),
+            React.createElement(
+                'div',
+                { className: 'px-3 py-3 space-y-2' },
+                errorMsg && React.createElement(
+                    'div',
+                    { className: 'p-2 bg-red-500/10 border border-red-500/30 rounded text-red-400 text-xs text-center font-medium' },
+                    errorMsg
+                ),
+                tab === 'login' ? React.createElement(
+                    'form',
+                    { onSubmit: handleLoginSubmit, className: 'space-y-2' },
                     React.createElement(
                         'div',
-                        { className: 'd-flex bg-black bg-opacity-50 p-1 rounded-pill mb-3' },
+                        null,
                         React.createElement(
-                            'button',
-                            { type: 'button', className: 'btn btn-sm flex-fill rounded-pill fw-bold ' + (tab === 'login' ? 'btn-danger' : 'text-secondary'), onClick: function () {
-                                    setTab('login');setErrorMsg('');
-                                } },
-                            'Sign In'
+                            'label',
+                            { className: 'text-xs text-slate-400 block mb-1' },
+                            'Email or Phone'
                         ),
-                        React.createElement(
-                            'button',
-                            { type: 'button', className: 'btn btn-sm flex-fill rounded-pill fw-bold ' + (tab === 'register' ? 'btn-danger' : 'text-secondary'), onClick: function () {
-                                    setTab('register');setErrorMsg('');
-                                } },
-                            'Register'
-                        )
+                        React.createElement('input', {
+                            type: 'text',
+                            value: loginData.email,
+                            onChange: function (e) {
+                                return setLoginData(_extends({}, loginData, { email: e.target.value }));
+                            },
+                            placeholder: 'your@email.com',
+                            required: true,
+                            className: 'w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition'
+                        })
                     ),
-                    errorMsg && React.createElement(
+                    React.createElement(
                         'div',
-                        { className: 'alert alert-danger border-0 p-2 small mb-3 text-center fw-bold' },
-                        errorMsg
+                        null,
+                        React.createElement(
+                            'label',
+                            { className: 'text-xs text-slate-400 block mb-1' },
+                            'Password'
+                        ),
+                        React.createElement('input', {
+                            type: 'password',
+                            value: loginData.password,
+                            onChange: function (e) {
+                                return setLoginData(_extends({}, loginData, { password: e.target.value }));
+                            },
+                            placeholder: '••••••',
+                            required: true,
+                            className: 'w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition'
+                        })
                     ),
-                    tab === 'login' ? React.createElement(
-                        'form',
-                        { onSubmit: handleLoginSubmit },
+                    React.createElement(
+                        'div',
+                        { className: 'pt-1 flex gap-1' },
                         React.createElement(
-                            'div',
-                            { className: 'mb-3' },
-                            React.createElement(
-                                'label',
-                                { className: 'form-label text-secondary small mb-1 fw-bold' },
-                                'Email or Phone'
-                            ),
-                            React.createElement('input', { type: 'text', className: 'form-control form-control-sm bg-black text-white border-secondary rounded-3', placeholder: 'Enter email or mobile', value: loginData.email, onChange: function (e) {
-                                    return setLoginData(_extends({}, loginData, { email: e.target.value }));
-                                }, required: true })
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'mb-4' },
-                            React.createElement(
-                                'label',
-                                { className: 'form-label text-secondary small mb-1 fw-bold' },
-                                'Password'
-                            ),
-                            React.createElement('input', { type: 'password', className: 'form-control form-control-sm bg-black text-white border-secondary rounded-3', placeholder: 'Enter password', value: loginData.password, onChange: function (e) {
-                                    return setLoginData(_extends({}, loginData, { password: e.target.value }));
-                                }, required: true })
+                            'button',
+                            {
+                                type: 'button',
+                                onClick: onClose,
+                                className: 'flex-1 py-1 text-xs font-semibold text-slate-300 border border-slate-600 rounded hover:bg-slate-800 transition'
+                            },
+                            'Cancel'
                         ),
                         React.createElement(
                             'button',
-                            { type: 'submit', className: 'btn btn-danger w-100 fw-bold py-2 rounded-3 text-uppercase', disabled: loading },
-                            loading ? React.createElement('span', { className: 'spinner-border spinner-border-sm me-1' }) : 'Sign In'
+                            {
+                                type: 'submit',
+                                disabled: loading,
+                                className: 'flex-1 py-1 text-xs font-semibold bg-lime-400 text-black rounded hover:bg-lime-300 transition'
+                            },
+                            loading ? 'Signing In...' : 'Sign In'
                         )
-                    ) : React.createElement(
-                        'form',
-                        { onSubmit: handleRegisterSubmit },
+                    )
+                ) : React.createElement(
+                    'form',
+                    { onSubmit: handleRegisterSubmit, className: 'space-y-2' },
+                    React.createElement(
+                        'div',
+                        null,
                         React.createElement(
-                            'div',
-                            { className: 'mb-2' },
-                            React.createElement(
-                                'label',
-                                { className: 'form-label text-secondary small mb-1 fw-bold' },
-                                'Full Name / Username'
-                            ),
-                            React.createElement('input', { type: 'text', className: 'form-control form-control-sm bg-black text-white border-secondary rounded-3', placeholder: 'Player Username', value: regData.name, onChange: function (e) {
-                                    return setRegData(_extends({}, regData, { name: e.target.value }));
-                                }, required: true })
+                            'label',
+                            { className: 'text-xs text-slate-400 block mb-1' },
+                            'Email'
                         ),
+                        React.createElement('input', {
+                            type: 'email',
+                            value: regData.email,
+                            onChange: function (e) {
+                                return setRegData(_extends({}, regData, { email: e.target.value }));
+                            },
+                            placeholder: 'your@email.com',
+                            required: true,
+                            className: 'w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition'
+                        })
+                    ),
+                    React.createElement(
+                        'div',
+                        null,
                         React.createElement(
-                            'div',
-                            { className: 'mb-2' },
-                            React.createElement(
-                                'label',
-                                { className: 'form-label text-secondary small mb-1 fw-bold' },
-                                'Email Address'
-                            ),
-                            React.createElement('input', { type: 'email', className: 'form-control form-control-sm bg-black text-white border-secondary rounded-3', placeholder: 'yourname@gmail.com', value: regData.email, onChange: function (e) {
-                                    return setRegData(_extends({}, regData, { email: e.target.value }));
-                                }, required: true })
+                            'label',
+                            { className: 'text-xs text-slate-400 block mb-1' },
+                            'Password'
                         ),
+                        React.createElement('input', {
+                            type: 'password',
+                            value: regData.password,
+                            onChange: function (e) {
+                                return setRegData(_extends({}, regData, { password: e.target.value }));
+                            },
+                            placeholder: '••••••',
+                            required: true,
+                            className: 'w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition'
+                        })
+                    ),
+                    React.createElement(
+                        'div',
+                        null,
                         React.createElement(
-                            'div',
-                            { className: 'mb-3' },
-                            React.createElement(
-                                'label',
-                                { className: 'form-label text-secondary small mb-1 fw-bold' },
-                                'Password'
-                            ),
-                            React.createElement('input', { type: 'password', className: 'form-control form-control-sm bg-black text-white border-secondary rounded-3', placeholder: 'Choose a password', value: regData.password, onChange: function (e) {
-                                    return setRegData(_extends({}, regData, { password: e.target.value }));
-                                }, required: true })
+                            'label',
+                            { className: 'text-xs text-slate-400 block mb-1' },
+                            'Confirm Password'
+                        ),
+                        React.createElement('input', {
+                            type: 'password',
+                            value: regData.confirmPassword,
+                            onChange: function (e) {
+                                return setRegData(_extends({}, regData, { confirmPassword: e.target.value }));
+                            },
+                            placeholder: '••••••',
+                            required: true,
+                            className: 'w-full px-2 py-1 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition'
+                        })
+                    ),
+                    React.createElement(
+                        'label',
+                        { className: 'flex items-center gap-2 mt-2 cursor-pointer' },
+                        React.createElement('input', {
+                            type: 'checkbox',
+                            checked: regData.terms,
+                            onChange: function (e) {
+                                return setRegData(_extends({}, regData, { terms: e.target.checked }));
+                            },
+                            className: 'w-3 h-3 accent-lime-400 rounded'
+                        }),
+                        React.createElement(
+                            'span',
+                            { className: 'text-xs text-slate-400' },
+                            'I agree to Terms of Service'
+                        )
+                    ),
+                    React.createElement(
+                        'div',
+                        { className: 'pt-1 flex gap-1' },
+                        React.createElement(
+                            'button',
+                            {
+                                type: 'button',
+                                onClick: onClose,
+                                className: 'flex-1 py-1 text-xs font-semibold text-slate-300 border border-slate-600 rounded hover:bg-slate-800 transition'
+                            },
+                            'Cancel'
                         ),
                         React.createElement(
                             'button',
-                            { type: 'submit', className: 'btn btn-success w-100 fw-bold py-2 rounded-3 text-uppercase', disabled: loading },
-                            loading ? React.createElement('span', { className: 'spinner-border spinner-border-sm me-1' }) : 'Create Account'
+                            {
+                                type: 'submit',
+                                disabled: loading,
+                                className: 'flex-1 py-1 text-xs font-semibold bg-lime-400 text-black rounded hover:bg-lime-300 transition'
+                            },
+                            loading ? 'Creating...' : 'Sign Up'
                         )
                     )
                 )
@@ -488,13 +668,13 @@ function AuthModal(_ref2) {
 }
 
 // --- HEADER COMPONENT ---
-function Header(_ref3) {
-    var user = _ref3.user;
-    var wallet = _ref3.wallet;
-    var currentView = _ref3.currentView;
-    var onViewChange = _ref3.onViewChange;
-    var onAuthClick = _ref3.onAuthClick;
-    var onWithdrawClick = _ref3.onWithdrawClick;
+function Header(_ref4) {
+    var user = _ref4.user;
+    var wallet = _ref4.wallet;
+    var currentView = _ref4.currentView;
+    var onViewChange = _ref4.onViewChange;
+    var onAuthClick = _ref4.onAuthClick;
+    var onWithdrawClick = _ref4.onWithdrawClick;
 
     var _useState13 = useState(false);
 
@@ -582,7 +762,21 @@ function Header(_ref3) {
             ),
             React.createElement(
                 'div',
-                { className: 'flex items-center gap-2 md:gap-3' },
+                { className: 'flex items-center gap-1.5 md:gap-3' },
+                React.createElement(
+                    'button',
+                    {
+                        onClick: onNotifClick,
+                        className: 'p-1.5 text-slate-400 hover:text-white hover:bg-slate-800 rounded transition relative',
+                        title: 'Notifications'
+                    },
+                    React.createElement(
+                        'span',
+                        { className: 'text-sm' },
+                        '🔔'
+                    ),
+                    React.createElement('span', { className: 'absolute top-1 right-1 w-2 h-2 bg-lime-400 rounded-full animate-pulse' })
+                ),
                 React.createElement(
                     'div',
                     { className: 'text-xs text-slate-300 font-mono font-bold whitespace-nowrap' },
@@ -791,10 +985,10 @@ function Header(_ref3) {
 }
 
 // --- AVIATOR CANVAS GAME COMPONENT ---
-function AviatorCanvas(_ref4) {
-    var gameState = _ref4.gameState;
-    var multiplier = _ref4.multiplier;
-    var countdown = _ref4.countdown;
+function AviatorCanvas(_ref5) {
+    var gameState = _ref5.gameState;
+    var multiplier = _ref5.multiplier;
+    var countdown = _ref5.countdown;
 
     var canvasRef = useRef(null);
     var planeImgRef = useRef(null);
@@ -1000,10 +1194,10 @@ function AviatorCanvas(_ref4) {
 }
 
 // --- LIVE BETS SIDE PANEL COMPONENT ---
-function LiveBetsPanel(_ref5) {
-    var multiplier = _ref5.multiplier;
-    var gameState = _ref5.gameState;
-    var liveBets = _ref5.liveBets;
+function LiveBetsPanel(_ref6) {
+    var multiplier = _ref6.multiplier;
+    var gameState = _ref6.gameState;
+    var liveBets = _ref6.liveBets;
 
     var _useState15 = useState('all');
 
@@ -1125,10 +1319,10 @@ function LiveBetsPanel(_ref5) {
 }
 
 // --- DUAL BET SLIPS COMPONENT ---
-function BetPanel(_ref6) {
-    var panelId = _ref6.panelId;
-    var wallet = _ref6.wallet;
-    var gameId = _ref6.gameId;
+function BetPanel(_ref7) {
+    var panelId = _ref7.panelId;
+    var wallet = _ref7.wallet;
+    var gameId = _ref7.gameId;
 
     var _useState16 = useState(10.00);
 
@@ -1467,22 +1661,22 @@ function LeaderboardView() {
 }
 
 // --- DEPOSIT VIEW COMPONENT ---
-function DepositView(_ref7) {
-    var wallet = _ref7.wallet;
+function DepositView(_ref8) {
+    var wallet = _ref8.wallet;
 
-    var _useState21 = useState(1000);
+    var _useState21 = useState('1000');
 
     var _useState212 = _slicedToArray(_useState21, 2);
 
     var amount = _useState212[0];
     var setAmount = _useState212[1];
 
-    var _useState22 = useState('bank');
+    var _useState22 = useState('card');
 
     var _useState222 = _slicedToArray(_useState22, 2);
 
-    var paymentMethod = _useState222[0];
-    var setPaymentMethod = _useState222[1];
+    var method = _useState222[0];
+    var setMethod = _useState222[1];
 
     var _useState23 = useState('');
 
@@ -1491,138 +1685,130 @@ function DepositView(_ref7) {
     var successMsg = _useState232[0];
     var setSuccessMsg = _useState232[1];
 
-    var presetAmounts = [500, 1000, 2000, 5000, 10000];
+    var quickAmounts = [500, 1000, 5000, 10000];
 
     var handleDepositSubmit = function handleDepositSubmit(e) {
         e.preventDefault();
-        setSuccessMsg('Deposit request for ₦' + amount.toLocaleString() + ' initiated successfully via ' + (paymentMethod === 'bank' ? 'Instant Bank Transfer' : 'Card / Paystack') + '!');
+        var amtNum = Number(amount);
+        if (!amtNum || amtNum <= 0) return;
+
+        setSuccessMsg('Deposit request for ₦' + amtNum.toLocaleString() + ' initiated successfully via ' + (method === 'bank' ? 'Bank Transfer' : method === 'card' ? 'Credit/Debit Card' : 'Digital Wallet') + '!');
     };
 
     return React.createElement(
         'div',
-        { className: 'bg-dark p-4 rounded-3 border border-secondary border-opacity-25 max-w-lg mx-auto', style: { maxWidth: '580px' } },
+        { className: 'bg-slate-900 rounded-lg border border-slate-700 max-w-sm mx-auto my-6 shadow-2xl overflow-hidden' },
         React.createElement(
             'div',
-            { className: 'd-flex align-items-center gap-2 mb-3 pb-2 border-bottom border-secondary' },
+            { className: 'px-3 py-2 border-b border-slate-700 flex items-center justify-between' },
             React.createElement(
-                'span',
-                { className: 'material-symbols-outlined text-warning fs-4' },
-                'account_balance_wallet'
+                'h2',
+                { className: 'text-sm font-semibold text-white flex items-center gap-2' },
+                React.createElement(
+                    'span',
+                    { className: 'text-lime-400' },
+                    '💳'
+                ),
+                ' Deposit Funds'
             ),
             React.createElement(
-                'h5',
-                { className: 'm-0 text-white fw-bold' },
-                'Deposit Funds to Wallet'
+                'div',
+                { className: 'text-xs font-mono font-bold text-lime-400' },
+                '₦',
+                Number(wallet || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })
             )
         ),
-        successMsg && React.createElement(
-            'div',
-            { className: 'alert alert-success border border-success mb-3 small fw-bold' },
-            successMsg
-        ),
         React.createElement(
-            'form',
-            { onSubmit: handleDepositSubmit },
-            React.createElement(
+            'div',
+            { className: 'px-3 py-3 space-y-3' },
+            successMsg && React.createElement(
                 'div',
-                { className: 'mb-3' },
-                React.createElement(
-                    'label',
-                    { className: 'form-label text-muted small uppercase fw-bold' },
-                    'Current Balance'
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'fs-4 fw-bold text-success bg-black bg-opacity-40 p-2 rounded-3 border border-secondary' },
-                    '₦',
-                    Number(wallet || 0).toLocaleString('en-US', { minimumFractionDigits: 2 })
-                )
+                { className: 'p-2 bg-emerald-500/10 border border-emerald-500/30 rounded text-emerald-400 text-xs text-center font-medium' },
+                successMsg
             ),
             React.createElement(
-                'div',
-                { className: 'mb-3' },
-                React.createElement(
-                    'label',
-                    { className: 'form-label text-muted small uppercase fw-bold' },
-                    'Select Deposit Amount (NGN)'
-                ),
+                'form',
+                { onSubmit: handleDepositSubmit, className: 'space-y-3' },
                 React.createElement(
                     'div',
-                    { className: 'input-group mb-2' },
+                    null,
                     React.createElement(
-                        'span',
-                        { className: 'input-group-text bg-black text-warning border-secondary fw-bold' },
-                        '₦'
-                    ),
-                    React.createElement('input', { type: 'number', className: 'form-control bg-black text-white border-secondary fs-5 fw-bold', value: amount, onChange: function (e) {
-                            return setAmount(Number(e.target.value));
-                        }, min: '100', required: true })
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'd-flex gap-1' },
-                    presetAmounts.map(function (amt) {
-                        return React.createElement(
-                            'button',
-                            { key: amt, type: 'button', className: 'btn btn-xs flex-fill ' + (amount === amt ? 'btn-warning text-dark fw-bold' : 'btn-outline-secondary text-white'), style: { fontSize: '11px', padding: '4px 0' }, onClick: function () {
-                                    return setAmount(amt);
-                                } },
-                            '+₦',
-                            amt.toLocaleString()
-                        );
-                    })
-                )
-            ),
-            React.createElement(
-                'div',
-                { className: 'mb-4' },
-                React.createElement(
-                    'label',
-                    { className: 'form-label text-muted small uppercase fw-bold' },
-                    'Payment Channel'
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'd-flex gap-2' },
-                    React.createElement(
-                        'div',
-                        { className: 'p-3 rounded-3 border flex-fill cursor-pointer text-center ' + (paymentMethod === 'bank' ? 'border-warning bg-warning bg-opacity-10 text-white' : 'border-secondary bg-black bg-opacity-20 text-muted'), onClick: function () {
-                                return setPaymentMethod('bank');
-                            } },
-                        React.createElement(
-                            'span',
-                            { className: 'material-symbols-outlined fs-3 d-block mb-1 text-warning' },
-                            'account_balance'
-                        ),
-                        React.createElement(
-                            'div',
-                            { className: 'fw-bold small' },
-                            'Instant Bank Transfer'
-                        )
+                        'label',
+                        { className: 'text-xs text-slate-400 block mb-1' },
+                        'Payment Method'
                     ),
                     React.createElement(
-                        'div',
-                        { className: 'p-3 rounded-3 border flex-fill cursor-pointer text-center ' + (paymentMethod === 'card' ? 'border-warning bg-warning bg-opacity-10 text-white' : 'border-secondary bg-black bg-opacity-20 text-muted'), onClick: function () {
-                                return setPaymentMethod('card');
-                            } },
+                        'select',
+                        {
+                            value: method,
+                            onChange: function (e) {
+                                return setMethod(e.target.value);
+                            },
+                            className: 'w-full px-2 py-1.5 bg-slate-800 border border-slate-700 rounded text-xs text-white outline-none focus:border-lime-400 transition'
+                        },
                         React.createElement(
-                            'span',
-                            { className: 'material-symbols-outlined fs-3 d-block mb-1 text-warning' },
-                            'credit_card'
+                            'option',
+                            { value: 'card' },
+                            'Credit/Debit Card'
                         ),
                         React.createElement(
-                            'div',
-                            { className: 'fw-bold small' },
-                            'Debit Card / Paystack'
+                            'option',
+                            { value: 'bank' },
+                            'Bank Transfer'
+                        ),
+                        React.createElement(
+                            'option',
+                            { value: 'wallet' },
+                            'Digital Wallet'
                         )
                     )
+                ),
+                React.createElement(
+                    'div',
+                    null,
+                    React.createElement(
+                        'label',
+                        { className: 'text-xs text-slate-400 block mb-1' },
+                        'Amount (₦)'
+                    ),
+                    React.createElement('input', {
+                        type: 'number',
+                        value: amount,
+                        onChange: function (e) {
+                            return setAmount(e.target.value);
+                        },
+                        placeholder: 'Enter amount',
+                        required: true,
+                        className: 'w-full px-2 py-1.5 bg-slate-800 border border-slate-700 rounded text-xs text-white placeholder-slate-500 outline-none focus:border-lime-400 transition font-mono font-bold'
+                    })
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'grid grid-cols-4 gap-1' },
+                    quickAmounts.map(function (amt) {
+                        return React.createElement(
+                            'button',
+                            {
+                                key: amt,
+                                type: 'button',
+                                onClick: function () {
+                                    return setAmount(amt.toString());
+                                },
+                                className: 'py-1 text-xs rounded transition font-medium ' + (amount === amt.toString() ? 'bg-lime-400 text-black font-bold' : 'bg-slate-800 hover:bg-slate-700 text-slate-300')
+                            },
+                            amt >= 1000 ? amt / 1000 + 'K' : amt
+                        );
+                    })
+                ),
+                React.createElement(
+                    'button',
+                    {
+                        type: 'submit',
+                        className: 'w-full py-2 text-xs font-bold bg-lime-400 text-black rounded hover:bg-lime-300 transition shadow-sm uppercase tracking-wider'
+                    },
+                    'Deposit ',
+                    amount ? '₦' + Number(amount).toLocaleString() : ''
                 )
-            ),
-            React.createElement(
-                'button',
-                { type: 'submit', className: 'btn btn-warning w-100 fw-bold py-2 rounded-3 text-dark text-uppercase fs-6' },
-                'Proceed to Pay ₦',
-                amount.toLocaleString()
             )
         )
     );
@@ -1838,40 +2024,47 @@ function ReactAviatorApp() {
     var withdrawModalShow = _useState292[0];
     var setWithdrawModalShow = _useState292[1];
 
-    var _useState30 = useState(1);
+    var _useState30 = useState(false);
 
     var _useState302 = _slicedToArray(_useState30, 2);
 
-    var gameId = _useState302[0];
-    var setGameId = _useState302[1];
+    var notifModalShow = _useState302[0];
+    var setNotifModalShow = _useState302[1];
 
-    var _useState31 = useState('FLYING');
+    var _useState31 = useState(1);
 
     var _useState312 = _slicedToArray(_useState31, 2);
 
-    var gameState = _useState312[0];
-    var setGameState = _useState312[1];
+    var gameId = _useState312[0];
+    var setGameId = _useState312[1];
 
-    var _useState33 = useState(104.4);
+    var _useState33 = useState('FLYING');
 
     var _useState332 = _slicedToArray(_useState33, 2);
 
-    var targetMultiplier = _useState332[0];
-    var setTargetMultiplier = _useState332[1];
+    var gameState = _useState332[0];
+    var setGameState = _useState332[1];
 
-    var _useState34 = useState(1.00);
+    var _useState34 = useState(104.4);
 
     var _useState342 = _slicedToArray(_useState34, 2);
 
-    var multiplier = _useState342[0];
-    var setMultiplier = _useState342[1];
+    var targetMultiplier = _useState342[0];
+    var setTargetMultiplier = _useState342[1];
 
-    var _useState35 = useState(5.0);
+    var _useState35 = useState(1.00);
 
     var _useState352 = _slicedToArray(_useState35, 2);
 
-    var countdown = _useState352[0];
-    var setCountdown = _useState352[1];
+    var multiplier = _useState352[0];
+    var setMultiplier = _useState352[1];
+
+    var _useState36 = useState(5.0);
+
+    var _useState362 = _slicedToArray(_useState36, 2);
+
+    var countdown = _useState362[0];
+    var setCountdown = _useState362[1];
 
     function generateInitialLiveBets() {
         var names = ['Alex_Aviator', 'Crypto_King', 'Grace_Naija', 'Flyer_99', 'BetMaster_NG', 'Winner_Pro', 'David_O', 'Tunde_Bet', 'Chidi_Wins', 'SuperFly_88', 'Fatima_K', 'Samuel_X', 'Queen_Aviator', 'Emeka_Cash', 'Bisi_Rolls', 'King_David', 'Zainab_M', 'FastCash_24', 'StarBoy_NG', 'Prince_Aviator', 'Chief_O', 'Victory_G', 'Rider_007', 'Gold_Fingers', 'Success_B', 'Lucky_Player', 'Aviator_Pro', 'Naija_Titan', 'Mega_Winner', 'Flight_Master'];
@@ -1887,12 +2080,12 @@ function ReactAviatorApp() {
         });
     }
 
-    var _useState36 = useState(generateInitialLiveBets());
+    var _useState37 = useState(generateInitialLiveBets());
 
-    var _useState362 = _slicedToArray(_useState36, 2);
+    var _useState372 = _slicedToArray(_useState37, 2);
 
-    var liveBets = _useState362[0];
-    var setLiveBets = _useState362[1];
+    var liveBets = _useState372[0];
+    var setLiveBets = _useState372[1];
 
     useEffect(function () {
         var fetchEngineData = function fetchEngineData() {
@@ -1980,6 +2173,8 @@ function ReactAviatorApp() {
                 setAuthModalTab(tab);setAuthModalShow(true);
             }, onWithdrawClick: function () {
                 return setWithdrawModalShow(true);
+            }, onNotifClick: function () {
+                return setNotifModalShow(true);
             } }),
         React.createElement(
             'main',
@@ -2051,6 +2246,9 @@ function ReactAviatorApp() {
                 currentView === 'mybets' && React.createElement(MyBetsView, null)
             )
         ),
+        React.createElement(NotificationsModal, { show: notifModalShow, onClose: function () {
+                return setNotifModalShow(false);
+            } }),
         React.createElement(AuthModal, { show: authModalShow, initialTab: authModalTab, onClose: function () {
                 return setAuthModalShow(false);
             }, onSuccessLogin: function (userData) {
@@ -2075,4 +2273,4 @@ if (rootEl) {
     }
     ReactDOM.render(React.createElement(ReactAviatorApp, null), rootEl);
 }
-/* Left: Hamburger (mobile only) + Logo + Desktop Nav */ /* Hamburger - mobile only */ /* Mobile Logo: Compact Icon */ /* Desktop Logo: Full Banner */ /* Right Section: Balance, Deposit & Auth */ /* Balance */ /* Deposit Button */ /* Account / User Menu */ /* Mobile Slide-out Drawer (triggered by hamburger) */ /* Tabs */ /* Total Bets Volume Header */ /* Previous Hand Trigger */ /* Table Headers */ /* Bets List Feed */ /* Toggles row */ /* Main controls row */ /* Left 50%: Spinner + Quick buttons */ /* Right 50%: BET Button */ /* Gloss highlight */ /* Unified Responsive Header */ /* Desktop View */ /* Mobile View */ /* React Auth Modal Component */ /* React Withdrawal Modal Component */
+/* Header */ /* Notifications List */ /* Footer */ /* Header */ /* Tab Switcher */ /* Form Body */ /* Left: Hamburger (mobile only) + Logo + Desktop Nav */ /* Hamburger - mobile only */ /* Mobile Logo: Compact Icon */ /* Desktop Logo: Full Banner */ /* Right Section: Notification Bell, Balance, Deposit & Auth */ /* Notification Bell */ /* Balance */ /* Deposit Button */ /* Account / User Menu */ /* Mobile Slide-out Drawer (triggered by hamburger) */ /* Tabs */ /* Total Bets Volume Header */ /* Previous Hand Trigger */ /* Table Headers */ /* Bets List Feed */ /* Toggles row */ /* Main controls row */ /* Left 50%: Spinner + Quick buttons */ /* Right 50%: BET Button */ /* Gloss highlight */ /* Header */ /* Content */ /* Payment Method */ /* Amount */ /* Quick Amount Buttons */ /* Unified Responsive Header */ /* Desktop View */ /* Mobile View */ /* React Notifications Modal Component */ /* React Auth Modal Component */ /* React Withdrawal Modal Component */
