@@ -12,27 +12,33 @@ if (!is_dir($storagePath)) {
     @mkdir($storagePath . '/logs', 0777, true);
 }
 
-// Ensure Environment Variables are propagated to getenv(), $_ENV, and $_SERVER
-foreach ($_ENV as $key => $value) {
-    putenv("{$key}={$value}");
-    $_SERVER[$key] = $value;
+try {
+    // Ensure Environment Variables are propagated to getenv(), $_ENV, and $_SERVER
+    foreach ($_ENV as $key => $value) {
+        putenv("{$key}={$value}");
+        $_SERVER[$key] = $value;
+    }
+
+    define('LARAVEL_START', microtime(true));
+
+    require __DIR__ . '/../laravel/vendor/autoload.php';
+
+    $app = require_once __DIR__ . '/../laravel/bootstrap/app.php';
+
+    // Bind storage path to writable /tmp directory
+    $app->useStoragePath($storagePath);
+
+    $kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
+
+    $response = $kernel->handle(
+        $request = Illuminate\Http\Request::capture()
+    );
+
+    $response->send();
+
+    $kernel->terminate($request, $response);
+} catch (\Throwable $e) {
+    http_response_code(500);
+    header('Content-Type: text/html');
+    echo '<h2>Server Error</h2><p>' . htmlspecialchars($e->getMessage()) . '</p><pre>' . htmlspecialchars($e->getTraceAsString()) . '</pre>';
 }
-
-define('LARAVEL_START', microtime(true));
-
-require __DIR__ . '/../laravel/vendor/autoload.php';
-
-$app = require_once __DIR__ . '/../laravel/bootstrap/app.php';
-
-// Bind storage path to writable /tmp directory
-$app->useStoragePath($storagePath);
-
-$kernel = $app->make(Illuminate\Contracts\Http\Kernel::class);
-
-$response = $kernel->handle(
-    $request = Illuminate\Http\Request::capture()
-);
-
-$response->send();
-
-$kernel->terminate($request, $response);
