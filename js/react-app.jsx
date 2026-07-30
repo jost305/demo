@@ -433,7 +433,7 @@ function AuthModal({ show, initialTab, onClose, onSuccessLogin }) {
 }
 
 // --- HEADER COMPONENT ---
-function Header({ user, wallet, currentView, onViewChange, onAuthClick, onWithdrawClick }) {
+function Header({ user, wallet, currentView, onViewChange, onAuthClick, onWithdrawClick, onNotifClick }) {
     const [menuOpen, setMenuOpen] = useState(false);
     const [drawerOpen, setDrawerOpen] = useState(false);
 

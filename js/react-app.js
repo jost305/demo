@@ -675,6 +675,7 @@ function Header(_ref4) {
     var onViewChange = _ref4.onViewChange;
     var onAuthClick = _ref4.onAuthClick;
     var onWithdrawClick = _ref4.onWithdrawClick;
+    var onNotifClick = _ref4.onNotifClick;
 
     var _useState13 = useState(false);
 
