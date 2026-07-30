@@ -39,9 +39,11 @@ if (!is_dir($storagePath)) {
 
 try {
     // Ensure Environment Variables are propagated to getenv(), $_ENV, and $_SERVER
-    foreach ($_ENV as $key => $value) {
-        putenv("{$key}={$value}");
-        $_SERVER[$key] = $value;
+    if (is_array($_ENV)) {
+        foreach ($_ENV as $key => $value) {
+            putenv("{$key}={$value}");
+            $_SERVER[$key] = $value;
+        }
     }
 
     define('LARAVEL_START', microtime(true));
