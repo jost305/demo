@@ -117,38 +117,70 @@
             opacity: 0.5 !important;
         }
 
+        /* FlyBoy 10x Modern Gaming Theme & Equal-Height 3-Column Dashboard */
+        :root {
+            --bg-dark-main: #08090d;
+            --card-bg: #12141c;
+            --card-border: #1e212d;
+            --accent-lime: #b5f600;
+            --accent-lime-hover: #9ee000;
+            --accent-cyan: #38bdf8;
+            --accent-green: #22c55e;
+            --input-bg: #191c26;
+            --text-gray: #94a3b8;
+        }
+
+        body.dark-bg-main {
+            background-color: var(--bg-dark-main) !important;
+            color: #f8fafc;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+
+        .btn-success, .btn-lime, .buttons-block .btn.btn-success {
+            background: var(--accent-lime) !important;
+            color: #000000 !important;
+            font-weight: 800 !important;
+            border: none !important;
+            text-shadow: none !important;
+            box-shadow: 0 4px 15px rgba(181, 246, 0, 0.25) !important;
+        }
+
+        .btn-lime:hover, .buttons-block .btn.btn-success:hover {
+            background: var(--accent-lime-hover) !important;
+            box-shadow: 0 6px 20px rgba(181, 246, 0, 0.35) !important;
+        }
+
+        .text-lime {
+            color: var(--accent-lime) !important;
+        }
+        .text-cyan {
+            color: var(--accent-cyan) !important;
+        }
+
         .stage-board {
             background-color: #000000 !important;
             height: calc(100vh - 215px) !important;
             min-height: 290px !important;
-            border-radius: 4px !important;
+            border-radius: 12px !important;
+            border: 1px solid var(--card-border) !important;
             overflow: hidden;
         }
         #myCanvas {
             background: transparent !important;
         }
 
+        .contents-blocks, .bet-controls .bet-control .controls {
+            background-color: var(--card-bg) !important;
+            border: 1px solid var(--card-border) !important;
+            border-radius: 12px !important;
+        }
 
         .bet-controls {
-            padding-top: 4px !important;
-        }
-        .bet-controls .bet-control,
-        .bet-controls .bet-control .controls,
-        .navigation-switcher,
-        .navigation-switcher .slider,
-        .navigation-switcher .active-line,
-        .spinner,
-        .btn-sm.bet-opt,
-        .buttons-block .btn.btn-success,
-        .buttons-block .btn.btn-warning,
-        .buttons-block .btn.btn-danger,
-        .buttons-block .btn,
-        .controls .second-row,
-        .bet-box-action {
-            border-radius: 2px !important;
+            padding-top: 6px !important;
         }
         .bet-controls .bet-control {
-            height: 120px !important;
+            height: 125px !important;
+            border-radius: 12px !important;
         }
         .controls .navigation {
             margin-top: 3px !important;
@@ -166,20 +198,42 @@
             margin-left: 4px !important;
         }
         .spinner {
-            height: 32px !important;
+            height: 34px !important;
+            background: var(--input-bg) !important;
+            border: 1px solid var(--card-border) !important;
             padding-left: 6px !important;
             padding-right: 6px !important;
-            border-radius: 2px !important;
+            border-radius: 8px !important;
         }
         .btn-sm.bet-opt {
             width: 58px !important;
-            height: 18px !important;
+            height: 20px !important;
             margin-top: 3px !important;
             margin-right: 2px !important;
             padding: 0 !important;
             font-size: 11px !important;
-            border-radius: 2px !important;
+            background: var(--input-bg) !important;
+            border: 1px solid var(--card-border) !important;
+            color: var(--text-gray) !important;
+            border-radius: 6px !important;
         }
+        .btn-sm.bet-opt:hover {
+            border-color: var(--accent-lime) !important;
+            color: #ffffff !important;
+        }
+
+        .tabs-navs .active-line {
+            background: var(--accent-lime) !important;
+            border-radius: 8px !important;
+        }
+
+        .list-items {
+            border-radius: 8px !important;
+            background: #141722 !important;
+            border: 1px solid #1f2334 !important;
+            margin-bottom: 3px !important;
+        }
+
         .loader-plane-img {
             width: 120px;
             height: auto;
@@ -210,6 +264,7 @@
             line-height: 1.1 !important;
             letter-spacing: 0.5px !important;
         }
+
         @media(max-width: 620px) {
             .stage-board {
                 height: 250px !important;
@@ -226,15 +281,15 @@
             }
         }
 
-        /* Clean Full-Height Left Sidebar Layout */
+        /* Clean Equal-Height Left Sidebar Layout */
         @media(min-width: 992px) {
             .left-sidebar {
                 display: flex !important;
                 flex-direction: column !important;
             }
             .contents-blocks {
-                border-radius: 4px !important;
-                padding: 8px !important;
+                border-radius: 12px !important;
+                padding: 10px !important;
                 height: auto !important;
             }
             .list-data-tbl {
@@ -251,9 +306,10 @@
                 height: auto !important;
             }
             .list-items {
-                border-radius: 4px !important;
+                border-radius: 8px !important;
             }
         }
+
 
 
 
