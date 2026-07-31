@@ -4,6 +4,8 @@ var _slicedToArray = (function () { function sliceIterator(arr, i) { var _arr = 
 
 var _extends = Object.assign || function (target) { for (var i = 1; i < arguments.length; i++) { var source = arguments[i]; for (var key in source) { if (Object.prototype.hasOwnProperty.call(source, key)) { target[key] = source[key]; } } } return target; };
 
+function _toConsumableArray(arr) { if (Array.isArray(arr)) { for (var i = 0, arr2 = Array(arr.length); i < arr.length; i++) arr2[i] = arr[i]; return arr2; } else { return Array.from(arr); } }
+
 var _React = React;
 var useState = _React.useState;
 var useEffect = _React.useEffect;
@@ -1137,16 +1139,6 @@ function AviatorCanvas(_ref5) {
                         }
                     }
                     ctx.restore();
-                } else if (gameState === 'PREPARING' || gameState === 'TAKEOFF') {
-                    if (planeImgRef.current && planeImgRef.current.complete) {
-                        var destWidth = 70;
-                        var destHeight = planeImgRef.current.naturalHeight / planeImgRef.current.naturalWidth * destWidth;
-                        ctx.save();
-                        ctx.translate(80, height - 80);
-                        ctx.rotate(gameState === 'TAKEOFF' ? -Math.PI / 18 : 0);
-                        ctx.drawImage(planeImgRef.current, -destWidth / 2, -destHeight / 2, destWidth, destHeight);
-                        ctx.restore();
-                    }
                 }
             }
 
@@ -1155,7 +1147,7 @@ function AviatorCanvas(_ref5) {
 
         render();
         return function () {
-            cancelAnimationFrame(animId);
+            return cancelAnimationFrame(animId);
         };
     }, [gameState, multiplier]);
 
@@ -1383,7 +1375,7 @@ function BetPanel(_ref7) {
     var handleBetClick = function handleBetClick() {
         if (!isBetPlaced) {
             $.ajax({
-                url: '/game/add_bet',
+                url: '/betNow',
                 type: 'POST',
                 data: {
                     _token: $('meta[name="csrf-token"]').attr('content') || '',
@@ -1404,8 +1396,8 @@ function BetPanel(_ref7) {
             });
         } else {
             $.ajax({
-                url: '/cash_out',
-                type: 'GET',
+                url: '/cashout',
+                type: 'POST',
                 data: {
                     _token: $('meta[name="csrf-token"]').attr('content') || '',
                     game_id: gameId || 1,
@@ -1535,30 +1527,11 @@ function BetPanel(_ref7) {
                     React.createElement(
                         'span',
                         { className: 'text-[11px] font-bold leading-tight font-mono mt-0.5 relative z-10' },
-                        'NGN ',
-                        amount.toFixed(2)
+                        isBetPlaced ? '₦' + (amount * multiplier).toFixed(2) : 'NGN ' + amount.toFixed(2)
                     )
                 )
             )
         )
-    );
-}
-
-// --- MULTIPLIER HISTORY BAR ---
-function HistoryBar() {
-    var rounds = [2.13, 1.45, 3.67, 1.12, 6.25, 1.75, 2.98, 12.43, 1.33, 4.12, 1.08, 9.76];
-
-    return React.createElement(
-        'div',
-        { className: 'px-3 py-1.5 border-b border-black bg-slate-950 flex items-center gap-1 overflow-x-auto scrollbar-hide' },
-        rounds.map(function (round, i) {
-            return React.createElement(
-                'div',
-                { key: i, className: 'flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap transition cursor-pointer', style: { color: round >= 10 ? '#facc15' : round >= 5 ? '#a3e635' : round >= 2 ? '#67e8f9' : '#94a3b8', background: 'rgba(2,6,23,0.7)' } },
-                round,
-                'x'
-            );
-        })
     );
 }
 
@@ -2066,26 +2039,26 @@ function ReactAviatorApp() {
     var gameState = _useState332[0];
     var setGameState = _useState332[1];
 
-    var _useState34 = useState(0);
+    var _useState34 = useState(1.00);
 
     var _useState342 = _slicedToArray(_useState34, 2);
 
-    var targetMultiplier = _useState342[0];
-    var setTargetMultiplier = _useState342[1];
+    var multiplier = _useState342[0];
+    var setMultiplier = _useState342[1];
 
-    var _useState35 = useState(1.00);
+    var _useState35 = useState(5.0);
 
     var _useState352 = _slicedToArray(_useState35, 2);
 
-    var multiplier = _useState352[0];
-    var setMultiplier = _useState352[1];
+    var countdown = _useState352[0];
+    var setCountdown = _useState352[1];
 
-    var _useState36 = useState(5.0);
+    var _useState36 = useState([2.13, 1.45, 3.67, 1.12, 6.25, 1.75, 2.98, 12.43, 1.33, 4.12, 1.08, 9.76]);
 
     var _useState362 = _slicedToArray(_useState36, 2);
 
-    var countdown = _useState362[0];
-    var setCountdown = _useState362[1];
+    var historyRounds = _useState362[0];
+    var setHistoryRounds = _useState362[1];
 
     function generateInitialLiveBets() {
         var names = ['Alex_Aviator', 'Crypto_King', 'Grace_Naija', 'Flyer_99', 'BetMaster_NG', 'Winner_Pro', 'David_O', 'Tunde_Bet', 'Chidi_Wins', 'SuperFly_88', 'Fatima_K', 'Samuel_X', 'Queen_Aviator', 'Emeka_Cash', 'Bisi_Rolls', 'King_David', 'Zainab_M', 'FastCash_24', 'StarBoy_NG', 'Prince_Aviator', 'Chief_O', 'Victory_G', 'Rider_007', 'Gold_Fingers', 'Success_B', 'Lucky_Player', 'Aviator_Pro', 'Naija_Titan', 'Mega_Winner', 'Flight_Master'];
@@ -2108,61 +2081,69 @@ function ReactAviatorApp() {
     var liveBets = _useState372[0];
     var setLiveBets = _useState372[1];
 
-    var startNewRound = function startNewRound() {
-        setMultiplier(1.00);
-        setCountdown(5.0);
-        setTargetMultiplier(0);
-        setGameState('WAITING');
+    // Hook into live engine state machine (window.canvasShow* and incrementor)
+    useEffect(function () {
+        var origShowWaiting = window.canvasShowWaitingState;
+        var origShowPreparing = window.canvasShowPreparingState;
+        var origShowTakeoff = window.canvasShowTakeoffState;
+        var origShowFlying = window.canvasShowFlyingState;
+        var origShowCrashed = window.canvasShowCrashedState;
+        var origIncrementor = window.incrementor;
 
-        $.ajax({
-            url: '/game/new_game_generated',
-            type: 'POST',
-            data: {
-                _token: $('meta[name="csrf-token"]').attr('content') || ''
-            },
-            dataType: 'json',
-            success: function success(res) {
-                if (res && res.id) {
-                    setGameId(res.id);
-                }
-                setGameState('PREPARING');
-                setTimeout(function () {
-                    $.ajax({
-                        url: '/game/increamentor',
-                        type: 'POST',
-                        data: {
-                            _token: $('meta[name="csrf-token"]').attr('content') || ''
-                        },
-                        dataType: 'json',
-                        success: function success(response) {
-                            if (response && response.result && Number(response.result) > 1) {
-                                setTargetMultiplier(Number(response.result));
-                            }
-                            setGameState('TAKEOFF');
-                            setTimeout(function () {
-                                setGameState('FLYING');
-                            }, 1000);
-                        },
-                        error: function error() {
-                            setGameState('WAITING');
-                        }
-                    });
-                }, 1200);
-            },
-            error: function error() {
-                setGameState('WAITING');
+        window.canvasShowWaitingState = function (mult) {
+            setGameState('WAITING');
+            if (mult) setMultiplier(Number(mult));
+            if (origShowWaiting) origShowWaiting(mult);
+        };
+        window.canvasShowPreparingState = function () {
+            setGameState('PREPARING');
+            setMultiplier(1.00);
+            if (origShowPreparing) origShowPreparing();
+        };
+        window.canvasShowTakeoffState = function () {
+            setGameState('TAKEOFF');
+            setMultiplier(1.00);
+            if (origShowTakeoff) origShowTakeoff();
+        };
+        window.canvasShowFlyingState = function () {
+            setGameState('FLYING');
+            if (origShowFlying) origShowFlying();
+        };
+        window.canvasShowCrashedState = function (mult) {
+            setGameState('CRASHED');
+            var crashVal = mult ? Number(mult) : 1.00;
+            setMultiplier(crashVal);
+            setHistoryRounds(function (prev) {
+                return [crashVal].concat(_toConsumableArray(prev.slice(0, 14)));
+            });
+            if (origShowCrashed) origShowCrashed(mult);
+        };
+
+        window.incrementor = function (inc_no) {
+            var val = Number(inc_no);
+            if (!isNaN(val)) {
+                setMultiplier(val);
+                setGameState('FLYING');
             }
-        });
-    };
+            if (origIncrementor) origIncrementor(inc_no);
+        };
 
+        return function () {
+            window.canvasShowWaitingState = origShowWaiting;
+            window.canvasShowPreparingState = origShowPreparing;
+            window.canvasShowTakeoffState = origShowTakeoff;
+            window.canvasShowFlyingState = origShowFlying;
+            window.canvasShowCrashedState = origShowCrashed;
+            window.incrementor = origIncrementor;
+        };
+    }, []);
+
+    // Poll live bets & game ID from backend
     useEffect(function () {
         var fetchEngineData = function fetchEngineData() {
             $.ajax({
-                url: '/game/currentlybet',
-                type: 'POST',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content') || ''
-                },
+                url: '/currentlybet',
+                type: 'GET',
                 dataType: 'json',
                 success: function success(res) {
                     if (res && res.currentGame) {
@@ -2183,70 +2164,14 @@ function ReactAviatorApp() {
                     }
                 }
             });
-
-            $.ajax({
-                url: '/game/increamentor',
-                type: 'POST',
-                data: {
-                    _token: $('meta[name="csrf-token"]').attr('content') || ''
-                },
-                dataType: 'json',
-                success: function success(res) {
-                    if (res && res.result && Number(res.result) > 1) {
-                        setTargetMultiplier(Number(res.result));
-                    }
-                }
-            });
         };
 
         fetchEngineData();
-        startNewRound();
-        var pollTimer = setInterval(fetchEngineData, 8000);
+        var pollTimer = setInterval(fetchEngineData, 5000);
         return function () {
             return clearInterval(pollTimer);
         };
     }, []);
-
-    useEffect(function () {
-        var interval = undefined;
-        if (gameState === 'FLYING' && targetMultiplier > 1) {
-            interval = setInterval(function () {
-                setMultiplier(function (prev) {
-                    var next = parseFloat((prev + 0.01).toFixed(2));
-                    if (next >= targetMultiplier) {
-                        next = parseFloat(targetMultiplier.toFixed(2));
-                        setGameState('CRASHED');
-                        $.ajax({
-                            url: '/game/game_over',
-                            type: 'POST',
-                            data: {
-                                _token: $('meta[name="csrf-token"]').attr('content') || '',
-                                last_time: next
-                            },
-                            dataType: 'text'
-                        });
-                        setTimeout(function () {
-                            startNewRound();
-                        }, 2500);
-                    }
-                    return next;
-                });
-            }, 100);
-        } else if (gameState === 'WAITING') {
-            interval = setInterval(function () {
-                setCountdown(function (prev) {
-                    if (prev <= 0.1) {
-                        return 0;
-                    }
-                    return parseFloat((prev - 0.1).toFixed(1));
-                });
-            }, 100);
-        }
-
-        return function () {
-            return clearInterval(interval);
-        };
-    }, [gameState, targetMultiplier]);
 
     return React.createElement(
         'div',
@@ -2271,7 +2196,7 @@ function ReactAviatorApp() {
                     React.createElement(
                         'div',
                         { className: 'flex-1 bg-slate-950 flex flex-col border-r border-slate-800 overflow-y-auto' },
-                        React.createElement(HistoryBar, null),
+                        React.createElement(HistoryBar, { historyRounds: historyRounds }),
                         React.createElement(
                             'div',
                             { className: 'p-3 flex-1 flex flex-col' },
@@ -2283,8 +2208,8 @@ function ReactAviatorApp() {
                             React.createElement(
                                 'div',
                                 { className: 'grid grid-cols-2 gap-2' },
-                                React.createElement(BetPanel, { panelId: 1, wallet: wallet, gameId: gameId }),
-                                React.createElement(BetPanel, { panelId: 2, wallet: wallet, gameId: gameId })
+                                React.createElement(BetPanel, { panelId: 1, wallet: wallet, gameId: gameId, multiplier: multiplier, gameState: gameState, onWalletChange: setWallet }),
+                                React.createElement(BetPanel, { panelId: 2, wallet: wallet, gameId: gameId, multiplier: multiplier, gameState: gameState, onWalletChange: setWallet })
                             )
                         )
                     ),
@@ -2300,7 +2225,7 @@ function ReactAviatorApp() {
                 currentView === 'crash' && React.createElement(
                     'div',
                     { className: 'flex flex-col' },
-                    React.createElement(HistoryBar, null),
+                    React.createElement(HistoryBar, { historyRounds: historyRounds }),
                     React.createElement(
                         'div',
                         { className: 'p-1.5' },
@@ -2309,8 +2234,8 @@ function ReactAviatorApp() {
                     React.createElement(
                         'div',
                         { className: 'p-1.5 space-y-1.5', style: { background: '#0f172a', borderTop: '1px solid #000' } },
-                        React.createElement(BetPanel, { panelId: 1, wallet: wallet, gameId: gameId }),
-                        React.createElement(BetPanel, { panelId: 2, wallet: wallet, gameId: gameId })
+                        React.createElement(BetPanel, { panelId: 1, wallet: wallet, gameId: gameId, multiplier: multiplier, gameState: gameState, onWalletChange: setWallet }),
+                        React.createElement(BetPanel, { panelId: 2, wallet: wallet, gameId: gameId, multiplier: multiplier, gameState: gameState, onWalletChange: setWallet })
                     )
                 ),
                 currentView === 'livebets' && React.createElement(
@@ -2355,4 +2280,4 @@ if (rootEl) {
     }
     ReactDOM.render(React.createElement(ReactAviatorApp, null), rootEl);
 }
-/* Header */ /* Notifications List */ /* Footer */ /* Header */ /* Tab Switcher */ /* Form Body */ /* Left: Hamburger (mobile only) + Logo + Desktop Nav */ /* Hamburger - mobile only */ /* Mobile Logo: Compact Icon */ /* Desktop Logo: Full Banner */ /* Right Section: Notification Bell, Balance, Deposit & Auth */ /* Notification Bell */ /* Balance */ /* Deposit Button */ /* Account / User Menu */ /* Mobile Slide-out Drawer (triggered by hamburger) */ /* Tabs */ /* Total Bets Volume Header */ /* Previous Hand Trigger */ /* Table Headers */ /* Bets List Feed */ /* Toggles row */ /* Main controls row */ /* Left 50%: Spinner + Quick buttons */ /* Right 50%: BET Button */ /* Gloss highlight */ /* Header */ /* Content */ /* Payment Method */ /* Amount */ /* Quick Amount Buttons */ /* Unified Responsive Header */ /* Desktop View */ /* Mobile View */ /* React Notifications Modal Component */ /* React Auth Modal Component */ /* React Withdrawal Modal Component */
+/* Header */ /* Notifications List */ /* Footer */ /* Header */ /* Tab Switcher */ /* Form Body */ /* Left: Hamburger (mobile only) + Logo + Desktop Nav */ /* Hamburger - mobile only */ /* Mobile Logo: Compact Icon */ /* Desktop Logo: Full Banner */ /* Right Section: Notification Bell, Balance, Deposit & Auth */ /* Notification Bell */ /* Balance */ /* Deposit Button */ /* Account / User Menu */ /* Mobile Slide-out Drawer (triggered by hamburger) */ /* Tabs */ /* Total Bets Volume Header */ /* Previous Hand Trigger */ /* Table Headers */ /* Bets List Feed */ /* Toggles row */ /* Main controls row */ /* Left 50%: Spinner + Quick buttons */ /* Right 50%: BET Button */ /* Header */ /* Content */ /* Payment Method */ /* Amount */ /* Quick Amount Buttons */ /* Unified Responsive Header */ /* Desktop View */ /* Mobile View */ /* React Notifications Modal Component */ /* React Auth Modal Component */ /* React Withdrawal Modal Component */

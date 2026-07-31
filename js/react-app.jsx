@@ -941,29 +941,16 @@ function BetPanel({ panelId, wallet, gameId }) {
                             color: '#fff'
                         }}
                     >
-                        {/* Gloss highlight */}
                         <span className="absolute inset-x-0 top-0 h-1/2 rounded-t-lg pointer-events-none" style={{ background: 'linear-gradient(180deg, rgba(255,255,255,0.22) 0%, rgba(255,255,255,0) 100%)' }} />
-                        <span className="text-sm font-black leading-none uppercase tracking-wide relative z-10">{isBetPlaced ? 'CASH OUT' : 'BET'}</span>
-                        <span className="text-[11px] font-bold leading-tight font-mono mt-0.5 relative z-10">NGN {amount.toFixed(2)}</span>
+                        <span className="text-sm font-black leading-none uppercase tracking-wide relative z-10">
+                            {isBetPlaced ? 'CASH OUT' : 'BET'}
+                        </span>
+                        <span className="text-[11px] font-bold leading-tight font-mono mt-0.5 relative z-10">
+                            {isBetPlaced ? `₦${(amount * multiplier).toFixed(2)}` : `NGN ${amount.toFixed(2)}`}
+                        </span>
                     </button>
                 </div>
             </div>
-        </div>
-    );
-}
-
-
-// --- MULTIPLIER HISTORY BAR ---
-function HistoryBar() {
-    const rounds = [2.13, 1.45, 3.67, 1.12, 6.25, 1.75, 2.98, 12.43, 1.33, 4.12, 1.08, 9.76];
-
-    return (
-        <div className="px-3 py-1.5 border-b border-black bg-slate-950 flex items-center gap-1 overflow-x-auto scrollbar-hide">
-            {rounds.map((round, i) => (
-                <div key={i} className="flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap transition cursor-pointer" style={{ color: round >= 10 ? '#facc15' : round >= 5 ? '#a3e635' : round >= 2 ? '#67e8f9' : '#94a3b8', background: 'rgba(2,6,23,0.7)' }}>
-                    {round}x
-                </div>
-            ))}
         </div>
     );
 }
@@ -1197,10 +1184,10 @@ function ReactAviatorApp() {
     const [notifModalShow, setNotifModalShow] = useState(false);
 
     const [gameId, setGameId] = useState(1);
-    const [gameState, setGameState] = useState('FLYING');
-    const [targetMultiplier, setTargetMultiplier] = useState(104.4);
+    const [gameState, setGameState] = useState('WAITING');
     const [multiplier, setMultiplier] = useState(1.00);
     const [countdown, setCountdown] = useState(5.0);
+    const [historyRounds, setHistoryRounds] = useState([2.13, 1.45, 3.67, 1.12, 6.25, 1.75, 2.98, 12.43, 1.33, 4.12, 1.08, 9.76]);
 
     function generateInitialLiveBets() {
         const names = [
@@ -1222,6 +1209,62 @@ function ReactAviatorApp() {
 
     const [liveBets, setLiveBets] = useState(generateInitialLiveBets());
 
+    // Hook into live engine state machine (window.canvasShow* and incrementor)
+    useEffect(() => {
+        const origShowWaiting = window.canvasShowWaitingState;
+        const origShowPreparing = window.canvasShowPreparingState;
+        const origShowTakeoff = window.canvasShowTakeoffState;
+        const origShowFlying = window.canvasShowFlyingState;
+        const origShowCrashed = window.canvasShowCrashedState;
+        const origIncrementor = window.incrementor;
+
+        window.canvasShowWaitingState = function (mult) {
+            setGameState('WAITING');
+            if (mult) setMultiplier(Number(mult));
+            if (origShowWaiting) origShowWaiting(mult);
+        };
+        window.canvasShowPreparingState = function () {
+            setGameState('PREPARING');
+            setMultiplier(1.00);
+            if (origShowPreparing) origShowPreparing();
+        };
+        window.canvasShowTakeoffState = function () {
+            setGameState('TAKEOFF');
+            setMultiplier(1.00);
+            if (origShowTakeoff) origShowTakeoff();
+        };
+        window.canvasShowFlyingState = function () {
+            setGameState('FLYING');
+            if (origShowFlying) origShowFlying();
+        };
+        window.canvasShowCrashedState = function (mult) {
+            setGameState('CRASHED');
+            const crashVal = mult ? Number(mult) : 1.00;
+            setMultiplier(crashVal);
+            setHistoryRounds(prev => [crashVal, ...prev.slice(0, 14)]);
+            if (origShowCrashed) origShowCrashed(mult);
+        };
+
+        window.incrementor = function (inc_no) {
+            const val = Number(inc_no);
+            if (!isNaN(val)) {
+                setMultiplier(val);
+                setGameState('FLYING');
+            }
+            if (origIncrementor) origIncrementor(inc_no);
+        };
+
+        return () => {
+            window.canvasShowWaitingState = origShowWaiting;
+            window.canvasShowPreparingState = origShowPreparing;
+            window.canvasShowTakeoffState = origShowTakeoff;
+            window.canvasShowFlyingState = origShowFlying;
+            window.canvasShowCrashedState = origShowCrashed;
+            window.incrementor = origIncrementor;
+        };
+    }, []);
+
+    // Poll live bets & game ID from backend
     useEffect(() => {
         const fetchEngineData = () => {
             $.ajax({
@@ -1245,55 +1288,12 @@ function ReactAviatorApp() {
                     }
                 }
             });
-
-            $.ajax({
-                url: '/increamentor',
-                type: 'GET',
-                dataType: 'json',
-                success: function(res) {
-                    if (res && res.result && Number(res.result) > 1) {
-                        setTargetMultiplier(Number(res.result));
-                    }
-                }
-            });
         };
 
         fetchEngineData();
-        const pollTimer = setInterval(fetchEngineData, 8000);
+        const pollTimer = setInterval(fetchEngineData, 5000);
         return () => clearInterval(pollTimer);
     }, []);
-
-    useEffect(() => {
-        let interval;
-        if (gameState === 'FLYING') {
-            interval = setInterval(() => {
-                setMultiplier((prev) => {
-                    const next = prev + 0.03 + Math.random() * 0.02;
-                    if (next >= targetMultiplier) {
-                        setGameState('CRASHED');
-                        setTimeout(() => {
-                            setGameState('WAITING');
-                            setCountdown(5.0);
-                        }, 2500);
-                    }
-                    return next;
-                });
-            }, 100);
-        } else if (gameState === 'WAITING') {
-            interval = setInterval(() => {
-                setCountdown((prev) => {
-                    if (prev <= 0.1) {
-                        setGameState('FLYING');
-                        setMultiplier(1.00);
-                        return 5.0;
-                    }
-                    return prev - 0.1;
-                });
-            }, 100);
-        }
-
-        return () => clearInterval(interval);
-    }, [gameState, targetMultiplier]);
 
     return (
         <div className="bg-slate-950 text-white flex flex-col font-sans" style={{ height: '100dvh', overflow: 'hidden' }}>
@@ -1307,14 +1307,14 @@ function ReactAviatorApp() {
                         <React.Fragment>
                             <LiveBetsPanel multiplier={multiplier} gameState={gameState} liveBets={liveBets} />
                             <div className="flex-1 bg-slate-950 flex flex-col border-r border-slate-800 overflow-y-auto">
-                                <HistoryBar />
+                                <HistoryBar historyRounds={historyRounds} />
                                 <div className="p-3 flex-1 flex flex-col">
                                     <AviatorCanvas gameState={gameState} multiplier={multiplier} countdown={countdown} />
                                 </div>
                                 <div className="p-2" style={{ background: '#0f172a', borderTop: '1px solid #000' }}>
                                     <div className="grid grid-cols-2 gap-2">
-                                        <BetPanel panelId={1} wallet={wallet} gameId={gameId} />
-                                        <BetPanel panelId={2} wallet={wallet} gameId={gameId} />
+                                        <BetPanel panelId={1} wallet={wallet} gameId={gameId} multiplier={multiplier} gameState={gameState} onWalletChange={setWallet} />
+                                        <BetPanel panelId={2} wallet={wallet} gameId={gameId} multiplier={multiplier} gameState={gameState} onWalletChange={setWallet} />
                                     </div>
                                 </div>
                             </div>
@@ -1330,13 +1330,13 @@ function ReactAviatorApp() {
                 <div className="flex md:hidden flex-col w-full" style={{ flex: 1, overflowY: 'auto', overflowX: 'hidden' }}>
                     {currentView === 'crash' && (
                         <div className="flex flex-col">
-                            <HistoryBar />
+                            <HistoryBar historyRounds={historyRounds} />
                             <div className="p-1.5">
                                 <AviatorCanvas gameState={gameState} multiplier={multiplier} countdown={countdown} />
                             </div>
                             <div className="p-1.5 space-y-1.5" style={{ background: '#0f172a', borderTop: '1px solid #000' }}>
-                                <BetPanel panelId={1} wallet={wallet} gameId={gameId} />
-                                <BetPanel panelId={2} wallet={wallet} gameId={gameId} />
+                                <BetPanel panelId={1} wallet={wallet} gameId={gameId} multiplier={multiplier} gameState={gameState} onWalletChange={setWallet} />
+                                <BetPanel panelId={2} wallet={wallet} gameId={gameId} multiplier={multiplier} gameState={gameState} onWalletChange={setWallet} />
                             </div>
                         </div>
                     )}
