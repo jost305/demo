@@ -955,6 +955,21 @@ function BetPanel({ panelId, wallet, gameId }) {
     );
 }
 
+// --- MULTIPLIER HISTORY BAR ---
+function HistoryBar({ historyRounds }) {
+    const rounds = historyRounds && historyRounds.length > 0 ? historyRounds : [2.13, 1.45, 3.67, 1.12, 6.25, 1.75, 2.98, 12.43, 1.33, 4.12, 1.08, 9.76];
+
+    return (
+        <div className="px-3 py-1.5 border-b border-black bg-slate-950 flex items-center gap-1 overflow-x-auto scrollbar-hide">
+            {rounds.map((round, i) => (
+                <div key={i} className="flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap transition cursor-pointer" style={{ color: round >= 10 ? '#facc15' : round >= 5 ? '#a3e635' : round >= 2 ? '#67e8f9' : '#94a3b8', background: 'rgba(2,6,23,0.7)' }}>
+                    {typeof round === 'number' ? round.toFixed(2) : round}x
+                </div>
+            ))}
+        </div>
+    );
+}
+
 // --- LEADERBOARD VIEW COMPONENT ---
 function LeaderboardView() {
     const topWinners = [

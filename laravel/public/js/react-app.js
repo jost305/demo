@@ -1535,6 +1535,26 @@ function BetPanel(_ref7) {
     );
 }
 
+// --- MULTIPLIER HISTORY BAR ---
+function HistoryBar(_ref8) {
+    var historyRounds = _ref8.historyRounds;
+
+    var rounds = historyRounds && historyRounds.length > 0 ? historyRounds : [2.13, 1.45, 3.67, 1.12, 6.25, 1.75, 2.98, 12.43, 1.33, 4.12, 1.08, 9.76];
+
+    return React.createElement(
+        'div',
+        { className: 'px-3 py-1.5 border-b border-black bg-slate-950 flex items-center gap-1 overflow-x-auto scrollbar-hide' },
+        rounds.map(function (round, i) {
+            return React.createElement(
+                'div',
+                { key: i, className: 'flex-shrink-0 px-2 py-0.5 rounded text-xs font-semibold whitespace-nowrap transition cursor-pointer', style: { color: round >= 10 ? '#facc15' : round >= 5 ? '#a3e635' : round >= 2 ? '#67e8f9' : '#94a3b8', background: 'rgba(2,6,23,0.7)' } },
+                typeof round === 'number' ? round.toFixed(2) : round,
+                'x'
+            );
+        })
+    );
+}
+
 // --- LEADERBOARD VIEW COMPONENT ---
 function LeaderboardView() {
     var topWinners = [{ rank: 1, name: 'Alex_Aviator', id: '84***12', multiplier: '184.50x', bet: '₦50.00', win: '₦9,225.00', trophy: '🥇' }, { rank: 2, name: 'CryptoKing_NG', id: '92***45', multiplier: '94.20x', bet: '₦50.00', win: '₦4,710.00', trophy: '🥈' }, { rank: 3, name: 'Grace_W', id: '15***88', multiplier: '52.10x', bet: '₦40.00', win: '₦2,084.00', trophy: '🥉' }, { rank: 4, name: 'HighRoller99', id: '34***77', multiplier: '38.40x', bet: '₦50.00', win: '₦1,920.00', trophy: '4' }, { rank: 5, name: 'Flyer_2026', id: '71***90', multiplier: '28.15x', bet: '₦50.00', win: '₦1,407.50', trophy: '5' }];
@@ -1655,8 +1675,8 @@ function LeaderboardView() {
 }
 
 // --- DEPOSIT VIEW COMPONENT ---
-function DepositView(_ref8) {
-    var wallet = _ref8.wallet;
+function DepositView(_ref9) {
+    var wallet = _ref9.wallet;
 
     var _useState21 = useState('1000');
 

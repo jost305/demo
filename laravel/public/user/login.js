@@ -1,0 +1,396 @@
+function onChangeCallback(ctr){
+    var country = $("#countries").val(ctr);
+    if (ctr == 'IN') {
+        $("#currency option").removeAttr('selected').filter('[value=1]').attr('selected', true);
+        $(".styledSelect").text('INR');
+    } else {
+        $("#currency option").removeAttr('selected').filter('[value=2]').attr('selected', true);
+        $(".styledSelect").text('USD');
+    }
+}
+
+$(document).ready(function () {
+    $("#otp_div").hide();
+    $("#otp_error").hide();
+    $("#registerError").hide();
+    $("#confirm_password-error").hide();
+    $("#new_password-error").hide();
+
+    const promocode = $("#referral_code").val();
+    if (promocode != '' && promocode != undefined) {
+        if (typeof switchAuthTab === 'function') switchAuthTab('register');
+        var modalEl = document.getElementById('auth-modal');
+        if (modalEl && typeof bootstrap !== 'undefined') {
+            var modal = bootstrap.Modal.getInstance(modalEl) || new bootstrap.Modal(modalEl);
+            modal.show();
+        }
+        $("#promocode").val(promocode);
+        $("#promo_code").val(promocode);
+    } 
+});
+
+$("#login").on('click', function() {
+    $("#username").val('');
+    $("#password").val('');
+    $("#login-error").hide();
+    $("#username-error").hide();
+    $("#password-error").hide();
+});
+
+function login_ajax(logindata, redirect_url) {
+    $("#loginSubmit").prop('disabled', true);
+    $.ajax({
+        url: '/auth/login',
+        data: logindata,
+        type: "POST",
+        dataType: "json",
+        success: function(result) {
+            $("#loginSubmit").prop('disabled', false);
+            if (result.isSuccess) {
+                window.location.href = redirect_url || '/crash';
+            } else {
+                $("#login-error").text(result.message || "Invalid email/phone or password").show();
+            }
+        },
+        error: function(xhr) {
+            $("#loginSubmit").prop('disabled', false);
+            var msg = "Login failed. Please try again.";
+            if (xhr.responseJSON && xhr.responseJSON.message) {
+                msg = xhr.responseJSON.message;
+            }
+            $("#login-error").text(msg).show();
+        }
+    });
+}
+
+$('#loginForm').validate({
+    rules: {
+        username: {
+            required: true
+        },
+        password: {
+            required: true
+        }
+    },
+    messages: {
+        username: {
+            required: "Please enter your email or phone!",
+        },
+        password: {
+            required: "Please enter your password!",
+        }
+    },
+    submitHandler: function(form) {
+        $("#loginSubmit").prop('disabled', true);
+        $("#login-error").hide();
+        login_ajax($(form).serialize(), "/crash");
+    }
+});
+
+$("#forgotPassword").on('click', function(){
+    $(".email_text").text("To recover your password, enter your email or phone number used during registration");
+    $(".email_text").css("color","#094b95");
+    $("#processSubmit").text('PROCEED');
+    $("#user_name_div").show();
+    $("#otp_div").hide();
+    $("#user_name").val('');
+    $("#processSubmit").prop('disabled', false);
+    $("#otp_error").hide();
+    $("#otp").val('');
+    $("#otp").prop('disabled', false);
+});
+
+$("#forgotPasswordForm").on('submit', function(e) {
+    e.preventDefault(); 
+    $("#processSubmit").prop('disabled', true);
+    $.ajax({
+        url: '/forgot_password_post',
+        data: $(this).serialize(),
+        type: "POST",
+        dataType: "json",
+        success: function(result) {
+            $("#processSubmit").prop('disabled', false);
+            if (result.isSuccess) {
+                $(".email_text").text(result.message);
+                $(".email_text").css("color","#88c20a");
+                $("#user_name").val(result.data.username);
+                $("#user_name_div").hide();
+                $("#otp_div").show();
+                $("#processSubmit").text('SEND CODE AGAIN');
+                $("#processSubmit").prop('disabled', true);
+                $("#otp_id").val(result.data.id);
+                setTimeout(() => {
+                    $("#processSubmit").prop('disabled', false);
+                }, 10000);
+            }
+        },
+        error: function() {
+            $("#processSubmit").prop('disabled', false);
+        }
+    });
+});
+
+$("#otp").on('input', function() {
+    var otp = $(this).val();
+    var otp_id = $("#otp_id").val();
+    var username = $("#user_name").val();
+    if(otp.length == 4) {
+        $(this).prop('disabled', true);
+        $.ajax({
+            url  : '/verify_otp',
+            type : 'post',
+            data :  {
+                'otp' : otp,
+                'otp_id' : otp_id,
+                'username' : username,
+            },
+            success : function(result) {
+                $("#new_password").val('');
+                $("#confirm_password").val('');
+                $("#confirm_password-error").hide();
+                $("#new_password-error").hide();
+                if(result.isSuccess) {
+                    $('#forgot-modal').modal('hide');
+                    $('#reset-password-modal').modal('show');
+                    $("#reset_username").val(result.data.username);
+                    $("#otp_error").hide();
+                } else {
+                    $("#otp").prop('disabled', false);
+                    $("#otp_error").text(result.message);
+                    $("#otp_error").show();
+                }
+            }
+        });
+    }
+});
+
+$('#resetPasswordForm').validate({ 
+    rules : {
+        password : {
+            minlength : 6,
+        },
+        confirm_password : {
+            equalTo: "#new_password"
+        }
+    },
+    messages : {
+        password : {
+            minlength : "Minimum password length is 6 characters",
+        },
+        confirm_password : {
+            equalTo: "Passwords don't match"
+        }
+    },
+    submitHandler: function(form) {
+        $("#saveSubmit").prop('disabled', true);
+        $.ajax({
+            url: '/reset_password',
+            data : $(form).serialize(),
+            type: "POST",
+            success: function(result) {
+                if (result.isSuccess) {
+                    $("#saveSubmit").prop('disabled', false);
+                    $('#reset-password-modal').modal('hide');
+                    let data = {
+                        username : result.data.username,
+                        password : result.data.password,
+                    };
+                    login_ajax(data, '/crash');
+                }
+            }
+        });
+    }
+});
+
+$('#registerViaEmailForm').validate({
+    rules: {
+        email: {
+            required: true,
+            email: true
+        },
+        password: {
+            required: true,
+            minlength: 4
+        }
+    },
+    messages: {
+        email: {
+            required: "Please enter your email!",
+            email: "Please enter a valid email address!"
+        },
+        password: {
+            required: "Please enter a password!",
+            minlength: "Password must be at least 4 characters!"
+        }
+    },
+    submitHandler: function(form) {
+        $(".registerSubmit, #register_via_email").prop('disabled', true);
+        $("#promo_code_error").hide();
+        $.ajax({
+            url: $(form).attr('action'),
+            data: $(form).serialize(),
+            type: "POST",
+            dataType: "json",
+            success: function(result) {
+                $(".registerSubmit, #register_via_email").prop('disabled', false);
+                if(result.isSuccess) {
+                    $('#auth-modal').modal('hide');
+                    $('#register-modal').modal('hide');
+                    window.location.href = '/crash';
+                } else if (result.data && result.data.is_email_exist == 1) {
+                    if (typeof switchAuthTab === 'function') switchAuthTab('login');
+                    $("#username").val(result.data.email || '');
+                    $("#login-error").text(result.message || 'Email already exists. Please sign in.').show();
+                } else {
+                    $("#promo_code_error").show();
+                    $("#promo_code_error").text(result.message || 'Registration failed');
+                }
+            },
+            error: function(xhr) {
+                $(".registerSubmit, #register_via_email").prop('disabled', false);
+                var msg = 'Registration failed. Please check inputs.';
+                if (xhr.responseJSON) {
+                    if (xhr.responseJSON.message) msg = xhr.responseJSON.message;
+                    if (xhr.responseJSON.errors) {
+                        var errs = Object.values(xhr.responseJSON.errors).flat();
+                        msg = errs.join(', ');
+                    }
+                }
+                $("#promo_code_error").show().text(msg);
+            }
+        });
+    }
+});
+
+$('#amounttransfer').validate({
+    rules: {
+        userid: {
+            required: true
+        },
+        amount: {
+            required: true
+        }
+    },
+    messages: {
+        userid: {
+            required: "Enter user id!",
+        },
+        amount: {
+            required: "Enter Amount!",
+        }
+    },
+    submitHandler: function(form) {
+        $(".registerSubmit").prop('disabled', true);
+        $.ajax({
+            url: $(form).attr('action'),
+            data: $(form).serialize(),
+            type: "POST",
+            dataType: "json",
+            success: function(result) {
+                $("#userid").val('');
+                $("#amount").val('');
+                $(".registerSubmit").prop('disabled', false);
+                if(result.isSuccess) {
+                    window.location.href='/';
+                } else {
+                    $("#promo_code_error").show();
+                    $("#promo_code_error").html(result.message);
+                }
+            }
+        });
+    }
+});
+
+$('#registerOneClickForm').validate({
+    submitHandler: function(form) {
+        $("#registerSubmit, #one_click_register").prop('disabled', true);
+        $.ajax({
+            url: $(form).attr('action'),
+            data: $(form).serialize(),
+            type: "POST",
+            dataType: "json",
+            success: function(result) {
+                if(result.isSuccess) {
+                    const data = {
+                        username : result.data.user_name,
+                        password : result.data.password,
+                    };
+                    login_ajax(data, '/crash');
+                } else {    
+                    $("#registerSubmit, #one_click_register").prop('disabled', false);
+                    $("#promocode_error").text(result.message).show();
+                }
+            },
+            error: function() {
+                $("#registerSubmit, #one_click_register").prop('disabled', false);
+            }
+        });
+    }
+});
+
+$(".reg_btn").on('click', function() {
+    $("#promocode").val('');
+    $("#reg_email").val('');
+    $("#regpassword").val('');
+    $("#promo_code").val('');
+    $("#promo_code_error").hide();
+    $("#promocode_error").hide();
+});
+
+$("#one_click_check").click(function() {
+    if(!$(this).is(":checked")) {
+        $("#one_click_register").prop('disabled', true);
+        $("#one_click_register").css({
+            'background-image' : 'linear-gradient(0deg,#9fa8b3,#becad7)',
+            'box-shadow'       : 'none',
+            'color'            : '#d4d9df',
+        });
+    } else {
+        $("#one_click_register").prop('disabled', false);
+        $("#one_click_register").css({
+            'background-image' : 'linear-gradient(0deg,#fa5e00 0,#fa7c00)',
+            'box-shadow'       : '0 20px 30px rgb(250 65 0 / 40%)',
+            'color'            : '#fff',
+        });
+    }  
+}); 
+
+$("#email_policy").click(function() {
+    if(!$(this).is(":checked")) {
+        $("#register_via_email").prop('disabled', true);
+        $("#register_via_email").css({
+            'background-image' : 'linear-gradient(0deg,#9fa8b3,#becad7)',
+            'box-shadow'       : 'none',
+            'color'            : '#d4d9df',
+        });
+    } else {
+        $("#register_via_email").prop('disabled', false);
+        $("#register_via_email").css({
+            'background-image' : 'linear-gradient(0deg,#fa5e00 0,#fa7c00)',
+            'box-shadow'       : '0 20px 30px rgb(250 65 0 / 40%)',
+            'color'            : '#fff',
+        });
+    }  
+}); 
+
+$("#view_password").on('click', function() {
+    let type = $("#password").prop('type');
+    if (type == 'password') {
+        $(this).text('visibility');
+        $("#password").prop('type', 'text');
+    } else {
+        $(this).text('visibility_off');
+        $("#password").prop('type', 'password');
+    }
+});
+
+$("#view_password_register").on('click', function() {
+    let type = $("#regpassword").prop('type');
+    if (type == 'password') {
+        $(this).text('visibility');
+        $("#regpassword").prop('type', 'text');
+    } else {
+        $(this).text('visibility_off');
+        $("#regpassword").prop('type', 'password');
+    }
+});
