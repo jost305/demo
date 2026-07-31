@@ -119,15 +119,36 @@
 
         .stage-board {
             background-color: #000;
-            height: calc(100vh - 195px) !important;
-            min-height: 380px !important;
+            height: calc(100vh - 215px) !important;
+            min-height: 290px !important;
+        }
+        .bet-controls {
+            padding-top: 4px !important;
+        }
+        .bet-controls .bet-control {
+            height: 125px !important;
+        }
+        .controls .navigation {
+            margin-top: 4px !important;
+            margin-bottom: 4px !important;
+        }
+        .first-row.auto-game-feature {
+            margin-bottom: 4px !important;
+        }
+        .btn-sm.bet-opt {
+            padding: 2px 6px !important;
+            font-size: 11px !important;
         }
         @media(max-width: 620px) {
             .stage-board {
-                height: 340px !important;
-                min-height: 340px !important;
+                height: 250px !important;
+                min-height: 250px !important;
+            }
+            .bet-controls .bet-control {
+                height: 115px !important;
             }
         }
+
 
 
         body {
