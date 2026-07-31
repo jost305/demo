@@ -56,34 +56,31 @@ class Gamesetting extends Controller
     
     public function increamentor(Request $r)
     {
-
-
         $gamestatusdata = Setting::where('category', 'game_status')->first();
-        $res = 0;
-        if($gamestatusdata){
-                
-        $totalbet = Userbit::where('gameid',currentid())->count();
-        $totalamount = Userbit::where('gameid',currentid())->sum('amount');
-        if ($totalbet == 0) {
-            $res =   rand(8,11);
-        }else{
-         //   $randomresult = array(1.1,1.1,1.2,1.3,1.4,1.5,1.6,1.7,1.8,1.9);
-            
- $emailvalue = Setting::where('id', '14')->sum('value');
-
-  $res =$emailvalue;
-            
-//           //  $gamestatusdataend = Setting::where('category', 'game_between_time_end')->first();
-       //   $res =  $randomresult[rand(0,2)]; //$emailvalue; 
-            
-        }
+        $res = rand(15, 60) / 10;
         
-                $status = true;
-                $result = $res;
-                $response = array('status'=>$status,'result'=>$result);
-        return response()->json($response);
+        if ($gamestatusdata) {
+            $totalbet = Userbit::where('gameid', currentid())->count();
+            if ($totalbet == 0) {
+                $res = rand(20, 85) / 10;
+            } else {
+                $emailvalue = Setting::where('id', '14')->sum('value');
+                if ($emailvalue > 1.0) {
+                    $res = floatval($emailvalue);
+                }
+            }
         }
+
+        if ($res <= 1.0) {
+            $res = rand(18, 55) / 10;
+        }
+
+        return response()->json([
+            'status' => true,
+            'result' => floatval($res)
+        ]);
     }
+
     // public function increamentor(Request $r)
     // {
     //     // return 1.7;

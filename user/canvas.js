@@ -182,6 +182,8 @@ function setVariable(is_plan = '') {
     imgTag.onerror = function () {
         planeImageReady = false;
     };
+    imgTag.src = "/images/flyboy10x_icon.png";
+
     // load overlay spritesheet (propeller/flame) - keep as fallback animated raster
     overlayImg = new Image();
     overlayReady = false;
@@ -487,17 +489,36 @@ function getPlaneScale() {
 }
 
 function draw(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, frameIndex, scale = 1) {
-    if (!spritesheet || !planeImageReady || !spritesheet.complete || !spritesheet.naturalWidth) {
-        return;
+    var drawWidth = (width || 80) * scale;
+    var drawHeight = (height || 45) * scale;
+    var drawX = x + (((width || 80) - drawWidth) / 2);
+    var drawY = y + (((height || 45) - drawHeight) / 2);
+
+    if (spritesheet && (planeImageReady || (spritesheet.complete && spritesheet.naturalWidth > 0))) {
+        try {
+            ctx.drawImage(spritesheet, drawX, drawY, drawWidth, drawHeight);
+            return;
+        } catch(e) {}
     }
 
-    var drawWidth = width * scale;
-    var drawHeight = height * scale;
-    var drawX = x + ((width - drawWidth) / 2);
-    var drawY = y + ((height - drawHeight) / 2);
+    // Reliable Fallback Vector Red Jet Plane
+    ctx.save();
+    ctx.fillStyle = '#ff1e46';
+    ctx.beginPath();
+    ctx.moveTo(drawX + drawWidth, drawY + drawHeight / 2);
+    ctx.lineTo(drawX, drawY);
+    ctx.lineTo(drawX + drawWidth * 0.35, drawY + drawHeight / 2);
+    ctx.lineTo(drawX, drawY + drawHeight);
+    ctx.closePath();
+    ctx.fill();
 
-    ctx.drawImage(spritesheet, drawX, drawY, drawWidth, drawHeight);
+    ctx.fillStyle = '#ffffff';
+    ctx.beginPath();
+    ctx.arc(drawX + drawWidth * 0.7, drawY + drawHeight / 2, 3, 0, Math.PI * 2);
+    ctx.fill();
+    ctx.restore();
 }
+
 function GameObject(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, scale = 1) {
     spritesheet = spritesheet;             //the spritesheet image
     x = x;                                 //the x coordinate of the object
