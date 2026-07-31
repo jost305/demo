@@ -630,7 +630,7 @@ function AviatorCanvas({ gameState, multiplier, countdown }) {
 
         const render = () => {
             const dpr = window.devicePixelRatio || 1;
-            const width = canvas.parentElement.clientWidth;
+            const width = canvas.parentElement.clientWidth || 600;
             const height = canvas.parentElement.clientHeight || 360;
 
             canvas.width = Math.max(1, Math.floor(width * dpr));
@@ -648,7 +648,7 @@ function AviatorCanvas({ gameState, multiplier, countdown }) {
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, width, height);
 
-            // Draw Rotating Background SVG Image
+            // Draw Rotating Background Rays Image
             if (bgImgRef.current && bgImgRef.current.complete) {
                 ctx.save();
                 ctx.translate(width / 2, height / 2);
@@ -661,7 +661,7 @@ function AviatorCanvas({ gameState, multiplier, countdown }) {
             }
 
             // Grid lines
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
             ctx.lineWidth = 1;
             for (let x = 0; x < width; x += 50) {
                 ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, height); ctx.stroke();
@@ -682,8 +682,10 @@ function AviatorCanvas({ gameState, multiplier, countdown }) {
                 ctx.globalAlpha = 1.0;
             }
 
-            if (gameState === 'FLYING' || gameState === 'CRASHED') {
-                const progress = Math.min((multiplier - 1) / 10, 1);
+            const isFlightState = gameState === 'FLYING' || gameState === 'CRASHED' || gameState === 'TAKEOFF' || gameState === 'PREPARING';
+            if (isFlightState) {
+                const multVal = Math.max(1.00, multiplier || 1.00);
+                const progress = Math.min((multVal - 1) / 10, 1);
                 const startX = 40;
                 const startY = height - 40;
                 const endX = startX + (width - 140) * progress;
@@ -707,7 +709,7 @@ function AviatorCanvas({ gameState, multiplier, countdown }) {
                 ctx.fill();
 
                 // Draw Plane Sprite Sheet & Propeller / Flame Animation (sprite2 & sprite3)
-                if (gameState === 'FLYING') {
+                if (gameState !== 'CRASHED') {
                     animFrameRef.current += 1;
                     const activeSprite = sprite3Ref.current && sprite3Ref.current.complete 
                         ? sprite3Ref.current 
@@ -743,40 +745,57 @@ function AviatorCanvas({ gameState, multiplier, countdown }) {
             animId = requestAnimationFrame(render);
         };
 
-                render();
+        render();
         return () => cancelAnimationFrame(animId);
     }, [gameState, multiplier]);
+
+    const displayMult = (multiplier && multiplier > 1) ? multiplier : 1.00;
 
     return (
         <div className="relative w-full rounded-lg overflow-hidden bg-slate-950 flex-1 min-h-[220px] md:min-h-[380px] h-[220px] md:h-[380px] flex items-center justify-center" style={{ border: '1px solid #000' }}>
             <canvas ref={canvasRef} className="w-full h-full block" />
 
-            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-2 pointer-events-none">
+            <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 pointer-events-none">
                 {gameState === 'WAITING' && (
                     <div>
-                        <div className="text-white-50 uppercase tracking-wider small fw-bold">WAITING FOR NEXT ROUND</div>
-                        <div className="fs-3 fw-bold text-warning mt-1">{countdown.toFixed(1)}s</div>
+                        <div className="text-slate-400 uppercase tracking-wider text-xs font-bold mb-1">WAITING FOR NEXT ROUND</div>
+                        <div className="text-3xl font-bold text-yellow-400 font-mono">{countdown ? countdown.toFixed(1) + 's' : '5.0s'}</div>
                     </div>
                 )}
 
-                {gameState === 'FLYING' && (
+                {gameState === 'PREPARING' && (
                     <div>
-                        <div className="display-2 fw-black text-white" style={{ fontFamily: 'Roboto, sans-serif', letterSpacing: '-2px' }}>
-                            {multiplier.toFixed(2)}<span className="text-danger">x</span>
+                        <div className="text-slate-300 uppercase tracking-wider text-xs font-bold mb-1">PREPARING FOR TAKEOFF...</div>
+                        <div className="text-4xl font-black text-white font-mono">1.00<span className="text-red-500">x</span></div>
+                    </div>
+                )}
+
+                {gameState === 'TAKEOFF' && (
+                    <div>
+                        <div className="text-lime-400 uppercase tracking-wider text-xs font-bold mb-1">TAKEOFF</div>
+                        <div className="text-4xl font-black text-white font-mono">1.00<span className="text-red-500">x</span></div>
+                    </div>
+                )}
+
+                {(gameState === 'FLYING' || (!['WAITING', 'PREPARING', 'TAKEOFF', 'CRASHED'].includes(gameState))) && (
+                    <div>
+                        <div className="text-6xl md:text-8xl font-black text-white font-mono tracking-tight" style={{ textShadow: '0 0 20px rgba(255,255,255,0.3)' }}>
+                            {displayMult.toFixed(2)}<span className="text-red-500">x</span>
                         </div>
                     </div>
                 )}
 
                 {gameState === 'CRASHED' && (
                     <div>
-                        <div className="text-danger fw-black uppercase tracking-wider small">FLEW AWAY!</div>
-                        <div className="display-3 fw-black text-danger">{multiplier.toFixed(2)}x</div>
+                        <div className="text-red-500 font-black uppercase tracking-wider text-sm mb-1 animate-bounce">FLEW AWAY!</div>
+                        <div className="text-5xl md:text-7xl font-black text-red-500 font-mono">{displayMult.toFixed(2)}x</div>
                     </div>
                 )}
             </div>
         </div>
     );
 }
+
 
 // --- LIVE BETS SIDE PANEL COMPONENT ---
 function LiveBetsPanel({ multiplier, gameState, liveBets }) {
@@ -1279,6 +1298,39 @@ function ReactAviatorApp() {
         };
     }, []);
 
+    // Autonomous simulation fallback loop to keep flight continuously active
+    useEffect(() => {
+        let interval;
+        if (gameState === 'FLYING') {
+            interval = setInterval(() => {
+                setMultiplier((prev) => {
+                    const next = prev + 0.03 + (Math.random() * 0.02);
+                    if (next >= 14.50) {
+                        setGameState('CRASHED');
+                        setTimeout(() => {
+                            setGameState('WAITING');
+                            setCountdown(4.0);
+                        }, 2500);
+                    }
+                    return next;
+                });
+            }, 100);
+        } else if (gameState === 'WAITING') {
+            interval = setInterval(() => {
+                setCountdown((prev) => {
+                    if (prev <= 0.2) {
+                        setGameState('FLYING');
+                        setMultiplier(1.00);
+                        return 4.0;
+                    }
+                    return prev - 0.1;
+                });
+            }, 100);
+        }
+
+        return () => clearInterval(interval);
+    }, [gameState]);
+
     // Poll live bets & game ID from backend
     useEffect(() => {
         const fetchEngineData = () => {
@@ -1309,6 +1361,7 @@ function ReactAviatorApp() {
         const pollTimer = setInterval(fetchEngineData, 5000);
         return () => clearInterval(pollTimer);
     }, []);
+
 
     return (
         <div className="bg-slate-950 text-white flex flex-col font-sans" style={{ height: '100dvh', overflow: 'hidden' }}>
