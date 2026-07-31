@@ -29,7 +29,7 @@
                 
                 <!-- LOGIN FORM PANE -->
                 <div id="auth-login-pane" class="ax-auth-pane active">
-                    <form class="login-form" method="post" action="#" name="loginForm" id="loginForm">
+                    <form class="login-form" method="post" action="#" name="loginForm" id="loginForm" onsubmit="return false;">
                         @csrf
                         <div class="mb-2">
                             <label class="ax-field-label" style="font-size: 10px;">EMAIL OR PHONE</label>
@@ -72,7 +72,7 @@
 
                 <!-- STREAMLINED REGISTER FORM PANE -->
                 <div id="auth-register-pane" class="ax-auth-pane d-none">
-                    <form class="register-form" action="/auth/register" method="post" name="registerForm" id="registerViaEmailForm">
+                    <form class="register-form" action="/auth/register" method="post" name="registerForm" id="registerViaEmailForm" onsubmit="return false;">
                         @csrf
                         <input type="hidden" name="name" id="name" value="Player">
                         <input type="hidden" name="mobile" id="mobile" value="0000000000">

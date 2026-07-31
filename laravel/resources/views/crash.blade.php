@@ -1537,9 +1537,6 @@
     @include('include.auth-modals')
     @include('include.wallet-modals')
 
-    <!--====== Plugin js ======-->
-    <script src="/js/jquery.min.js"></script>
-
     <!--====== Bootstrap js ======-->
     <script src="/js/popper.min.js"></script>
     <script src="/js/bootstrap.bundle.min.js"></script>

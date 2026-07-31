@@ -81,7 +81,7 @@ $('#loginForm').validate({
         }
     },
     submitHandler: function(form) {
-        $("#loginSubmit").prop('disabled', true);
+        $("#loginSubmit").prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> SIGNING IN...');
         $("#login-error").hide();
         login_ajax($(form).serialize(), "/crash");
     }
