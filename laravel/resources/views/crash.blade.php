@@ -118,16 +118,16 @@
         }
 
         .stage-board {
-            background: #080a14 url('images/sky_clouds_bg.png?v={{ env('APP_VERSION', time()) }}') no-repeat center center / cover !important;
+            background-color: #000000 !important;
             height: calc(100vh - 215px) !important;
             min-height: 290px !important;
             border-radius: 4px !important;
             overflow: hidden;
-            box-shadow: inset 0 0 50px rgba(0, 0, 0, 0.7);
         }
         #myCanvas {
             background: transparent !important;
         }
+
 
         .bet-controls {
             padding-top: 4px !important;
