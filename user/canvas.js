@@ -272,7 +272,9 @@ function animatePathDrawing(ctx, x0, y0, x1, y1, x2, y2, duration, imgTag) {
         if (progress < 1) {
             window.requestAnimationFrame(step);
         } else {
-            onFlightComplete();
+            if (typeof onFlightComplete === 'function') {
+                onFlightComplete();
+            }
         }
     };
     window.requestAnimationFrame(step);

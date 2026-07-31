@@ -263,10 +263,10 @@
                     <input type="number" class="ax-amount-input" id="modal_deposit_amount" value="500" min="100" step="1" placeholder="Min ₦100">
                 </div>
                 <div class="ax-chips">
-                    <div class="ax-chip active" onclick="setDepAmt(500)">₦500</div>
-                    <div class="ax-chip" onclick="setDepAmt(1000)">₦1,000</div>
-                    <div class="ax-chip" onclick="setDepAmt(2000)">₦2,000</div>
-                    <div class="ax-chip" onclick="setDepAmt(5000)">₦5,000</div>
+                    <div class="ax-chip active" onclick="setDepAmt(500, this)">₦500</div>
+                    <div class="ax-chip" onclick="setDepAmt(1000, this)">₦1,000</div>
+                    <div class="ax-chip" onclick="setDepAmt(2000, this)">₦2,000</div>
+                    <div class="ax-chip" onclick="setDepAmt(5000, this)">₦5,000</div>
                 </div>
 
                 <button type="button" class="ax-cta-green" id="dep_submit_btn" onclick="submitModalDeposit()">
@@ -345,7 +345,7 @@
 </div>
 
 <script>
-function switchWalletModal(target) {
+window.switchWalletModal = function(target) {
     var from = target === 'withdraw' ? 'deposit' : 'withdraw';
     var fromModal = bootstrap.Modal.getInstance(document.getElementById(from + '-modal'));
     if (fromModal) fromModal.hide();
@@ -353,21 +353,23 @@ function switchWalletModal(target) {
         var toModal = new bootstrap.Modal(document.getElementById(target + '-modal'));
         toModal.show();
     }, 300);
-}
+};
+</script>
 <!-- Ensure Flutterwave SDK is pre-loaded for 0ms delay popup -->
 <script src="https://checkout.flutterwave.com/v3.js"></script>
 
-function setDepAmt(val) {
+<script>
+window.setDepAmt = function(val, el) {
     $('#modal_deposit_amount').val(val);
     $('.ax-chip').removeClass('active');
-    event.currentTarget.classList.add('active');
-}
-function selectPayMethod(el, gatewayId) {
+    if (el) $(el).addClass('active');
+};
+window.selectPayMethod = function(el, gatewayId) {
     document.querySelectorAll('.ax-pay-method').forEach(function(m){ m.classList.remove('selected'); });
-    el.classList.add('selected');
-    document.getElementById('dep_modal_gateway').value = gatewayId;
-}
-function submitModalDeposit() {
+    if (el) $(el).addClass('selected');
+    $('#dep_modal_gateway').val(gatewayId);
+};
+window.submitModalDeposit = function() {
     var amt = parseFloat($('#modal_deposit_amount').val());
     if (!amt || amt < 100) {
         alert('Please enter a valid deposit amount (minimum ₦100)');
