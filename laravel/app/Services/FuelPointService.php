@@ -43,8 +43,8 @@ class FuelPointService
                 PlatformNotificationService::create(
                     $user->id,
                     'fuel_points',
-                    'Daily Streak Reward! ⚡',
-                    'You earned +10 FuelPoints (FP) for logging in today. Total FP: ' . ($user->fuel_points + 10),
+                    'Daily Streak Reward! 🛩️',
+                    'You earned +10 FlyPoints (FP) for logging in today. Total FP: ' . ($user->fuel_points + 10),
                     ['points' => 10, 'total_fp' => $user->fuel_points + 10]
                 );
             } catch (\Throwable $te) {}
@@ -57,7 +57,7 @@ class FuelPointService
     }
 
     /**
-     * Award 20 FuelPoints for Referral.
+     * Award 20 FlyPoints for Referral.
      */
     public static function awardReferral(int $referrerId, int $referredUserId): bool
     {
@@ -83,8 +83,8 @@ class FuelPointService
                 PlatformNotificationService::create(
                     $referrer->id,
                     'fuel_points',
-                    'Referral Reward! ⚡',
-                    'You earned +20 FuelPoints (FP) for inviting a new player!',
+                    'Referral Reward! 🛩️',
+                    'You earned +20 FlyPoints (FP) for inviting a new player!',
                     ['points' => 20, 'referred_user_id' => $referredUserId]
                 );
             } catch (\Throwable $te) {}
@@ -97,7 +97,7 @@ class FuelPointService
     }
 
     /**
-     * Award 10 FuelPoints for a successful Deposit.
+     * Award 10 FlyPoints for a successful Deposit.
      */
     public static function awardDeposit(int $userId, float $amount): bool
     {
@@ -123,8 +123,8 @@ class FuelPointService
                 PlatformNotificationService::create(
                     $user->id,
                     'fuel_points',
-                    'Deposit Bonus! ⚡',
-                    'You earned +10 FuelPoints (FP) for your ₦' . number_format($amount, 2) . ' deposit!',
+                    'Deposit Bonus! 🛩️',
+                    'You earned +10 FlyPoints (FP) for your ₦' . number_format($amount, 2) . ' deposit!',
                     ['points' => 10, 'amount' => $amount]
                 );
             } catch (\Throwable $te) {}
@@ -137,7 +137,7 @@ class FuelPointService
     }
 
     /**
-     * Award 20 FuelPoints for a Winning Bet.
+     * Award 20 FlyPoints for a Winning Bet.
      */
     public static function awardWinningBet(int $userId, float $winAmount): bool
     {
@@ -163,8 +163,8 @@ class FuelPointService
                 PlatformNotificationService::create(
                     $user->id,
                     'fuel_points',
-                    'Victory Reward! ⚡',
-                    'You earned +20 FuelPoints (FP) for winning your bet!',
+                    'Victory Reward! 🛩️',
+                    'You earned +20 FlyPoints (FP) for winning your bet!',
                     ['points' => 20, 'win_amount' => $winAmount]
                 );
             } catch (\Throwable $te) {}

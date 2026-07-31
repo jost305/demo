@@ -15,6 +15,12 @@
                 <button type="button" class="ax-deposit-btn" data-bs-toggle="modal" data-bs-target="#deposit-modal" title="Deposit funds">+</button>
             </div>
 
+            {{-- FlyPoints Pill --}}
+            <div class="ax-fp-pill" style="display:inline-flex; align-items:center; gap:4px; background:rgba(255,152,0,0.12); border:1px solid rgba(255,152,0,0.3); padding:4px 10px; border-radius:20px; color:#ff9800; font-size:12px; font-weight:700;" title="FlyPoints (FP)">
+                <span>🛩️</span>
+                <span id="header_fuel_points">{{ user('fuel_points') ?: 0 }} FP</span>
+            </div>
+
             {{-- Notification Bell --}}
             @include('include.notification-dropdown')
 
@@ -36,6 +42,8 @@
                         <div class="ax-pm-balance">
                             <div class="ax-pm-bal-label">Balance</div>
                             <div class="ax-pm-bal-amount" id="profile_wallet_balance">₦ {{ number_format(floatval(wallet(user('id'), 'num')), 2) }}</div>
+                            <div class="ax-pm-bal-label mt-1" style="color:#ff9800;">FlyPoints</div>
+                            <div class="ax-pm-bal-amount" style="color:#ff9800; font-size:12px;">🛩️ {{ user('fuel_points') ?: 0 }} FP</div>
                         </div>
                     </div>
 
