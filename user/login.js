@@ -38,22 +38,22 @@ $("#login").on('click', function() {
 });
 
 function login_ajax(logindata, redirect_url) {
-    $("#loginSubmit").prop('disabled', true);
+    $("#loginSubmit").prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> SIGNING IN...');
     $.ajax({
         url: '/auth/login',
         data: logindata,
         type: "POST",
         dataType: "json",
         success: function(result) {
-            $("#loginSubmit").prop('disabled', false);
             if (result.isSuccess) {
-                window.location.href = redirect_url || '/crash';
+                window.location.reload();
             } else {
+                $("#loginSubmit").prop('disabled', false).html('SIGN IN');
                 $("#login-error").text(result.message || "Invalid email/phone or password").show();
             }
         },
         error: function(xhr) {
-            $("#loginSubmit").prop('disabled', false);
+            $("#loginSubmit").prop('disabled', false).html('SIGN IN');
             var msg = "Login failed. Please try again.";
             if (xhr.responseJSON && xhr.responseJSON.message) {
                 msg = xhr.responseJSON.message;
@@ -224,7 +224,7 @@ $('#registerViaEmailForm').validate({
         }
     },
     submitHandler: function(form) {
-        $(".registerSubmit, #register_via_email").prop('disabled', true);
+        $(".registerSubmit, #register_via_email").prop('disabled', true).html('<span class="spinner-border spinner-border-sm me-1" role="status" aria-hidden="true"></span> CREATING ACCOUNT...');
         $("#promo_code_error").hide();
         $.ajax({
             url: $(form).attr('action'),
@@ -232,22 +232,22 @@ $('#registerViaEmailForm').validate({
             type: "POST",
             dataType: "json",
             success: function(result) {
-                $(".registerSubmit, #register_via_email").prop('disabled', false);
                 if(result.isSuccess) {
                     $('#auth-modal').modal('hide');
-                    $('#register-modal').modal('hide');
-                    window.location.href = '/crash';
+                    window.location.reload();
                 } else if (result.data && result.data.is_email_exist == 1) {
+                    $(".registerSubmit, #register_via_email").prop('disabled', false).html('CREATE ACCOUNT');
                     if (typeof switchAuthTab === 'function') switchAuthTab('login');
                     $("#username").val(result.data.email || '');
                     $("#login-error").text(result.message || 'Email already exists. Please sign in.').show();
                 } else {
+                    $(".registerSubmit, #register_via_email").prop('disabled', false).html('CREATE ACCOUNT');
                     $("#promo_code_error").show();
                     $("#promo_code_error").text(result.message || 'Registration failed');
                 }
             },
             error: function(xhr) {
-                $(".registerSubmit, #register_via_email").prop('disabled', false);
+                $(".registerSubmit, #register_via_email").prop('disabled', false).html('CREATE ACCOUNT');
                 var msg = 'Registration failed. Please check inputs.';
                 if (xhr.responseJSON) {
                     if (xhr.responseJSON.message) msg = xhr.responseJSON.message;

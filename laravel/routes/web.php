@@ -51,7 +51,10 @@ Route::match(['get', 'post'], '/currentlybet', [Gamesetting::class, "currentlybe
 Route::match(['get', 'post'], '/game/currentlybet', [Gamesetting::class, "currentlybet"]);
 
 Route::get('/register', function () {
-    return view('register');
+    return redirect('/crash?auth=register');
+});
+Route::get('/login', function () {
+    return redirect('/crash?auth=login');
 });
 // Auth Login
 Route::post('/auth/login', [Authentication::class, "login"]);
