@@ -77,7 +77,7 @@ class Authentication extends Controller
 
         $user = new User;
         $user->name = $r->name ?: 'Player';
-        $user->image = null;
+        $user->image = '/images/flyboy10x_icon.png';
         $user->mobile = $mobile;
         $user->email = $r->email;
         $user->password = Hash::make($r->password);

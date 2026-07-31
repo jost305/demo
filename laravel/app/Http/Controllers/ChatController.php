@@ -75,7 +75,7 @@ class ChatController extends Controller
                         'room'     => isset($msg->room) ? $msg->room : 'general',
                         'userid'   => $msg->userid,
                         'username' => $msg->username ?? 'Guest',
-                        'avatar'   => $msg->avatar ?? '/images/avtar/av-1.png',
+                        'avatar'   => $msg->avatar ?: '/images/flyboy10x_icon.png',
                         'source'   => isset($msg->source) ? $msg->source : 'web',
                         'badge'    => isset($msg->badge) ? $msg->badge : ((isset($msg->source) && $msg->source === 'telegram') ? 'Telegram' : null),
                         'message'  => e($msg->message),
@@ -116,7 +116,7 @@ class ChatController extends Controller
 
         $userid   = null;
         $username = 'Guest_' . rand(100, 999);
-        $avatar   = '/images/avtar/av-' . rand(1, 72) . '.png';
+        $avatar   = user('image') ?: '/images/flyboy10x_icon.png';
         $badge    = null;
 
         if (session()->has('userlogin')) {

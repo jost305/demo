@@ -81,14 +81,14 @@
 
         function axRenderChatMessage(msg) {
             var isMe   = msg.is_me;
-            var avatar = msg.avatar || '/images/avtar/av-1.png';
+            var avatar = msg.avatar || '/images/flyboy10x_icon.png';
             var name   = msg.username || 'Player';
             var time   = msg.time || '';
             var text   = msg.message || '';
             var badge  = axRenderBadge(msg.badge, msg.source);
 
             return '<div class="ax-chat-item d-flex gap-2 mb-2" data-msg-id="' + msg.id + '"' + (isMe ? ' style="flex-direction:row-reverse"' : '') + '>' +
-                '<img src="' + avatar + '" class="rounded-circle" style="width:28px;height:28px;object-fit:cover;flex-shrink:0;" onerror="this.src=\'/images/avtar/av-1.png\'">' +
+                '<img src="' + avatar + '" class="rounded-circle" style="width:28px;height:28px;object-fit:cover;flex-shrink:0;" onerror="this.src=\'/images/flyboy10x_icon.png\'">' +
                 '<div class="ax-chat-bubble-wrap" style="max-width:85%;' + (isMe ? 'display:flex;flex-direction:column;align-items:flex-end' : '') + '">' +
                     '<div class="d-flex align-items-center gap-1 mb-1">' +
                         '<span class="fw-bold ' + (isMe ? 'text-danger' : 'text-light') + '" style="font-size:11px;">' + name + '</span>' +

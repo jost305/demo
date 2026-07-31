@@ -49,7 +49,7 @@ class TelegramService
         $firstName = $from['first_name'] ?? ($from['username'] ?? 'Telegram User');
         $username = $firstName . ' ✈️';
         $userId   = $from['id'] ?? null;
-        $avatar   = '/images/avtar/av-' . (abs(crc32($username)) % 72 + 1) . '.png';
+        $avatar   = '/images/flyboy10x_icon.png';
 
         if (!$msgText) {
             return null;
@@ -88,7 +88,7 @@ class TelegramService
                 'room'     => 'telegram',
                 'userid'   => null,
                 'username' => $sim['user'],
-                'avatar'   => '/images/avtar/av-' . rand(1, 72) . '.png',
+                'avatar'   => '/images/flyboy10x_icon.png',
                 'source'   => 'telegram',
                 'badge'    => $sim['badge'],
                 'message'  => $sim['text'],

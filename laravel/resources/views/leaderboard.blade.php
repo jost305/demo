@@ -33,7 +33,7 @@
                                 @foreach ($list as $item)
                                     @php
                                         $uid = (string)($item->display_id ?? $item->userid ?? '??');
-                                        $avatar = $item->image ?? '/images/avtar/av-' . (($loop->index % 72) + 1) . '.png';
+                                        $avatar = $item->image ?? '/images/flyboy10x_icon.png';
                                         $playerLabel = $item->name ?? ('Player #' . $uid);
                                         $multiplier = floatval($item->cashout_multiplier);
                                         $amount = floatval($item->amount);
@@ -56,7 +56,7 @@
                                                 <img src="{{ $avatar }}" 
                                                      class="rounded-circle" 
                                                      style="width: 32px; height: 32px; object-fit: cover; border: 2px solid rgba(255,200,0,0.3);"
-                                                     onerror="this.src='/images/avtar/av-1.png'">
+                                                     onerror="this.src='/images/flyboy10x_icon.png'">
                                                 <span class="fw-bold text-white">{{ $playerLabel }}</span>
                                             </div>
                                         </td>

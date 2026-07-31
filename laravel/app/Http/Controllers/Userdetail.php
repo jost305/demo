@@ -95,7 +95,7 @@ class Userdetail extends Controller
         $isSuccess = false;
         $message = "Something went wrong!";
         $notification = "";
-        $avatar = "images/avtar/av-1.png";
+        $avatar = user('image') ?: "/images/flyboy10x_icon.png";
         $data = array("username"=>user('id'),"avatar"=>$avatar,"notification"=>$notification);
         $message = "Success";
         $isSuccess = true;
