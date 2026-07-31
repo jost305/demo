@@ -11,8 +11,8 @@
                     <span class="d-inline-block rounded-circle me-1" style="width:6px;height:6px; background: #b5f600;"></span>
                     <span id="ax-online-count">68</span> Online
                 </span>
-                <a href="https://t.me/" target="_blank" class="btn btn-xs btn-outline-info rounded-pill px-2 py-0.5 f-10 d-inline-flex align-items-center gap-1" title="Join Telegram Group">
-                    <span>📱 Telegram</span>
+                <a href="https://t.me/flyboy10x" target="_blank" class="btn btn-xs btn-outline-info rounded-pill px-2 py-0.5 f-10 d-inline-flex align-items-center gap-1" title="Join Official Telegram Group">
+                    <span>📱 Telegram @flyboy10x</span>
                 </a>
             </div>
         </div>
