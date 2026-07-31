@@ -45,13 +45,16 @@ function user($parameter, $id = null)
 {
     if ($id == null) {
         $userlogin = session()->get('userlogin');
+        if (is_object($userlogin)) {
+            return $userlogin->{$parameter} ?? null;
+        }
         if (is_array($userlogin) && isset($userlogin[$parameter])) {
             return $userlogin[$parameter];
         }
         return null;
     } else {
         $data = User::where('id', $id)->first();
-        return $data ? $data->{$parameter} : null;
+        return $data ? ($data->{$parameter} ?? null) : null;
     }
 }
 function userdetail($id, $parameter)

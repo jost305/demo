@@ -151,6 +151,11 @@ class FlutterwaveController extends Controller
                     addtransaction($userId, 'Flutterwave', $ref, 'credit', $amountPaid, 'recharge', 'Successful Deposit', '1');
                 }
 
+                // Award 10 FuelPoints for successful deposit
+                try {
+                    \App\Services\FuelPointService::awardDeposit((int)$userId, $amountPaid);
+                } catch (\Throwable $fpe) {}
+
                 // Platform notification
                 try {
                     PlatformNotificationService::create(

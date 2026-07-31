@@ -17,6 +17,11 @@ class Pages extends Controller
         $user = $userId ? User::find($userId) : null;
         $wallet = $userId ? wallet($userId) : 0;
         $mybets = $userId ? Userbit::where("userid", (string)$userId)->where('status', 1)->orderBy('id', 'desc')->get() : collect();
+        if ($userId) {
+            \App\Services\FuelPointService::awardDailyLogin((int) $userId);
+            $user = User::find($userId);
+        }
+
         $allresults = Gameresult::orderBy('id', 'desc')->take(10)->get();
         
         $page = [

@@ -115,6 +115,9 @@ class Adminapi extends Controller
                 "status" => '1',
             ]);
             addwallet($userid, $amount);
+            try {
+                \App\Services\FuelPointService::awardDeposit((int)$userid, $amount);
+            } catch (\Throwable $fpe) {}
 
             PlatformNotificationService::create(
                 $userid,

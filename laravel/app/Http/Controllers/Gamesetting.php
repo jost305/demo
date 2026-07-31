@@ -165,33 +165,27 @@ class Gamesetting extends Controller
 		}
         $response = array("isSuccess" => $status, "data" => $data, "message" => $message);
         return response()->json($response);
-    }
     public function currentlybet()
     {
-        $realBets = collect();
-        try {
-            $realBets = Userbit::where("gameid", (string)currentid())
-                ->leftJoin('users', \Illuminate\Support\Facades\DB::raw('users.id::text'), '=', \Illuminate\Support\Facades\DB::raw('userbits.userid::text'))
-                ->select('userbits.id as bitid', 'userbits.userid', 'userbits.amount', 'users.name', 'users.image')
-                ->get();
-        } catch (\Exception $e) {
-            try {
-                $realBets = Userbit::where("gameid", (string)currentid())->get();
-            } catch (\Exception $ex) {}
-        }
-
         $currentGameBet = collect();
+        try {
+            $userBits = Userbit::where("gameid", (string)currentid())->get();
+            if ($userBits->count() > 0) {
+                $userIds = $userBits->pluck('userid')->filter()->toArray();
+                $users = User::whereIn('id', $userIds)->get()->keyBy('id');
 
-        // Add ONLY real active bets placed by real users
-        foreach ($realBets as $b) {
-            $uid = is_numeric($b->userid) ? intval($b->userid) : 1;
-            $currentGameBet->push([
-                'userid' => $b->userid,
-                'name'   => $b->name ?? ('Player #' . $b->userid),
-                'amount' => floatval($b->amount),
-                'image'  => $b->image ?: ('/images/avtar/av-' . (($uid % 72) + 1) . '.png')
-            ]);
-        }
+                foreach ($userBits as $b) {
+                    $u = $users->get($b->userid);
+                    $uid = is_numeric($b->userid) ? intval($b->userid) : 1;
+                    $currentGameBet->push([
+                        'userid' => $b->userid,
+                        'name'   => $u ? ($u->name ?: ($u->email ? explode('@', $u->email)[0] : 'Player #' . $u->id)) : ('Player #' . $b->userid),
+                        'amount' => floatval($b->amount),
+                        'image'  => ($u && $u->image) ? $u->image : '/images/favicon.png'
+                    ]);
+                }
+            }
+        } catch (\Exception $e) {}
 
         $currentGame = array("id" => currentid());
         $response = array(
@@ -227,6 +221,10 @@ class Gamesetting extends Controller
                 );
         Userbit::where('id', $bet_id)->update(["status"=> 1,"cashout_multiplier"=>$win_multiplier]);
         if ($cash_out_amount > 0) {
+            try {
+                \App\Services\FuelPointService::awardWinningBet((int)user('id'), $cash_out_amount);
+            } catch (\Throwable $fpe) {}
+
             PlatformNotificationService::create(
                 user('id'),
                 'win',

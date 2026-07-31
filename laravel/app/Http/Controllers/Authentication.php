@@ -104,6 +104,11 @@ class Authentication extends Controller
             // Log user in immediately upon registration
             $r->session()->put('userlogin', $user);
 
+            // Award 20 FP to referrer if valid promocode used
+            if ($r->promocode) {
+                \App\Services\FuelPointService::awardReferral((int)$r->promocode, (int)$user->id);
+            }
+
             $data = array("username" => $user->email, "password" => $r->password, "token" => csrf_token());
             $isSuccess = true;
             $message = "Registration successful!";
