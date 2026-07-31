@@ -987,7 +987,7 @@ function Header(_ref4) {
     );
 }
 
-// --- AVIATOR CANVAS GAME COMPONENT ---
+// --- AVIATOR CANVAS GAME COMPONENT WITH PARTICLE ENGINE ---
 function AviatorCanvas(_ref5) {
     var gameState = _ref5.gameState;
     var multiplier = _ref5.multiplier;
@@ -997,16 +997,17 @@ function AviatorCanvas(_ref5) {
     var planeImgRef = useRef(null);
     var bgImgRef = useRef(null);
     var sprite2Ref = useRef(null);
-    var sprite3Ref = useRef(null);
     var xAxisRef = useRef(null);
     var yAxisRef = useRef(null);
 
     var bgAngleRef = useRef(0);
     var animFrameRef = useRef(0);
+    var particlesRef = useRef([]);
 
     useEffect(function () {
+        // High-res FlyBoy Jet emblem & legacy sprites
         var planeImg = new Image();
-        planeImg.src = '/images/p.png';
+        planeImg.src = '/images/flyboy10x_icon.png';
         planeImgRef.current = planeImg;
 
         var bgImg = new Image();
@@ -1014,12 +1015,8 @@ function AviatorCanvas(_ref5) {
         bgImgRef.current = bgImg;
 
         var sp2 = new Image();
-        sp2.src = '/images/sprite2.png';
+        sp2.src = '/images/p.png';
         sprite2Ref.current = sp2;
-
-        var sp3 = new Image();
-        sp3.src = '/images/sprite3.png';
-        sprite3Ref.current = sp3;
 
         var xAxis = new Image();
         xAxis.src = '/images/x-axis.png';
@@ -1049,27 +1046,27 @@ function AviatorCanvas(_ref5) {
             ctx.imageSmoothingEnabled = true;
             ctx.imageSmoothingQuality = 'high';
 
-            // Background fill
+            // Background Fill
             var bgGrad = ctx.createLinearGradient(0, 0, 0, height);
-            bgGrad.addColorStop(0, '#0a0b10');
-            bgGrad.addColorStop(1, '#131522');
+            bgGrad.addColorStop(0, '#020617');
+            bgGrad.addColorStop(1, '#0f172a');
             ctx.fillStyle = bgGrad;
             ctx.fillRect(0, 0, width, height);
 
-            // Draw Rotating Background Rays Image
+            // Rotating Background Rays
             if (bgImgRef.current && bgImgRef.current.complete) {
                 ctx.save();
                 ctx.translate(width / 2, height / 2);
-                bgAngleRef.current += 0.003;
+                bgAngleRef.current += 0.0025;
                 ctx.rotate(bgAngleRef.current);
-                ctx.globalAlpha = 0.18;
-                var bgSize = Math.max(width, height) * 1.5;
+                ctx.globalAlpha = 0.15;
+                var bgSize = Math.max(width, height) * 1.6;
                 ctx.drawImage(bgImgRef.current, -bgSize / 2, -bgSize / 2, bgSize, bgSize);
                 ctx.restore();
             }
 
-            // Grid lines
-            ctx.strokeStyle = 'rgba(255, 255, 255, 0.05)';
+            // Grid Lines
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.04)';
             ctx.lineWidth = 1;
             for (var x = 0; x < width; x += 50) {
                 ctx.beginPath();ctx.moveTo(x, 0);ctx.lineTo(x, height);ctx.stroke();
@@ -1078,14 +1075,14 @@ function AviatorCanvas(_ref5) {
                 ctx.beginPath();ctx.moveTo(0, y);ctx.lineTo(width, y);ctx.stroke();
             }
 
-            // Draw X-Axis & Y-Axis images
+            // Axis Overlay Images
             if (xAxisRef.current && xAxisRef.current.complete) {
-                ctx.globalAlpha = 0.4;
+                ctx.globalAlpha = 0.35;
                 ctx.drawImage(xAxisRef.current, 0, height - 20, width, 18);
                 ctx.globalAlpha = 1.0;
             }
             if (yAxisRef.current && yAxisRef.current.complete) {
-                ctx.globalAlpha = 0.4;
+                ctx.globalAlpha = 0.35;
                 ctx.drawImage(yAxisRef.current, 10, 0, 18, height);
                 ctx.globalAlpha = 1.0;
             }
@@ -1099,16 +1096,17 @@ function AviatorCanvas(_ref5) {
                 var endX = startX + (width - 140) * progress;
                 var endY = startY - (height - 110) * Math.pow(progress, 0.8);
 
-                // Flight curve path gradient
+                // Flight Curve Gradient Fill
                 var pathGrad = ctx.createLinearGradient(startX, startY, endX, endY);
-                pathGrad.addColorStop(0, 'rgba(255, 30, 70, 0.05)');
+                pathGrad.addColorStop(0, 'rgba(255, 30, 70, 0.02)');
+                pathGrad.addColorStop(0.7, 'rgba(255, 30, 70, 0.35)');
                 pathGrad.addColorStop(1, 'rgba(255, 30, 70, 0.85)');
 
                 ctx.beginPath();
                 ctx.moveTo(startX, startY);
                 ctx.quadraticCurveTo(startX + (endX - startX) * 0.5, startY, endX, endY);
                 ctx.strokeStyle = '#ff1e46';
-                ctx.lineWidth = 4;
+                ctx.lineWidth = 4.5;
                 ctx.stroke();
 
                 ctx.lineTo(endX, startY);
@@ -1116,10 +1114,46 @@ function AviatorCanvas(_ref5) {
                 ctx.fillStyle = pathGrad;
                 ctx.fill();
 
-                // Draw Plane Sprite Sheet or Vector Plane at tip of red curve
+                // Particle Engine: Jet Exhaust Smoke & Fire
+                if (gameState === 'FLYING') {
+                    // Spawn new particles behind jet nozzle
+                    var particles = particlesRef.current;
+                    for (var pIdx = 0; pIdx < 2; pIdx++) {
+                        particles.push({
+                            x: endX - 25,
+                            y: endY + (Math.random() * 6 - 3),
+                            vx: -Math.random() * 3 - 1,
+                            vy: Math.random() * 1.5 - 0.75,
+                            life: 1.0,
+                            size: Math.random() * 4 + 2,
+                            color: Math.random() > 0.4 ? '#ff1e46' : Math.random() > 0.5 ? '#facc15' : '#ffffff'
+                        });
+                    }
+
+                    // Update & draw active particles
+                    for (var i = particles.length - 1; i >= 0; i--) {
+                        var p = particles[i];
+                        p.x += p.vx;
+                        p.y += p.vy;
+                        p.life -= 0.04;
+                        if (p.life <= 0) {
+                            particles.splice(i, 1);
+                        } else {
+                            ctx.save();
+                            ctx.globalAlpha = p.life * 0.8;
+                            ctx.fillStyle = p.color;
+                            ctx.beginPath();
+                            ctx.arc(p.x, p.y, Math.max(1, p.size * p.life), 0, Math.PI * 2);
+                            ctx.fill();
+                            ctx.restore();
+                        }
+                    }
+                }
+
+                // Render Plane Sprite at Tip of Curve
                 if (gameState !== 'CRASHED') {
                     animFrameRef.current += 1;
-                    var activeSprite = sprite3Ref.current && sprite3Ref.current.complete && sprite3Ref.current.naturalWidth > 0 ? sprite3Ref.current : sprite2Ref.current && sprite2Ref.current.complete && sprite2Ref.current.naturalWidth > 0 ? sprite2Ref.current : planeImgRef.current && planeImgRef.current.complete && planeImgRef.current.naturalWidth > 0 ? planeImgRef.current : null;
+                    var activeSprite = planeImgRef.current && planeImgRef.current.complete && planeImgRef.current.naturalWidth > 0 ? planeImgRef.current : sprite2Ref.current && sprite2Ref.current.complete && sprite2Ref.current.naturalWidth > 0 ? sprite2Ref.current : null;
 
                     ctx.save();
                     ctx.translate(endX, endY);
@@ -1134,33 +1168,33 @@ function AviatorCanvas(_ref5) {
                         var frameWidth = isSpriteSheet ? fw / numFrames : fw;
                         var frameHeight = fh;
                         var currentFrame = isSpriteSheet ? Math.floor(animFrameRef.current / 5) % numFrames : 0;
-                        var destWidth = 85;
+                        var destWidth = 80;
                         var destHeight = frameWidth > 0 && !isNaN(frameHeight / frameWidth) ? frameHeight / frameWidth * destWidth : 45;
 
                         if (!isNaN(destWidth) && !isNaN(destHeight) && destWidth > 0 && destHeight > 0) {
                             if (isSpriteSheet) {
-                                ctx.drawImage(activeSprite, currentFrame * frameWidth, 0, frameWidth, frameHeight, -destWidth + 10, -destHeight / 2, destWidth, destHeight);
+                                ctx.drawImage(activeSprite, currentFrame * frameWidth, 0, frameWidth, frameHeight, -destWidth + 12, -destHeight / 2, destWidth, destHeight);
                             } else {
-                                ctx.drawImage(activeSprite, -destWidth + 10, -destHeight / 2, destWidth, destHeight);
+                                ctx.drawImage(activeSprite, -destWidth + 12, -destHeight / 2, destWidth, destHeight);
                             }
                             planeDrawn = true;
                         }
                     }
 
-                    // Reliable fallback vector plane drawing if image sprite is loading or absent
+                    // Fallback Vector Jet Drawing
                     if (!planeDrawn) {
                         ctx.fillStyle = '#ff1e46';
                         ctx.beginPath();
-                        ctx.moveTo(12, 0);
-                        ctx.lineTo(-38, -16);
-                        ctx.lineTo(-24, 0);
-                        ctx.lineTo(-38, 16);
+                        ctx.moveTo(14, 0);
+                        ctx.lineTo(-36, -15);
+                        ctx.lineTo(-22, 0);
+                        ctx.lineTo(-36, 15);
                         ctx.closePath();
                         ctx.fill();
 
                         ctx.fillStyle = '#ffffff';
                         ctx.beginPath();
-                        ctx.arc(2, 0, 3.5, 0, Math.PI * 2);
+                        ctx.arc(3, 0, 3.5, 0, Math.PI * 2);
                         ctx.fill();
                     }
 
@@ -1243,7 +1277,7 @@ function AviatorCanvas(_ref5) {
                 null,
                 React.createElement(
                     'div',
-                    { className: 'text-6xl md:text-8xl font-black text-white font-mono tracking-tight', style: { textShadow: '0 0 20px rgba(255,255,255,0.3)' } },
+                    { className: 'text-6xl md:text-8xl font-black text-white font-mono tracking-tight', style: { textShadow: '0 0 25px rgba(255,255,255,0.35)' } },
                     displayMult.toFixed(2),
                     React.createElement(
                         'span',
@@ -1272,6 +1306,7 @@ function AviatorCanvas(_ref5) {
 }
 
 // --- LIVE BETS SIDE PANEL COMPONENT ---
+
 function LiveBetsPanel(_ref6) {
     var multiplier = _ref6.multiplier;
     var gameState = _ref6.gameState;
