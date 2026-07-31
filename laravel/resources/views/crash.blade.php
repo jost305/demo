@@ -1100,11 +1100,11 @@
                     <ul class="list-unstyled limit-rules">
                         <li class="list-group-item">
                             Minimum Bet:
-                            <span class="badge badge-success px-2 font-family-number">10 ₦ </span>
+                            <span class="badge badge-success px-2 font-family-number">₦5.00</span>
                         </li>
                         <li class="list-group-item">
                             Maximum Bet:
-                            <span class="badge badge-success px-2 font-family-number">8000 ₦ </span>
+                            <span class="badge badge-success px-2 font-family-number">₦50.00</span>
                         </li>
                         <li class="list-group-item">
                             Maximum win for one bet:
@@ -1295,15 +1295,15 @@
                 </audio>
                         <li class="list-group-item">
                             Minimum Bet:
-                            <span class="badge badge-success px-2 font-family-number">10 ₦ </span>
+                            <span class="badge badge-success px-2 font-family-number">₦5.00</span>
                         </li>
                         <li class="list-group-item">
                             Maximum Bet:
-                            <span class="badge badge-success px-2 font-family-number">8000 ₦ </span>
+                            <span class="badge badge-success px-2 font-family-number">₦50.00</span>
                         </li>
                         <li class="list-group-item">
                             Maximum win for one bet:
-                            <span class="badge badge-success px-2 font-family-number">800000 ₦ </span>
+                            <span class="badge badge-success px-2 font-family-number">₦500,000</span>
                         </li>
                     </ul>
                 </div>
@@ -1573,7 +1573,9 @@
     <script src="/js/dataTables.bootstrap5.min.js"></script>
     <script src="/js/dataTables.responsive.min.js"></script>
     <script src="https://unpkg.com/sweetalert/dist/sweetalert.min.js"></script>
+    <script src="https://checkout.flutterwave.com/v3.js"></script>
     <script>
+
         var successMessage = '';
         var errorMessage = '';
         let game_id = 0;
@@ -1712,6 +1714,56 @@
     </script>
 
     @include('include.mobile-nav')
+
+    {{-- Flutterwave Deposit Callback Notification --}}
+    @if(request()->get('deposit') === 'success')
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var amt = '{{ request()->get("amount") }}';
+        var amtTxt = amt ? '₦' + parseFloat(amt).toLocaleString('en-NG', {minimumFractionDigits: 2}) : '';
+        swal({
+            title: "Deposit Successful! 🎉",
+            text: "Your wallet has been credited" + (amtTxt ? " with " + amtTxt : "") + ". Start flying!",
+            icon: "success",
+            button: "LET'S FLY ✈"
+        });
+    });
+    </script>
+    @elseif(request()->get('deposit') === 'failed')
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        swal({
+            title: "Payment Failed",
+            text: "{{ request()->get('msg', 'Your Flutterwave payment could not be verified. Please try again or contact support.') }}",
+            icon: "error",
+            button: "Try Again"
+        });
+    });
+    </script>
+    @elseif(request()->get('deposit') === 'cancelled')
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        swal({
+            title: "Payment Cancelled",
+            text: "Your deposit was cancelled. You can try again anytime.",
+            icon: "warning",
+            button: "OK"
+        });
+    });
+    </script>
+    @elseif(request()->get('deposit') === 'error')
+    <script>
+    document.addEventListener('DOMContentLoaded', function() {
+        swal({
+            title: "Payment Error",
+            text: "{{ request()->get('msg', 'An error occurred processing your payment. Please try again.') }}",
+            icon: "error",
+            button: "OK"
+        });
+    });
+    </script>
+    @endif
+
 </body>
 
 </html>

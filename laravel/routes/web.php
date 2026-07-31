@@ -130,7 +130,16 @@ Route::group(['middleware' => ['isUser']], function () {
     Route::post('/insert/withdrawal', [Adminapi::class, "withdrawal_query"]);
     Route::post('/depositNow', [Adminapi::class, "depositNow"]);
     Route::post('/wallet_transfer', [Userdetail::class, "wallet_transfer"]);
+
+    // Flutterwave Payment Routes
+    Route::post('/payment/flutterwave/initialize', [\App\Http\Controllers\FlutterwaveController::class, 'initialize']);
 });
+
+Route::get('/payment/flutterwave/callback', [\App\Http\Controllers\FlutterwaveController::class, 'callback']);
+Route::post('/payment/flutterwave/webhook', [\App\Http\Controllers\FlutterwaveController::class, 'webhook']);
+Route::post('/payment/flutterwave/verify', [\App\Http\Controllers\FlutterwaveController::class, 'verify']);
+
 
 Route::match(['get', 'post'], '/currentlybet', [Gamesetting::class, "currentlybet"]);
 Route::match(['get', 'post'], '/game/currentlybet', [Gamesetting::class, "currentlybet"]);
+

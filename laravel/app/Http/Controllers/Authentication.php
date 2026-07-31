@@ -90,7 +90,7 @@ class Authentication extends Controller
         if ($user->save()) {
             $wallet = new Wallet;
             $wallet->userid = $user->id;
-            $wallet->amount = setting('initial_bonus') ?: 500;
+            $wallet->amount = (float) (setting('initial_bonus') ?: 0);
             $wallet->save();
 
             PlatformNotificationService::create(

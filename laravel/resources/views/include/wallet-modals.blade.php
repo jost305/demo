@@ -246,36 +246,31 @@
                     <button type="button" class="ax-wallet-tab active">DEPOSIT</button>
                     <button type="button" class="ax-wallet-tab" onclick="switchWalletModal('withdraw')">WITHDRAW</button>
                 </div>
-
                 <!-- Payment Method -->
                 <div class="ax-section-label">SELECT PAYMENT METHOD</div>
                 <div class="ax-pay-grid">
-                    <div class="ax-pay-method selected" onclick="selectPayMethod(this,'6')">
-                        <img src="images/app-logo/interkassa_net_banking.svg" />
-                        Net Banking
-                    </div>
-                    <div class="ax-pay-method" onclick="selectPayMethod(this,'3')">
-                        <img src="images/app-logo/upiMt.svg" />
-                        UPI
+                    <div class="ax-pay-method selected" onclick="selectPayMethod(this,'flutterwave')">
+                        <span class="fs-5 d-block mb-1">💳</span>
+                        Flutterwave (Cards, USSD, Bank Transfer)
                     </div>
                 </div>
-                <input type="hidden" id="dep_modal_gateway" value="6">
+                <input type="hidden" id="dep_modal_gateway" value="flutterwave">
 
                 <!-- Amount -->
-                <div class="ax-section-label">ENTER AMOUNT (₦)</div>
+                <div class="ax-section-label">ENTER DEPOSIT AMOUNT (NGN ₦)</div>
                 <div class="ax-amount-row">
                     <span class="ax-amount-symbol">₦</span>
-                    <input type="number" class="ax-amount-input" id="modal_deposit_amount" value="1000" min="100" placeholder="Min {{ setting('min_recharge') ?: '500' }}">
+                    <input type="number" class="ax-amount-input" id="modal_deposit_amount" value="500" min="100" step="1" placeholder="Min ₦100">
                 </div>
                 <div class="ax-chips">
-                    <div class="ax-chip" onclick="setDepAmt(500)">500</div>
-                    <div class="ax-chip active" onclick="setDepAmt(1000)">1,000</div>
-                    <div class="ax-chip" onclick="setDepAmt(2500)">2,500</div>
-                    <div class="ax-chip" onclick="setDepAmt(5000)">5,000</div>
+                    <div class="ax-chip active" onclick="setDepAmt(500)">₦500</div>
+                    <div class="ax-chip" onclick="setDepAmt(1000)">₦1,000</div>
+                    <div class="ax-chip" onclick="setDepAmt(2000)">₦2,000</div>
+                    <div class="ax-chip" onclick="setDepAmt(5000)">₦5,000</div>
                 </div>
 
-                <button type="button" class="ax-cta-green" onclick="submitModalDeposit()">
-                    ✈ DEPOSIT NOW
+                <button type="button" class="ax-cta-green" id="dep_submit_btn" onclick="submitModalDeposit()">
+                    ⚡ PAY WITH FLUTTERWAVE
                 </button>
             </div>
         </div>
@@ -300,31 +295,44 @@
                     <button type="button" class="ax-wallet-tab active">WITHDRAW</button>
                 </div>
 
-                <!-- Balance -->
-                <div class="ax-balance-banner">
-                    <span class="ax-balance-label">AVAILABLE BALANCE</span>
-                    <span class="ax-balance-value">₦{{ session()->has('userlogin') ? wallet(user('id')) : '0' }}</span>
-                </div>
-
-                <form action="/insert/withdrawal" method="post" id="modal_withdraw_form">
+                <form action="/insert/withdrawal" method="POST">
                     @csrf
-                    <input type="hidden" name="payment_gateway_type" value="6">
+                    <div class="ax-balance-banner">
+                        <div>
+                            <div class="ax-balance-label">AVAILABLE BALANCE</div>
+                            <div class="ax-balance-value">₦ {{ number_format(floatval(wallet(user('id'))), 2) }}</div>
+                        </div>
+                    </div>
 
-                    <div style="margin-bottom:12px;">
-                        <label class="ax-field-label" for="modal_withdraw_amount">WITHDRAWAL AMOUNT (₦)</label>
-                        <input type="number" class="ax-input" id="modal_withdraw_amount" name="amount" placeholder="Enter amount" required>
+                    <div class="mb-3">
+                        <label class="ax-field-label">WITHDRAWAL AMOUNT (₦)</label>
+                        <input type="number" name="amount" class="ax-input" min="100" placeholder="Min 100" required>
                     </div>
-                    <div style="margin-bottom:12px;">
-                        <label class="ax-field-label" for="modal_account_no">ACCOUNT NUMBER</label>
-                        <input type="text" class="ax-input" id="modal_account_no" name="account_no" placeholder="Bank Account Number" required>
+
+                    <div class="mb-3">
+                        <label class="ax-field-label">NIGERIAN BANK NAME</label>
+                        <select name="bank_name" class="ax-input" required>
+                            <option value="GTBank">GTBank (Guaranty Trust Bank)</option>
+                            <option value="Access Bank">Access Bank</option>
+                            <option value="Zenith Bank">Zenith Bank</option>
+                            <option value="First Bank">First Bank of Nigeria</option>
+                            <option value="UBA">United Bank for Africa (UBA)</option>
+                            <option value="Kuda Bank">Kuda Microfinance Bank</option>
+                            <option value="OPay">OPay Digital Services</option>
+                            <option value="PalmPay">PalmPay</option>
+                            <option value="Moniepoint">Moniepoint Microfinance Bank</option>
+                            <option value="Fidelity Bank">Fidelity Bank</option>
+                        </select>
                     </div>
-                    <div style="margin-bottom:12px;">
-                        <label class="ax-field-label" for="modal_account_holder">ACCOUNT HOLDER NAME</label>
-                        <input type="text" class="ax-input" id="modal_account_holder" name="account_holder_name" placeholder="Full Name" required>
+
+                    <div class="mb-3">
+                        <label class="ax-field-label">ACCOUNT NUMBER (NUBAN)</label>
+                        <input type="text" name="account_no" class="ax-input" maxlength="10" placeholder="10-digit NUBAN" required>
                     </div>
-                    <div style="margin-bottom:12px;">
-                        <label class="ax-field-label" for="modal_ifsc">IFSC / BANK CODE</label>
-                        <input type="text" class="ax-input" id="modal_ifsc" name="ifsc_code" placeholder="IFSC Code" required>
+
+                    <div class="mb-3">
+                        <label class="ax-field-label">ACCOUNT HOLDER NAME</label>
+                        <input type="text" name="holdername" class="ax-input" placeholder="Full Account Name" required>
                     </div>
 
                     <button type="submit" class="ax-cta-red">
@@ -359,29 +367,82 @@ function selectPayMethod(el, gatewayId) {
 function submitModalDeposit() {
     var amt = parseFloat($('#modal_deposit_amount').val());
     if (!amt || amt < 100) {
-        if (typeof toastr !== 'undefined') toastr.error('Please enter a valid amount (min ₦100)');
-        else alert('Please enter a valid amount (min ₦100)');
+        alert('Please enter a valid deposit amount (minimum ₦100)');
         return;
     }
-    var gateway = $('#dep_modal_gateway').val() || '6';
+
+    var btn = $('#dep_submit_btn');
+    btn.prop('disabled', true).html('⚡ LOADING...');
+
     $.ajax({
-        url: '/depositNow',
+        url: '/payment/flutterwave/initialize',
         type: 'POST',
-        data: { _token: '{{ csrf_token() }}', amount: amt, payment_gateway_type: gateway },
+        data: { _token: '{{ csrf_token() }}', amount: amt },
         dataType: 'json',
         success: function(res) {
-            if (res && (res.status == 1 || res.isSuccess)) {
-                if (typeof toastr !== 'undefined') toastr.success('Deposit request submitted!');
-                bootstrap.Modal.getInstance(document.getElementById('deposit-modal')).hide();
+            btn.prop('disabled', false).html('⚡ PAY WITH FLUTTERWAVE');
+
+            if (res && res.status === 'success') {
+                // Close the deposit modal first
+                var depModal = bootstrap.Modal.getInstance(document.getElementById('deposit-modal'));
+                if (depModal) depModal.hide();
+
+                // Launch Flutterwave Inline payment widget (same-window overlay)
+                FlutterwaveCheckout({
+                    public_key:      res.public_key,
+                    tx_ref:          res.tx_ref,
+                    amount:          res.amount,
+                    currency:        res.currency || 'NGN',
+                    payment_options: 'card,banktransfer,ussd',
+                    customer:        res.customer,
+                    customizations:  res.customizations,
+                    meta:            res.meta,
+                    callback: function(data) {
+                        if (data.status === 'successful') {
+                            // Verify with backend & credit wallet
+                            $.ajax({
+                                url: '/payment/flutterwave/verify',
+                                type: 'POST',
+                                data: {
+                                    _token: '{{ csrf_token() }}',
+                                    transaction_id: data.transaction_id,
+                                    tx_ref: data.tx_ref
+                                },
+                                dataType: 'json',
+                                success: function(vRes) {
+                                    if (vRes && vRes.status === 'success') {
+                                        swal({
+                                            title: "Deposit Successful! 🎉",
+                                            text: "₦" + parseFloat(vRes.amount).toLocaleString('en-NG', {minimumFractionDigits:2}) + " has been credited to your FlyBoy wallet. Start flying!",
+                                            icon: "success",
+                                            button: "LET'S FLY ✈"
+                                        }).then(function() {
+                                            window.location.reload();
+                                        });
+                                    } else {
+                                        swal("Verification Pending", (vRes && vRes.message) || "Your payment was received but verification is pending. Contact support if balance is not updated within 5 minutes.", "warning");
+                                    }
+                                },
+                                error: function() {
+                                    swal("Verification Error", "Payment was received but could not be verified automatically. Please contact support.", "error");
+                                }
+                            });
+                        }
+                    },
+                    onclose: function() {
+                        // Widget closed without completing — no action needed
+                    }
+                });
             } else {
-                if (typeof toastr !== 'undefined') toastr.error((res && res.message) || 'Deposit failed. Please try again.');
-                else alert((res && res.message) || 'Deposit failed.');
+                alert((res && res.message) || 'Failed to initialize payment. Please try again.');
             }
         },
-        error: function() {
-            if (typeof toastr !== 'undefined') toastr.success('Deposit request sent!');
-            bootstrap.Modal.getInstance(document.getElementById('deposit-modal')).hide();
+        error: function(xhr) {
+            btn.prop('disabled', false).html('⚡ PAY WITH FLUTTERWAVE');
+            var err = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Please log in to deposit funds.';
+            alert(err);
         }
     });
 }
 </script>
+
