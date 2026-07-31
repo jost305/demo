@@ -537,37 +537,8 @@ function GameObject(spritesheet, x, y, width, height, timePerFrame, numberOfFram
     }
     // window.onload=function(){
     draw(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, frameIndex, scale);
-    // }
-
-    // draw overlay animated sprite (propeller/flame) on top of plane
-    try {
-        if (overlayReady && overlayImg && overlayFrameW > 0) {
-            if (overlayFrames > 1 && Date.now() - overlayLastUpdate >= overlayFrameTime) {
-                overlayFrameIndex = (overlayFrameIndex + 1) % overlayFrames;
-                overlayLastUpdate = Date.now();
-            }
-
-            var drawWidth = width * scale;
-            var drawHeight = height * scale;
-            var drawX = x + ((width - drawWidth) / 2);
-            var drawY = y + ((height - drawHeight) / 2);
-
-            var overlayScale = Math.max(0.25, Math.min(0.45, scale * 0.35));
-            var ox = drawX + drawWidth * 0.65;
-            var oy = drawY + drawHeight * 0.20;
-
-            var sw = overlayFrameW;
-            var sh = overlayFrameH;
-            var dw = Math.floor(drawWidth * 0.55);
-            var dh = Math.floor(drawHeight * 0.55);
-
-            var sx = overlayFrames > 1 ? overlayFrameIndex * sw : 0;
-            var sy = 0;
-
-            ctx.drawImage(overlayImg, sx, sy, sw, sh, ox - dw / 2, oy - dh / 2, dw, dh);
-        }
-    } catch (e) {}
 }
+
 
 
 function drawBezierSplit(ctx, x0, y0, x1, y1, x2, y2, t0, t1, imgTag) {
