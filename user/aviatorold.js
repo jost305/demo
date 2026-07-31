@@ -335,6 +335,9 @@ function crash_plane(inc_no) {
     soundPlay();
     window.clearInterval(StopPlaneIntervalID);
     $(".flew_away_section").show();
+    if (window.canvasShowCrashedState) {
+        window.canvasShowCrashedState(inc_no);
+    }
     $("#auto_increment_number").addClass('text-danger');
     stopPlane();
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
@@ -549,6 +552,9 @@ function new_game_generated() {
     $("#running_type").text('bet time');
     $("#auto_increment_number_div").hide();
     //khushbu
+    if (window.canvasShowPreparingState) {
+        window.canvasShowPreparingState();
+    }
     current_game_count = 0;
 
     let is_main_auto_bet_checked = $("#main_auto_bet").prop('checked');
@@ -603,6 +609,9 @@ function lets_fly_one() {
     is_game_generated = 0;
     $(".stage-board").addClass('blink_section');
     $(".bet-controls").addClass('blink_section');
+    if (window.canvasShowTakeoffState) {
+        window.canvasShowTakeoffState();
+    }
 }
 
 function lets_fly() {
@@ -695,6 +704,9 @@ function lets_fly() {
     $('body').removeClass('overflow-hidden');
     // main_counter = 0;
     // extra_counter = 0;
+    if (window.canvasShowFlyingState) {
+        window.canvasShowFlyingState();
+    }
     $('.loading-game').removeClass('show');
     $("#auto_increment_number_div").show();
     setVariable(1);

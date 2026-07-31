@@ -648,7 +648,7 @@
                             </div>
                         </div>
                         <div class="bottom-left-plane">
-                            <img class="plane-static" src="images/p.png" />
+                            <img class="plane-static" src="images/p.png?v={{ env('APP_VERSION', time()) }}" />
                         </div>
                     </div>
                     <img src="images/bg-rotate-old.svg" class="rotateimage rotatebg" />
@@ -1402,7 +1402,7 @@
         var is_game_generated = 0;
     </script>
     <script src="/user/avatar.js"></script>
-    <script src="/user/canvas.js"></script>
+    <script src="/user/canvas.js?v={{ env('APP_VERSION', time()) }}"></script>
     <script src="/user/aviatorold.js?v={{env('APP_VERSION')}}"></script>
     <script src="/user/aviatorbyapp.js?v={{env('APP_VERSION')}}"></script>
 

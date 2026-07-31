@@ -33,6 +33,9 @@ function currentid() {
 }
 
 function gamegenerate() {
+    if (window.canvasShowWaitingState) {
+        window.canvasShowWaitingState();
+    }
     setTimeout(() => {
         $("#auto_increment_number_div").hide();
         $('.loading-game').addClass('show');
@@ -138,7 +141,7 @@ function gamegenerate() {
                                 }
                             });
                             clearInterval(increamtsappgame);
-                            gamegenerate();
+                            setTimeout(gamegenerate, 2200);
                         } else {
                             a = parseFloat(a) + 0.01;
                             incrementor(parseFloat(a).toFixed(2));

@@ -62,13 +62,81 @@ var ny2 = 0;
 var StopPlaneIntervalID1 = 0;
 var startupdown = 0;
 var imgTag;
+var planeImageReady = false;
+var overlayImg;
+var overlayReady = false;
+var overlayFrames = 1;
+var overlayFrameIndex = 0;
+var overlayLastUpdate = Date.now();
+var overlayFrameTime = 120; // ms per frame
+var overlayFrameW = 0;
+var overlayFrameH = 0;
 // const canvas = document.querySelector("canvas");
 // const ctx = canvas.getContext("2d");
 // ctx.fillStyle = "red";
 // ctx.fillRect(0, 0, 40, 40);
 let bmp;
+var gamePhase = 'IDLE';
+var currentGameResult = null;
 
-setVariable();
+function setCanvasState(state, multiplier) {
+    gamePhase = state;
+    currentGameResult = multiplier || currentGameResult;
+
+    switch (state) {
+        case 'IDLE':
+            $('.loading-game').addClass('show');
+            $('.flew_away_section').hide();
+            $('#auto_increment_number_div').hide();
+            $('.bottom-left-plane').show();
+            break;
+        case 'PREPARING':
+            $('.loading-game').addClass('show');
+            $('.flew_away_section').hide();
+            $('#auto_increment_number_div').hide();
+            $('.bottom-left-plane').show();
+            break;
+        case 'TAKEOFF':
+        case 'FLYING':
+            $('.loading-game').removeClass('show');
+            $('.flew_away_section').hide();
+            $('#auto_increment_number_div').show();
+            $('.bottom-left-plane').hide();
+            break;
+        case 'CRASHED':
+            $('.loading-game').removeClass('show');
+            $('.flew_away_section').show();
+            $('#auto_increment_number_div').show();
+            if (multiplier) {
+                $('#auto_increment_number').text(multiplier + 'x');
+            }
+            $('.bottom-left-plane').hide();
+            break;
+        default:
+            $('.loading-game').removeClass('show');
+            $('.flew_away_section').hide();
+            $('.bottom-left-plane').hide();
+            break;
+    }
+}
+
+window.canvasShowWaitingState = function (multiplier) {
+    setCanvasState('IDLE', multiplier);
+};
+window.canvasShowPreparingState = function () {
+    setCanvasState('PREPARING');
+};
+window.canvasShowTakeoffState = function () {
+    setCanvasState('TAKEOFF');
+};
+window.canvasShowFlyingState = function () {
+    setCanvasState('FLYING');
+};
+window.canvasShowCrashedState = function (multiplier) {
+    setCanvasState('CRASHED', multiplier);
+};
+
+setCanvasState('IDLE');
 function setVariable(is_plan = '') {
     cW = $('.stage-board').width();
     cH = $('.stage-board').height();
@@ -107,6 +175,25 @@ function setVariable(is_plan = '') {
     $(".rotateimage").css("width", widthDouble).css("height", widthDouble).css("top", yPoint).css("left", xPoint);
     $(".rotateimage").addClass('rotatebg');
     imgTag = new Image();
+    planeImageReady = false;
+    imgTag.onload = function () {
+        planeImageReady = true;
+    };
+    imgTag.onerror = function () {
+        planeImageReady = false;
+    };
+    // load overlay spritesheet (propeller/flame) - keep as fallback animated raster
+    overlayImg = new Image();
+    overlayReady = false;
+    overlayImg.onload = function () {
+        overlayReady = true;
+        try {
+            overlayFrameW = Math.floor(overlayImg.naturalWidth / overlayFrames);
+            overlayFrameH = overlayImg.naturalHeight;
+        } catch (e) {}
+    };
+    overlayImg.onerror = function () { overlayReady = false; };
+    overlayImg.src = "./images/sprite2.png?v=" + (window.__aviatorAssetVersion || Date.now());
     // if (canvasWidth < 992) {
     //     diffx = calcwidth * 45;
     // }
@@ -117,9 +204,8 @@ function setVariable(is_plan = '') {
     if (canvasWidth < 992) {
         imgheight = 48;
         imgwidth = 200;
-        imgyposition = 45;
-        imgxposition = 10;
-        imgTag.src = "./images/sprite2.png";
+        imgyposition = 34;
+        imgxposition = 190;
         settimeinterval = 40;
         checkuplinedownlinecount = 50;
 
@@ -127,12 +213,13 @@ function setVariable(is_plan = '') {
     else {
         imgheight = 71;
         imgwidth = 300;
-        imgyposition = 66;
-        imgxposition = 15;
-        imgTag.src = "./images/sprite3.png";
+        imgyposition = 46;
+        imgxposition = 290;
         settimeinterval = 20;
         checkuplinedownlinecount = 150;
     }
+
+    imgTag.src = "./images/p.png?v=" + (window.__aviatorAssetVersion || Date.now());
     diffy = calcheight * 70;
     diffx1 = canvasWidth - (calcwidth * 60)
 
@@ -159,10 +246,10 @@ function setVariable(is_plan = '') {
    
     if (is_plan != '') {
         var is_plan_display = imgTag;
+        animatePathDrawing(ctx, verticalLine, (ctx.canvas.height - verticalLine), diffx1, (ctx.canvas.height - verticalLine), xend, yend, 5000, is_plan_display);
     } else {
         var is_plan_display = '';
     }
-    animatePathDrawing(ctx, verticalLine, (ctx.canvas.height - verticalLine), diffx1, (ctx.canvas.height - verticalLine), xend, yend, 5000, is_plan_display);
     // console.log('-----------------------start--------setVariable-------------------------');
 }
 
@@ -182,6 +269,8 @@ function animatePathDrawing(ctx, x0, y0, x1, y1, x2, y2, duration, imgTag) {
 
         if (progress < 1) {
             window.requestAnimationFrame(step);
+        } else {
+            onFlightComplete();
         }
     };
     window.requestAnimationFrame(step);
@@ -219,7 +308,7 @@ if(StopPlaneIntervalID1 == 0){
         ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height);
         ctx.moveTo(nx0, ny0);
         ctx.quadraticCurveTo(nx1, ny1, nx2 + intervalTimex, ny2 - intervalTimey);
-        GameObject(imgTag, (nx2 + intervalTimex) - imgxposition, (ny2 - intervalTimey) - imgyposition, imgwidth, imgheight, 300, 2, ctx);
+        GameObject(imgTag, (nx2 + intervalTimex) - imgxposition, (ny2 - intervalTimey) - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
         ctx.closePath();
         StopPlaneIntervalID1++;
         intervalTimex = intervalTimex + 4;
@@ -382,10 +471,34 @@ function drawVerticalDots() {
     ctx.restore();
 }
 
-function draw(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, frameIndex) {
-    ctx.drawImage(spritesheet, (frameIndex * width / numberOfFrames), 0, (width / numberOfFrames), height, x, y, (width / numberOfFrames), height);
+function getPlaneScale() {
+    var speedFactor = 1;
+    if (typeof window !== 'undefined' && window.currentRoundSpeed) {
+        speedFactor = window.currentRoundSpeed;
+    }
+    var pulseSpeed = 480 / Math.max(speedFactor, 0.6);
+    var amplitude = 0.035;
+    if (speedFactor > 1.4) {
+        amplitude = 0.045;
+    } else if (speedFactor < 0.8) {
+        amplitude = 0.025;
+    }
+    return 1 + (Math.sin(Date.now() / pulseSpeed) * amplitude);
 }
-function GameObject(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx) {
+
+function draw(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, frameIndex, scale = 1) {
+    if (!spritesheet || !planeImageReady || !spritesheet.complete || !spritesheet.naturalWidth) {
+        return;
+    }
+
+    var drawWidth = width * scale;
+    var drawHeight = height * scale;
+    var drawX = x + ((width - drawWidth) / 2);
+    var drawY = y + ((height - drawHeight) / 2);
+
+    ctx.drawImage(spritesheet, drawX, drawY, drawWidth, drawHeight);
+}
+function GameObject(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, scale = 1) {
     spritesheet = spritesheet;             //the spritesheet image
     x = x;                                 //the x coordinate of the object
     y = y;                                 //the y coordinate of the object
@@ -402,8 +515,37 @@ function GameObject(spritesheet, x, y, width, height, timePerFrame, numberOfFram
         lastUpdate = Date.now();
     }
     // window.onload=function(){
-    draw(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, frameIndex);
+    draw(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, frameIndex, scale);
     // }
+
+    // draw overlay animated sprite (propeller/flame) on top of plane
+    try {
+        if (overlayReady && overlayImg && overlayFrameW > 0) {
+            if (overlayFrames > 1 && Date.now() - overlayLastUpdate >= overlayFrameTime) {
+                overlayFrameIndex = (overlayFrameIndex + 1) % overlayFrames;
+                overlayLastUpdate = Date.now();
+            }
+
+            var drawWidth = width * scale;
+            var drawHeight = height * scale;
+            var drawX = x + ((width - drawWidth) / 2);
+            var drawY = y + ((height - drawHeight) / 2);
+
+            var overlayScale = Math.max(0.25, Math.min(0.45, scale * 0.35));
+            var ox = drawX + drawWidth * 0.65;
+            var oy = drawY + drawHeight * 0.20;
+
+            var sw = overlayFrameW;
+            var sh = overlayFrameH;
+            var dw = Math.floor(drawWidth * 0.55);
+            var dh = Math.floor(drawHeight * 0.55);
+
+            var sx = overlayFrames > 1 ? overlayFrameIndex * sw : 0;
+            var sy = 0;
+
+            ctx.drawImage(overlayImg, sx, sy, sw, sh, ox - dw / 2, oy - dh / 2, dw, dh);
+        }
+    } catch (e) {}
 }
 
 
@@ -418,7 +560,7 @@ function drawBezierSplit(ctx, x0, y0, x1, y1, x2, y2, t0, t1, imgTag) {
             animationVerticalDots();
             ctx.moveTo(x0, y0);
             ctx.quadraticCurveTo(x1, y1, x2, y2);
-            GameObject(imgTag, x2 - imgxposition, y2 - imgyposition, imgwidth, imgheight, 300, 2, ctx);
+            GameObject(imgTag, x2 - imgxposition, y2 - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
             ctx.lineWidth = 5;
             ctx.strokeStyle = '#F00B3E';
             ctx.stroke();
@@ -455,7 +597,7 @@ function drawBezierSplit(ctx, x0, y0, x1, y1, x2, y2, t0, t1, imgTag) {
                 ny1 = lerp(lerp(y0, y1, t0), lerp(y1, y2, t0), t1);
             ctx.moveTo(nx0, ny0);
             ctx.quadraticCurveTo(nx1, ny1, nx2, ny2);
-            GameObject(imgTag, nx2 - imgxposition, ny2 - imgyposition, imgwidth, imgheight, 300, 2, ctx);
+            GameObject(imgTag, nx2 - imgxposition, ny2 - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
             ctx.lineWidth = 5;
             ctx.strokeStyle = '#F00B3E';
             ctx.stroke();
@@ -495,7 +637,7 @@ function upplane(x0, y0, x1, y1, x2, y2) {
     var DecreaseX = estimateWidth - (countInterval);
     ctx.moveTo(x0, y0);
     ctx.quadraticCurveTo(x1, y1, DecreaseX, IncreaseY);
-    GameObject(imgTag, DecreaseX - imgxposition, IncreaseY - imgyposition, imgwidth, imgheight, 300, 2, ctx);
+    GameObject(imgTag, DecreaseX - imgxposition, IncreaseY - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
     ctx.lineWidth = 5;
     ctx.strokeStyle = '#F00B3E';
     ctx.stroke();
@@ -521,7 +663,7 @@ function downplane(x0, y0, x1, y1, x2, y2) {
     estimateWidth = IncreaseX;
     ctx.moveTo(x0, y0);
     ctx.quadraticCurveTo(x1, y1, IncreaseX, DecreaseY);
-    GameObject(imgTag, IncreaseX - imgxposition, DecreaseY - imgyposition, imgwidth, imgheight, 300, 2, ctx);
+    GameObject(imgTag, IncreaseX - imgxposition, DecreaseY - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
     ctx.lineWidth = 5;
     ctx.strokeStyle = '#F00B3E';
     ctx.stroke();
