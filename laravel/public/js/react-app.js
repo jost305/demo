@@ -1090,7 +1090,7 @@ function AviatorCanvas(_ref5) {
             var isFlightState = gameState === 'FLYING' || gameState === 'CRASHED' || gameState === 'TAKEOFF' || gameState === 'PREPARING';
             if (isFlightState) {
                 var multVal = Math.max(1.00, multiplier || 1.00);
-                var progress = Math.min((multVal - 1) / 10, 1);
+                var progress = Math.min(Math.pow((multVal - 1) / 6, 0.72), 1);
                 var startX = 40;
                 var startY = height - 40;
                 var endX = startX + (width - 140) * progress;
@@ -2258,30 +2258,32 @@ function ReactAviatorApp() {
         };
     }, []);
 
-    // Autonomous simulation fallback loop to keep flight continuously active
+    // Fast, authentic flight ticker running at 33fps frame interval with dynamic exponential acceleration
     useEffect(function () {
         var interval = undefined;
         if (gameState === 'FLYING') {
             interval = setInterval(function () {
                 setMultiplier(function (prev) {
-                    var next = prev + 0.03 + Math.random() * 0.02;
-                    if (next >= 14.50) {
+                    // Dynamic exponential acceleration: starts snappy and speeds up smoothly
+                    var increment = 0.025 + prev * 0.012 + Math.random() * 0.015;
+                    var next = prev + increment;
+                    if (next >= 12.80) {
                         setGameState('CRASHED');
                         setTimeout(function () {
                             setGameState('WAITING');
-                            setCountdown(4.0);
-                        }, 2500);
+                            setCountdown(3.0);
+                        }, 2200);
                     }
                     return next;
                 });
-            }, 100);
+            }, 30);
         } else if (gameState === 'WAITING') {
             interval = setInterval(function () {
                 setCountdown(function (prev) {
-                    if (prev <= 0.2) {
+                    if (prev <= 0.1) {
                         setGameState('FLYING');
                         setMultiplier(1.00);
-                        return 4.0;
+                        return 3.0;
                     }
                     return prev - 0.1;
                 });

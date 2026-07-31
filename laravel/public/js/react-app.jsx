@@ -682,11 +682,12 @@ function AviatorCanvas({ gameState, multiplier, countdown }) {
             const isFlightState = gameState === 'FLYING' || gameState === 'CRASHED' || gameState === 'TAKEOFF' || gameState === 'PREPARING';
             if (isFlightState) {
                 const multVal = Math.max(1.00, multiplier || 1.00);
-                const progress = Math.min((multVal - 1) / 10, 1);
+                const progress = Math.min(Math.pow((multVal - 1) / 6, 0.72), 1);
                 const startX = 40;
                 const startY = height - 40;
                 const endX = startX + (width - 140) * progress;
                 const endY = startY - (height - 110) * Math.pow(progress, 0.8);
+
 
                 // Flight Curve Gradient Fill
                 const pathGrad = ctx.createLinearGradient(startX, startY, endX, endY);
@@ -1356,30 +1357,32 @@ function ReactAviatorApp() {
         };
     }, []);
 
-    // Autonomous simulation fallback loop to keep flight continuously active
+    // Fast, authentic flight ticker running at 33fps frame interval with dynamic exponential acceleration
     useEffect(() => {
         let interval;
         if (gameState === 'FLYING') {
             interval = setInterval(() => {
                 setMultiplier((prev) => {
-                    const next = prev + 0.03 + (Math.random() * 0.02);
-                    if (next >= 14.50) {
+                    // Dynamic exponential acceleration: starts snappy and speeds up smoothly
+                    const increment = 0.025 + (prev * 0.012) + (Math.random() * 0.015);
+                    const next = prev + increment;
+                    if (next >= 12.80) {
                         setGameState('CRASHED');
                         setTimeout(() => {
                             setGameState('WAITING');
-                            setCountdown(4.0);
-                        }, 2500);
+                            setCountdown(3.0);
+                        }, 2200);
                     }
                     return next;
                 });
-            }, 100);
+            }, 30);
         } else if (gameState === 'WAITING') {
             interval = setInterval(() => {
                 setCountdown((prev) => {
-                    if (prev <= 0.2) {
+                    if (prev <= 0.1) {
                         setGameState('FLYING');
                         setMultiplier(1.00);
-                        return 4.0;
+                        return 3.0;
                     }
                     return prev - 0.1;
                 });
@@ -1388,6 +1391,7 @@ function ReactAviatorApp() {
 
         return () => clearInterval(interval);
     }, [gameState]);
+
 
     // Poll live bets & game ID from backend
     useEffect(() => {
