@@ -121,23 +121,58 @@
             background-color: #000;
             height: calc(100vh - 215px) !important;
             min-height: 290px !important;
+            border-radius: 4px !important;
         }
         .bet-controls {
             padding-top: 4px !important;
         }
+        .bet-controls .bet-control,
+        .bet-controls .bet-control .controls,
+        .navigation-switcher,
+        .navigation-switcher .slider,
+        .navigation-switcher .active-line,
+        .spinner,
+        .btn-sm.bet-opt,
+        .buttons-block .btn.btn-success,
+        .buttons-block .btn.btn-warning,
+        .buttons-block .btn.btn-danger,
+        .buttons-block .btn,
+        .controls .second-row,
+        .bet-box-action {
+            border-radius: 2px !important;
+        }
         .bet-controls .bet-control {
-            height: 125px !important;
+            height: 120px !important;
         }
         .controls .navigation {
-            margin-top: 4px !important;
-            margin-bottom: 4px !important;
+            margin-top: 3px !important;
+            margin-bottom: 3px !important;
         }
         .first-row.auto-game-feature {
-            margin-bottom: 4px !important;
+            margin-bottom: 2px !important;
+            width: calc(100% - 10px) !important;
+        }
+        .bet-block {
+            width: 126px !important;
+        }
+        .controls .first-row .buttons-block {
+            width: calc(100% - 130px) !important;
+            margin-left: 4px !important;
+        }
+        .spinner {
+            height: 32px !important;
+            padding-left: 6px !important;
+            padding-right: 6px !important;
+            border-radius: 2px !important;
         }
         .btn-sm.bet-opt {
-            padding: 2px 6px !important;
+            width: 58px !important;
+            height: 18px !important;
+            margin-top: 3px !important;
+            margin-right: 2px !important;
+            padding: 0 !important;
             font-size: 11px !important;
+            border-radius: 2px !important;
         }
         @media(max-width: 620px) {
             .stage-board {
@@ -148,6 +183,7 @@
                 height: 115px !important;
             }
         }
+
 
 
 
