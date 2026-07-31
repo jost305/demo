@@ -119,7 +119,16 @@
 
         .stage-board {
             background-color: #000;
+            height: calc(100vh - 195px) !important;
+            min-height: 380px !important;
         }
+        @media(max-width: 620px) {
+            .stage-board {
+                height: 340px !important;
+                min-height: 340px !important;
+            }
+        }
+
 
         body {
             -webkit-touch-callout: none;
