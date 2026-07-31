@@ -31,4 +31,15 @@ return [
         'region' => env('AWS_DEFAULT_REGION', 'us-east-1'),
     ],
 
+    'vapid' => [
+        'subject' => env('VAPID_SUBJECT'),
+        'public_key' => env('VAPID_PUBLIC_KEY'),
+        'private_key' => env('VAPID_PRIVATE_KEY'),
+    ],
+
+    'pusher_beams' => [
+        'instance_id' => env('PUSHER_BEAMS_INSTANCE_ID'),
+        'primary_key' => env('PUSHER_BEAMS_PRIMARY_KEY'),
+    ],
+
 ];

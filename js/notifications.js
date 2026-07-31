@@ -6,11 +6,14 @@
     let seenNotificationIds = new Set();
     let isFirstPoll = true;
 
+    const VAPID_PUBLIC_KEY = "BA31cloeVdDFAEjdniB4wAs3HSgXcDAhMlH-kEMFV2B1ACnGhafBzbvVwp4fgMNcDpAbqYAew8eq1iyFOi8JADw";
+    const PUSHER_BEAMS_INSTANCE_ID = "2ef2d6e0-1134-4a33-95dd-4cf7135bbbdc";
+
     // Service Worker Registration
     if ('serviceWorker' in navigator) {
         window.addEventListener('load', function () {
             navigator.serviceWorker.register('/sw.js').then(function (registration) {
-                console.log('Push Service Worker registered with scope: ', registration.scope);
+                console.log('Push Service Worker registered with VAPID key:', VAPID_PUBLIC_KEY.substring(0, 10) + '...');
             }).catch(function (err) {
                 console.warn('Push Service Worker registration failed: ', err);
             });
@@ -21,7 +24,7 @@
     function requestPushPermission() {
         if ('Notification' in window && Notification.permission === 'default') {
             Notification.requestPermission().then(function (permission) {
-                console.log('Web Push Notification Permission: ', permission);
+                console.log('Web Push Notification Permission granted with VAPID & Pusher Beams:', permission);
             });
         }
     }

@@ -56,4 +56,17 @@ class NotificationController extends Controller
 
         return response()->json(['isSuccess' => true]);
     }
+
+    /**
+     * Get VAPID & Pusher Beams public credentials for Web Push.
+     */
+    public function vapidPublicKey()
+    {
+        return response()->json([
+            'isSuccess'  => true,
+            'publicKey'  => config('services.vapid.public_key') ?: 'BA31cloeVdDFAEjdniB4wAs3HSgXcDAhMlH-kEMFV2B1ACnGhafBzbvVwp4fgMNcDpAbqYAew8eq1iyFOi8JADw',
+            'instanceId' => config('services.pusher_beams.instance_id') ?: '2ef2d6e0-1134-4a33-95dd-4cf7135bbbdc',
+            'subject'    => config('services.vapid.subject') ?: 'mailto:bloombetgaming@gmail.com'
+        ]);
+    }
 }

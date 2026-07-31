@@ -60,6 +60,7 @@ Route::get('/login', function () {
 // Notifications API
 Route::get('/notifications/unread', [\App\Http\Controllers\NotificationController::class, 'unread']);
 Route::post('/notifications/mark-read', [\App\Http\Controllers\NotificationController::class, 'markRead']);
+Route::get('/notifications/vapid-public-key', [\App\Http\Controllers\NotificationController::class, 'vapidPublicKey']);
 // Auth Login
 Route::post('/auth/login', [Authentication::class, "login"]);
 Route::post('/auth/register', [Authentication::class, "register"]);
