@@ -226,49 +226,35 @@
             }
         }
 
-        /* Equal Height 3-Column Dashboard Layout */
+        /* Clean Full-Height Left Sidebar Layout */
         @media(min-width: 992px) {
-            .main-container {
-                height: calc(100vh - 85px) !important;
-                max-height: calc(100vh - 85px) !important;
-                overflow: hidden !important;
-            }
             .left-sidebar {
-                height: 100% !important;
                 display: flex !important;
                 flex-direction: column !important;
             }
             .contents-blocks {
-                height: calc(100% - 40px) !important;
-                flex: 1 !important;
-                min-height: 0 !important;
-                display: flex !important;
-                flex-direction: column !important;
                 border-radius: 4px !important;
+                padding: 8px !important;
+                height: auto !important;
             }
-            .tab-content,
-            .tab-pane,
             .list-data-tbl {
-                height: 100% !important;
-                display: flex !important;
-                flex-direction: column !important;
-                flex: 1 !important;
-                min-height: 0 !important;
+                height: auto !important;
             }
             .slimScrollDiv,
             .list-body.scroll-div,
             #all_bets,
             #prev_bets,
             #my_bets {
-                max-height: calc(100vh - 210px) !important;
-                height: 100% !important;
+                max-height: calc(100vh - 150px) !important;
+                min-height: 480px !important;
                 overflow-y: auto !important;
-                flex: 1 !important;
+                height: auto !important;
             }
             .list-items {
                 border-radius: 4px !important;
             }
         }
+
 
 
 
