@@ -1,51 +1,40 @@
-<div class="ax-chatroom-panel d-flex flex-column h-100" style="background: var(--card-bg, #12141c); border: 1px solid var(--card-border, #1e212d); border-radius: 12px; overflow: hidden;">
-    <!-- Chat Header & Room Selector -->
-    <div class="ax-chat-header px-3 py-2 border-bottom" style="border-color: #1e212d !important; background: #0f1118;">
-        <div class="d-flex align-items-center justify-content-between mb-2">
-            <div class="d-flex align-items-center gap-2">
-                <span class="material-symbols-outlined text-warning fs-5">forum</span>
-                <span class="fw-bold text-white fs-6">Live Community</span>
-            </div>
-            <div class="d-flex align-items-center gap-2">
-                <span class="badge rounded-pill px-2 py-1" style="font-size:10px; background: rgba(181, 246, 0, 0.15); color: #b5f600; border: 1px solid rgba(181, 246, 0, 0.3);">
-                    <span class="d-inline-block rounded-circle me-1" style="width:6px;height:6px; background: #b5f600;"></span>
-                    <span id="ax-online-count">68</span> Online
-                </span>
-                <a href="https://t.me/flyboy10x" target="_blank" class="btn btn-xs btn-outline-info rounded-pill px-2 py-0.5 f-10 d-inline-flex align-items-center gap-1" title="Join Official Telegram Group">
-                    <span>📱 Telegram @flyboy10x</span>
-                </a>
-            </div>
+<div class="ax-chatroom-panel d-flex flex-column h-100" style="background: #090a0f; border: 1px solid #1a1d26; border-radius: 12px; overflow: hidden; font-family: system-ui, -apple-system, sans-serif;">
+    <!-- Chat Header -->
+    <div class="ax-chat-header px-3 py-2.5 border-bottom d-flex align-items-center justify-content-between" style="border-color: #1a1d26 !important; background: #090a0f;">
+        <div class="d-flex align-items-center gap-2">
+            <span class="material-symbols-outlined text-danger fs-5" style="color: #ef4444 !important;">chat_bubble</span>
+            <span class="fw-bold text-white tracking-wide" style="font-size: 13px; letter-spacing: 0.5px;">LIVE CHAT & TROLL</span>
         </div>
-
-        <!-- Sync Header Info -->
-        <div class="d-flex align-items-center justify-content-between px-1 pb-1" style="font-size: 10.5px; color: #8a8d9b;">
-            <span>⚡ 2-Way Realtime Telegram & Web Sync</span>
-            <span style="color:#b5f600;">● Live</span>
+        <div class="d-flex align-items-center gap-2">
+            <span class="badge rounded-pill px-2.5 py-1 d-inline-flex align-items-center gap-1.5" style="font-size: 10.5px; background: rgba(34, 197, 94, 0.12); color: #22c55e; border: 1px solid rgba(34, 197, 94, 0.25); font-weight: 600;">
+                <span class="rounded-circle d-inline-block" style="width: 6px; height: 6px; background: #22c55e; box-shadow: 0 0 6px #22c55e;"></span>
+                <span id="ax-online-count">128</span> Online
+            </span>
         </div>
     </div>
 
     <!-- Chat Messages Container -->
-    <div class="ax-chat-body p-3 flex-grow-1 overflow-auto" id="ax-chat-messages" style="min-height: 250px; max-height: 520px; background: #0c0d12;">
+    <div class="ax-chat-body p-3 flex-grow-1 overflow-auto" id="ax-chat-messages" style="min-height: 250px; max-height: 540px; background: #06070a; scrollbar-width: thin; scrollbar-color: #1e2230 transparent;">
         <div class="text-center py-4 text-muted small" id="ax-chat-loader">
-            <div class="spinner-border spinner-border-sm me-1" role="status" style="color: #b5f600;"></div>
-            Connecting to Live Community Chat...
+            <div class="spinner-border spinner-border-sm me-1" role="status" style="color: #ef4444;"></div>
+            Loading chat...
         </div>
     </div>
 
     <!-- Chat Footer / Send Form -->
-    <div class="ax-chat-footer p-2 border-top" style="border-color: #1e212d !important; background: #0f1118;">
+    <div class="ax-chat-footer px-3 py-2 border-top" style="border-color: #1a1d26 !important; background: #090a0f;">
         @if(session()->has('userlogin'))
-            <form id="ax-chat-form" class="d-flex align-items-center gap-2 m-0" onsubmit="axSendChatMessage(event);">
+            <form id="ax-chat-form" class="position-relative d-flex align-items-center m-0" onsubmit="axSendChatMessage(event);">
                 @csrf
-                <input type="text" id="ax-chat-input" class="form-control form-control-sm text-white" placeholder="Send to Website & Telegram..." maxlength="300" autocomplete="off" required style="border-radius: 20px; font-size: 12.5px; background: #191c26; border: 1px solid #1e212d;">
-                <button type="submit" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 34px; height: 34px; flex-shrink: 0; background: #b5f600; color: #000; border: none; font-weight: bold;" title="Send Message">
-                    <span class="material-symbols-outlined fs-5">send</span>
+                <input type="text" id="ax-chat-input" class="form-control text-white border-0" placeholder="Type a message..." maxlength="300" autocomplete="off" required style="border-radius: 20px; font-size: 12.5px; background: #12141d; border: 1px solid #222634 !important; padding: 8px 42px 8px 14px;">
+                <button type="submit" class="btn p-0 position-absolute d-flex align-items-center justify-content-center" style="right: 12px; background: transparent; border: none; color: #f8fafc;" title="Send Message">
+                    <span class="material-symbols-outlined" style="font-size: 18px; transform: rotate(-25deg);">send</span>
                 </button>
             </form>
         @else
             <div class="text-center py-1">
-                <a href="#" class="btn btn-outline-danger btn-sm w-100 py-1" style="font-size:12px; border-radius: 20px; border-color: #ef4444; color: #ef4444;" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="if(window.switchAuthTab) switchAuthTab('login')">
-                    Log in to Chat & Sync
+                <a href="#" class="btn btn-outline-danger btn-sm w-100 py-1.5" style="font-size: 12px; border-radius: 20px; border-color: #ef4444; color: #ef4444;" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="if(window.switchAuthTab) switchAuthTab('login')">
+                    Log in to Chat
                 </a>
             </div>
         @endif
@@ -64,17 +53,12 @@
         var pusherKey      = '6cb294030245343b2cb7';
         var pusherCluster  = 'mt1';
 
-        function axRenderBadge(badge, source) {
-            if (!badge && source === 'telegram') badge = '📱 Telegram';
-            if (!badge) badge = '💻 Web';
-            
-            var bgClass = 'bg-secondary';
-            if (badge.includes('Admin')) bgClass = 'bg-danger text-white';
-            if (badge.includes('Captain')) bgClass = 'bg-warning text-dark';
-            if (badge.includes('Telegram')) bgClass = 'bg-info text-dark';
-            if (badge.includes('Pilot')) bgClass = 'bg-primary text-white';
-
-            return '<span class="badge ' + bgClass + ' ms-1" style="font-size:9px; padding: 2px 6px;">' + badge + '</span>';
+        function axRenderBadgeIcon(badge, source) {
+            if (badge && badge.includes('Telegram')) return '<span style="font-size:10px; margin-left:3px;" title="Telegram">📱</span>';
+            if (badge && badge.includes('Admin')) return '<span style="font-size:10px; margin-left:3px;" title="Admin">👑</span>';
+            if (badge && badge.includes('Captain')) return '<span style="font-size:10px; margin-left:3px;" title="Captain">👨‍✈️</span>';
+            if (source === 'telegram') return '<span style="font-size:10px; margin-left:3px;" title="Telegram">📱</span>';
+            return '';
         }
 
         function axRenderChatMessage(msg) {
@@ -83,17 +67,19 @@
             var name   = msg.username || 'Pilot';
             var time   = msg.time || '';
             var text   = msg.message || '';
-            var badge  = axRenderBadge(msg.badge, msg.source);
+            var icon   = axRenderBadgeIcon(msg.badge, msg.source);
 
-            return '<div class="ax-chat-item d-flex gap-2 mb-2" data-msg-id="' + msg.id + '"' + (isMe ? ' style="flex-direction:row-reverse"' : '') + '>' +
-                '<img src="' + avatar + '" class="rounded-circle" style="width:28px;height:28px;object-fit:cover;flex-shrink:0;" onerror="this.src=\'/images/flyboy10x_icon.png\'">' +
-                '<div class="ax-chat-bubble-wrap" style="max-width:85%;' + (isMe ? 'display:flex;flex-direction:column;align-items:flex-end' : '') + '">' +
-                    '<div class="d-flex align-items-center gap-1 mb-1">' +
-                        '<span class="fw-bold ' + (isMe ? 'text-danger' : 'text-light') + '" style="font-size:11px;">' + name + '</span>' +
-                        badge +
-                        '<span class="text-muted ms-1" style="font-size:9.5px;">' + time + '</span>' +
+            return '<div class="ax-chat-item d-flex align-items-start gap-2.5 mb-2.5" data-msg-id="' + msg.id + '">' +
+                '<img src="' + avatar + '" class="rounded-circle" style="width:30px; height:30px; object-fit:cover; flex-shrink:0; border: 1px solid rgba(255,255,255,0.12);" onerror="this.src=\'/images/flyboy10x_icon.png\'">' +
+                '<div class="flex-grow-1 min-w-0">' +
+                    '<div class="d-flex align-items-center justify-content-between mb-0.5">' +
+                        '<div class="d-flex align-items-center">' +
+                            '<span class="fw-bold ' + (isMe ? 'text-danger' : 'text-white') + '" style="font-size: 12.5px; line-height: 1.2;">' + name + '</span>' +
+                            icon +
+                        '</div>' +
+                        '<span class="text-muted" style="font-size: 11px; color: #64748b !important;">' + time + '</span>' +
                     '</div>' +
-                    '<div class="ax-chat-bubble p-2 rounded-3 text-white" style="font-size:12.5px;background:' + (isMe ? 'rgba(255,30,70,0.25)' : '#1c1e27') + ';border:1px solid ' + (isMe ? 'rgba(255,30,70,0.4)' : 'rgba(255,255,255,0.06)') + ';word-break:break-word;">' +
+                    '<div style="font-size: 12.5px; color: #cbd5e1; line-height: 1.35; word-break: break-word; font-weight: 400;">' +
                         text +
                     '</div>' +
                 '</div>' +
@@ -160,7 +146,6 @@
             });
         };
 
-        // Initialize Pusher WebSocket Subscriptions for 0ms Real-Time Sync
         function initPusherWebSocket() {
             if (typeof Pusher !== 'undefined' && pusherKey) {
                 try {
@@ -174,17 +159,14 @@
                             axAppendSingleMessage(data);
                         }
                     });
-                    console.log('FlyBoy Pusher Chat WebSocket connected on channel: flyboy-chat');
-                } catch(e) {
-                    console.warn('Pusher WS connection error: ', e);
-                }
+                } catch(e) {}
             }
         }
 
         $(document).ready(function() {
             axFetchChatMessages();
             initPusherWebSocket();
-            axChatPollTimer = setInterval(axFetchChatMessages, 3000); // 3s fallback poll
+            axChatPollTimer = setInterval(axFetchChatMessages, 3000);
         });
     })();
 </script>
