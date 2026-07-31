@@ -10,7 +10,7 @@ return new class extends Migration
         if (!DB::table('settings')->where('category', 'daily_login_reward')->exists()) {
             DB::table('settings')->insert([
                 'category' => 'daily_login_reward',
-                'value' => '5',
+                'value' => '0',
                 'status' => '1',
                 'created_at' => now(),
                 'updated_at' => now(),

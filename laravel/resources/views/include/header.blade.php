@@ -21,14 +21,14 @@
             {{-- Profile Menu --}}
             <div class="ax-profile-dropdown">
                 <button type="button" class="ax-icon-btn ax-profile-trigger" id="profileMenuBtn" aria-label="Profile menu">
-                    <img src="images/avtar/av-1.png" class="ax-avatar-sm" id="avatar_img" onerror="this.src='images/avtar/av-1.png'">
+                    <img src="{{ user('image') ?: 'images/favicon.png' }}" class="ax-avatar-sm" id="avatar_img" onerror="this.src='images/favicon.png'">
                     <span class="ax-caret material-symbols-outlined">expand_more</span>
                 </button>
 
                 <div class="ax-profile-menu" id="profileMenu">
                     {{-- User card --}}
                     <div class="ax-pm-user">
-                        <img src="images/avtar/av-1.png" class="ax-pm-avatar" onerror="this.src='images/avtar/av-1.png'">
+                        <img src="{{ user('image') ?: 'images/favicon.png' }}" class="ax-pm-avatar" onerror="this.src='images/favicon.png'">
                         <div class="ax-pm-info">
                             <div class="ax-pm-email">{{ user('email') }}</div>
                             <div class="ax-pm-id">ID #{{ user('id') }}</div>

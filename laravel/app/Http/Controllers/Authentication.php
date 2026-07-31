@@ -77,7 +77,7 @@ class Authentication extends Controller
 
         $user = new User;
         $user->name = $r->name ?: 'Player';
-        $user->image = "/images/avtar/av-" . rand(1, 72) . ".png";
+        $user->image = null;
         $user->mobile = $mobile;
         $user->email = $r->email;
         $user->password = Hash::make($r->password);
@@ -90,7 +90,7 @@ class Authentication extends Controller
         if ($user->save()) {
             $wallet = new Wallet;
             $wallet->userid = $user->id;
-            $wallet->amount = (float) (setting('initial_bonus') ?: 0);
+            $wallet->amount = 0.0;
             $wallet->save();
 
             PlatformNotificationService::create(
@@ -103,7 +103,6 @@ class Authentication extends Controller
 
             // Log user in immediately upon registration
             $r->session()->put('userlogin', $user);
-            app(DailyLoginRewardService::class)->reward($user);
 
             $data = array("username" => $user->email, "password" => $r->password, "token" => csrf_token());
             $isSuccess = true;
