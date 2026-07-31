@@ -88,8 +88,7 @@
             </div>
 
         @else
-            <button class="ax-auth-btn ax-auth-register" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="switchAuthTab('register')">Register</button>
-            <button class="ax-auth-btn ax-auth-login" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="switchAuthTab('login')" id="login">Login</button>
+            <button class="ax-auth-btn ax-auth-login" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="switchAuthTab('login')" id="login">Sign In</button>
         @endif
     </div>
 </header>

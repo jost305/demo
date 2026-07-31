@@ -87,9 +87,8 @@
                 🎁<span class="ax-gift-dot"></span>
             </button>
 
-            {{-- Register & Login Action Buttons --}}
-            <button class="ax-auth-btn ax-auth-register" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="switchAuthTab('register')">Register</button>
-            <button class="ax-auth-btn ax-auth-login" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="switchAuthTab('login')" id="login">Login</button>
+            {{-- Sign In Button --}}
+            <button class="ax-auth-btn ax-auth-login" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="switchAuthTab('login')" id="login">Sign In</button>
         @endif
     </div>
 </header>
