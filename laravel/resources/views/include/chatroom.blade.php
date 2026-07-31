@@ -6,25 +6,21 @@
                 <span class="material-symbols-outlined text-warning fs-5">forum</span>
                 <span class="fw-bold text-white fs-6">Live Community</span>
             </div>
-            <div class="d-flex align-items-center gap-1">
+            <div class="d-flex align-items-center gap-2">
                 <span class="badge rounded-pill px-2 py-1" style="font-size:10px; background: rgba(181, 246, 0, 0.15); color: #b5f600; border: 1px solid rgba(181, 246, 0, 0.3);">
                     <span class="d-inline-block rounded-circle me-1" style="width:6px;height:6px; background: #b5f600;"></span>
-                    <span id="ax-online-count">142</span> Online
+                    <span id="ax-online-count">68</span> Online
                 </span>
+                <a href="https://t.me/" target="_blank" class="btn btn-xs btn-outline-info rounded-pill px-2 py-0.5 f-10 d-inline-flex align-items-center gap-1" title="Join Telegram Group">
+                    <span>📱 Telegram</span>
+                </a>
             </div>
         </div>
 
-        <!-- Room Selector Pills -->
-        <div class="ax-chat-rooms d-flex gap-1 overflow-auto pb-1" style="scrollbar-width:none;">
-            <button type="button" class="ax-room-btn btn btn-xs active rounded-pill px-2.5 py-1 text-nowrap" data-room="general" onclick="axSwitchChatRoom('general')" style="font-size:11px; background: #b5f600; color: #000; font-weight: 700; border: none;">
-                💬 General
-            </button>
-            <button type="button" class="ax-room-btn btn btn-xs text-slate-300 rounded-pill px-2.5 py-1 text-nowrap" data-room="highrollers" onclick="axSwitchChatRoom('highrollers')" style="font-size:11px; background: #191c26; color: #94a3b8; border: 1px solid #1e212d;">
-                💎 High Rollers
-            </button>
-            <button type="button" class="ax-room-btn btn btn-xs text-slate-300 rounded-pill px-2.5 py-1 text-nowrap" data-room="telegram" onclick="axSwitchChatRoom('telegram')" style="font-size:11px; background: #191c26; color: #94a3b8; border: 1px solid #1e212d;">
-                ✈️ Telegram Feed
-            </button>
+        <!-- Sync Header Info -->
+        <div class="d-flex align-items-center justify-content-between px-1 pb-1" style="font-size: 10.5px; color: #8a8d9b;">
+            <span>⚡ 2-Way Realtime Telegram & Web Sync</span>
+            <span style="color:#b5f600;">● Live</span>
         </div>
     </div>
 
@@ -32,7 +28,7 @@
     <div class="ax-chat-body p-3 flex-grow-1 overflow-auto" id="ax-chat-messages" style="min-height: 250px; max-height: 520px; background: #0c0d12;">
         <div class="text-center py-4 text-muted small" id="ax-chat-loader">
             <div class="spinner-border spinner-border-sm me-1" role="status" style="color: #b5f600;"></div>
-            Connecting to room...
+            Connecting to Live Community Chat...
         </div>
     </div>
 
@@ -41,7 +37,7 @@
         @if(session()->has('userlogin'))
             <form id="ax-chat-form" class="d-flex align-items-center gap-2 m-0" onsubmit="axSendChatMessage(event);">
                 @csrf
-                <input type="text" id="ax-chat-input" class="form-control form-control-sm text-white" placeholder="Say something..." maxlength="300" autocomplete="off" required style="border-radius: 20px; font-size: 12.5px; background: #191c26; border: 1px solid #1e212d;">
+                <input type="text" id="ax-chat-input" class="form-control form-control-sm text-white" placeholder="Send to Website & Telegram..." maxlength="300" autocomplete="off" required style="border-radius: 20px; font-size: 12.5px; background: #191c26; border: 1px solid #1e212d;">
                 <button type="submit" class="btn btn-sm rounded-circle d-flex align-items-center justify-content-center p-0" style="width: 34px; height: 34px; flex-shrink: 0; background: #b5f600; color: #000; border: none; font-weight: bold;" title="Send Message">
                     <span class="material-symbols-outlined fs-5">send</span>
                 </button>
@@ -49,40 +45,42 @@
         @else
             <div class="text-center py-1">
                 <a href="#" class="btn btn-outline-danger btn-sm w-100 py-1" style="font-size:12px; border-radius: 20px; border-color: #ef4444; color: #ef4444;" data-bs-toggle="modal" data-bs-target="#auth-modal" onclick="if(window.switchAuthTab) switchAuthTab('login')">
-                    Log in to Chat & Troll
+                    Log in to Chat & Sync
                 </a>
             </div>
         @endif
     </div>
 </div>
 
-
+<script src="https://js.pusher.com/8.2.0/pusher.min.js"></script>
 <script>
     (function() {
         var isMobileSize  = window.innerWidth < 992;
         var isChatPage    = window.location.pathname === '/chat';
         if (isMobileSize && !isChatPage) return;
 
-        var currentRoom    = 'general';
         var axLastChatId   = 0;
         var axChatPollTimer= null;
+        var pusherKey      = '6cb294030245343b2cb7';
+        var pusherCluster  = 'mt1';
 
         function axRenderBadge(badge, source) {
-            if (!badge && source === 'telegram') badge = 'Telegram';
-            if (!badge) return '';
+            if (!badge && source === 'telegram') badge = '📱 Telegram';
+            if (!badge) badge = '💻 Web';
             
             var bgClass = 'bg-secondary';
-            if (badge === 'Admin') bgClass = 'bg-danger';
-            if (badge === 'VIP') bgClass = 'bg-warning text-dark';
-            if (badge === 'Telegram') bgClass = 'bg-info text-dark';
+            if (badge.includes('Admin')) bgClass = 'bg-danger text-white';
+            if (badge.includes('Captain')) bgClass = 'bg-warning text-dark';
+            if (badge.includes('Telegram')) bgClass = 'bg-info text-dark';
+            if (badge.includes('Pilot')) bgClass = 'bg-primary text-white';
 
-            return '<span class="badge ' + bgClass + ' ms-1" style="font-size:9px; padding: 2px 5px;">' + badge + '</span>';
+            return '<span class="badge ' + bgClass + ' ms-1" style="font-size:9px; padding: 2px 6px;">' + badge + '</span>';
         }
 
         function axRenderChatMessage(msg) {
             var isMe   = msg.is_me;
             var avatar = msg.avatar || '/images/flyboy10x_icon.png';
-            var name   = msg.username || 'Player';
+            var name   = msg.username || 'Pilot';
             var time   = msg.time || '';
             var text   = msg.message || '';
             var badge  = axRenderBadge(msg.badge, msg.source);
@@ -102,40 +100,32 @@
             '</div>';
         }
 
-        window.axSwitchChatRoom = function(room) {
-            currentRoom = room;
-            axLastChatId = 0;
-
-            $('.ax-room-btn').removeClass('btn-outline-danger active').addClass('btn-outline-secondary text-white');
-            $('.ax-room-btn[data-room="' + room + '"]').addClass('btn-outline-danger active').removeClass('btn-outline-secondary text-white');
-
-            $('#ax-chat-messages').html('<div class="text-center py-4 text-muted small" id="ax-chat-loader"><div class="spinner-border spinner-border-sm text-danger me-1" role="status"></div>Loading ' + room + ' room...</div>');
-
-            axFetchChatMessages();
-        };
+        function axAppendSingleMessage(msg) {
+            var container = $('#ax-chat-messages');
+            if (container.find('.ax-chat-item[data-msg-id="' + msg.id + '"]').length === 0) {
+                var atBottom = (container[0].scrollHeight - container.scrollTop() - container[0].clientHeight) < 120 || axLastChatId === 0;
+                container.append(axRenderChatMessage(msg));
+                axLastChatId = Math.max(axLastChatId, msg.id);
+                if (atBottom) {
+                    container.scrollTop(container[0].scrollHeight);
+                }
+            }
+        }
 
         function axFetchChatMessages() {
             $.ajax({
-                url: '/chat/messages?room=' + currentRoom + '&last_id=' + axLastChatId,
+                url: '/chat/messages?room=general&last_id=' + axLastChatId,
                 type: 'GET',
                 dataType: 'json',
                 success: function(res) {
                     $('#ax-chat-loader').remove();
+                    if (res.online_count) {
+                        $('#ax-online-count').text(res.online_count);
+                    }
                     if (res.messages && res.messages.length > 0) {
-                        var container = $('#ax-chat-messages');
-                        var atBottom  = (container[0].scrollHeight - container.scrollTop() - container[0].clientHeight) < 100 || axLastChatId === 0;
-
                         res.messages.forEach(function(msg) {
-                            if ($('.ax-chat-item[data-msg-id="' + msg.id + '"]').length === 0) {
-                                container.append(axRenderChatMessage(msg));
-                            }
+                            axAppendSingleMessage(msg);
                         });
-
-                        axLastChatId = res.last_id;
-
-                        if (atBottom) {
-                            container.scrollTop(container[0].scrollHeight);
-                        }
                     }
                 }
             });
@@ -154,19 +144,14 @@
                 type: 'POST',
                 data: {
                     _token: '{{ csrf_token() }}',
-                    room: currentRoom,
+                    room: 'general',
                     message: text
                 },
                 dataType: 'json',
                 success: function(res) {
                     input.prop('disabled', false).focus();
                     if (res.success && res.message) {
-                        var container = $('#ax-chat-messages');
-                        if ($('.ax-chat-item[data-msg-id="' + res.message.id + '"]').length === 0) {
-                            container.append(axRenderChatMessage(res.message));
-                            axLastChatId = Math.max(axLastChatId, res.message.id);
-                            container.scrollTop(container[0].scrollHeight);
-                        }
+                        axAppendSingleMessage(res.message);
                     }
                 },
                 error: function() {
@@ -175,9 +160,31 @@
             });
         };
 
+        // Initialize Pusher WebSocket Subscriptions for 0ms Real-Time Sync
+        function initPusherWebSocket() {
+            if (typeof Pusher !== 'undefined' && pusherKey) {
+                try {
+                    var pusher = new Pusher(pusherKey, { cluster: pusherCluster });
+                    var channel = pusher.subscribe('flyboy-chat');
+                    channel.bind('message-sent', function(data) {
+                        if (typeof data === 'string') {
+                            try { data = JSON.parse(data); } catch(e){}
+                        }
+                        if (data) {
+                            axAppendSingleMessage(data);
+                        }
+                    });
+                    console.log('FlyBoy Pusher Chat WebSocket connected on channel: flyboy-chat');
+                } catch(e) {
+                    console.warn('Pusher WS connection error: ', e);
+                }
+            }
+        }
+
         $(document).ready(function() {
             axFetchChatMessages();
-            axChatPollTimer = setInterval(axFetchChatMessages, 2500);
+            initPusherWebSocket();
+            axChatPollTimer = setInterval(axFetchChatMessages, 3000); // 3s fallback poll
         });
     })();
 </script>

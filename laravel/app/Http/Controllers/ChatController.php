@@ -4,80 +4,59 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Chat;
+use App\Models\User;
 use App\Services\TelegramService;
+use App\Services\PusherBroadcaster;
 use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
 
 class ChatController extends Controller
 {
     /**
-     * Mobile /chat page
+     * AJAX: fetch latest chat messages for chatroom (General / Telegram unified)
      */
     public function index(Request $r)
     {
-        $activeRoom = $r->get('room', 'general');
-        if ($activeRoom === 'telegram') {
-            try {
-                TelegramService::seedSimulatedTelegramFeed();
-            } catch (\Throwable $e) {}
+        if (function_exists('opcache_reset')) {
+            @opcache_reset();
         }
-
-        try {
-            $messages = Chat::orderBy('id', 'desc')->take(50)->get()->reverse()->values();
-        } catch (\Throwable $e) {
-            $messages = collect();
-        }
-
-        return view('chat', compact('messages', 'activeRoom'));
-    }
-
-    /**
-     * AJAX: get latest messages for a room (polling)
-     * ?room=general&last_id=X
-     */
-    public function messages(Request $r)
-    {
-        $last_id = intval($r->get('last_id', 0));
         $room    = $r->get('room', 'general');
+        $last_id = intval($r->get('last_id', 0));
 
-        if ($room === 'telegram') {
-            try {
-                TelegramService::seedSimulatedTelegramFeed();
-            } catch (\Throwable $e) {}
-        }
+        $userlogin = session()->get('userlogin');
+        $myUserId = is_object($userlogin) ? $userlogin->id : (is_array($userlogin) ? ($userlogin['id'] ?? null) : null);
 
         try {
-            $query = Chat::where('id', '>', $last_id);
+            // Seed simulated feed if empty
+            try {
+                TelegramService::seedSimulatedTelegramFeed();
+            } catch (\Throwable $se) {}
 
-            // Filter by room if room column exists in chats table
-            if (Schema::hasColumn('chats', 'room')) {
-                if ($room === 'general') {
-                    $query->where(function($q) {
-                        $q->where('room', 'general')->orWhereNull('room');
-                    });
-                } else {
-                    $query->where('room', $room);
-                }
+            $query = Chat::orderBy('id', 'desc');
+
+            if ($last_id > 0) {
+                $query->where('id', '>', $last_id);
             }
 
-            $messages = $query->orderBy('id', 'asc')
-                ->take(40)
-                ->get()
-                ->map(function ($msg) {
-                    $isMe = (session()->has('userlogin') && session('userlogin')['id'] == $msg->userid);
-                    
-                    $timeStr = date('h:i A');
-                    if (!empty($msg->created_at)) {
+            $messages = $query->take(50)->get()
+                ->reverse()
+                ->values()
+                ->map(function ($msg) use ($myUserId) {
+                    $isMe = ($myUserId && $msg->userid == $myUserId);
+
+                    $timeStr = '';
+                    if ($msg->created_at) {
                         $timeStr = is_string($msg->created_at) ? date('h:i A', strtotime($msg->created_at)) : $msg->created_at->format('h:i A');
                     }
 
                     return [
                         'id'       => $msg->id,
-                        'room'     => isset($msg->room) ? $msg->room : 'general',
+                        'room'     => $msg->room ?? 'general',
                         'userid'   => $msg->userid,
-                        'username' => $msg->username ?? 'Guest',
+                        'username' => $msg->username ?? 'Pilot',
                         'avatar'   => $msg->avatar ?: '/images/flyboy10x_icon.png',
-                        'source'   => isset($msg->source) ? $msg->source : 'web',
-                        'badge'    => isset($msg->badge) ? $msg->badge : ((isset($msg->source) && $msg->source === 'telegram') ? 'Telegram' : null),
+                        'source'   => $msg->source ?? 'web',
+                        'badge'    => $msg->badge ?: ($msg->source === 'telegram' ? '📱 Telegram' : '💻 Web'),
                         'message'  => e($msg->message),
                         'time'     => $timeStr,
                         'is_me'    => $isMe,
@@ -87,6 +66,7 @@ class ChatController extends Controller
             return response()->json([
                 'messages' => $messages,
                 'last_id'  => $messages->count() > 0 ? $messages->last()['id'] : $last_id,
+                'online_count' => rand(42, 88)
             ]);
         } catch (\Throwable $e) {
             return response()->json([
@@ -98,7 +78,7 @@ class ChatController extends Controller
     }
 
     /**
-     * AJAX: post a new message to a specific chatroom
+     * AJAX: post a new message to the chatroom (Two-way synced to Telegram + Pusher)
      */
     public function store(Request $r)
     {
@@ -107,69 +87,80 @@ class ChatController extends Controller
             'room'    => 'nullable|string|max:50',
         ]);
 
-        $message = trim($r->message);
-        $room    = $r->get('room', 'general');
-
-        if (!$message) {
+        $rawMessage = trim($r->message);
+        if (!$rawMessage) {
             return response()->json(['success' => false, 'message' => 'Empty message']);
         }
+
+        // Sanitize profanity / spam
+        $message = TelegramService::sanitizeText($rawMessage);
 
         $userid   = null;
         $username = 'Guest_' . rand(100, 999);
         $avatar   = user('image') ?: '/images/flyboy10x_icon.png';
-        $badge    = null;
+        $badge    = '💻 Web';
 
-        if (session()->has('userlogin')) {
-            $user     = session('userlogin');
-            $userid   = $user['id'];
-            $username = $user['name'] ?? ('Player #' . $user['id']);
-            $avatar   = $user['image'] ?? $avatar;
-            if (isset($user['isadmin']) && $user['isadmin'] == 1) {
-                $badge = 'Admin';
+        $userlogin = session()->get('userlogin');
+        if ($userlogin) {
+            $uId = is_object($userlogin) ? $userlogin->id : ($userlogin['id'] ?? null);
+            if ($uId) {
+                $user = User::find($uId);
+                if ($user) {
+                    $userid   = $user->id;
+                    $username = $user->name ?: ($user->email ? explode('@', $user->email)[0] : 'Pilot #' . $user->id);
+                    $avatar   = $user->image ?: '/images/flyboy10x_icon.png';
+                    
+                    if ($user->isadmin == 1) {
+                        $badge = '👑 Admin';
+                    } elseif ($user->fuel_points >= 50) {
+                        $badge = '👨‍✈️ Captain';
+                    } else {
+                        $badge = '👨‍✈️ Pilot';
+                    }
+                }
             }
         }
 
         try {
-            $chatData = [
+            $chat = Chat::create([
+                'room'     => 'general',
                 'userid'   => $userid,
                 'username' => $username,
                 'avatar'   => $avatar,
+                'source'   => 'web',
+                'badge'    => $badge,
                 'message'  => $message,
+            ]);
+
+            $payload = [
+                'id'       => $chat->id,
+                'room'     => 'general',
+                'userid'   => $chat->userid,
+                'username' => $chat->username,
+                'avatar'   => $chat->avatar,
+                'source'   => 'web',
+                'badge'    => $badge,
+                'message'  => $chat->message,
+                'time'     => date('h:i A'),
+                'is_me'    => false,
             ];
 
-            if (Schema::hasColumn('chats', 'room')) {
-                $chatData['room'] = $room;
-            }
-            if (Schema::hasColumn('chats', 'source')) {
-                $chatData['source'] = 'web';
-            }
-            if (Schema::hasColumn('chats', 'badge')) {
-                $chatData['badge'] = $badge;
-            }
+            // 1. Send to Telegram Group via Telegram Bot API
+            try {
+                TelegramService::sendToTelegram($username, $message, $badge);
+            } catch (\Throwable $te) {}
 
-            $chat = Chat::create($chatData);
+            // 2. Broadcast to all Web App players via Pusher WebSocket
+            try {
+                PusherBroadcaster::broadcastChat($payload);
+            } catch (\Throwable $pe) {}
 
-            if ($room === 'telegram') {
-                try {
-                    TelegramService::sendToTelegram($username, $message);
-                } catch (\Throwable $e) {}
-            }
+            $payload['is_me'] = true;
 
             return response()->json([
                 'success' => true,
                 'id'      => $chat->id,
-                'message' => [
-                    'id'       => $chat->id,
-                    'room'     => $room,
-                    'userid'   => $chat->userid,
-                    'username' => $chat->username,
-                    'avatar'   => $chat->avatar,
-                    'source'   => 'web',
-                    'badge'    => $badge,
-                    'message'  => e($chat->message),
-                    'time'     => date('h:i A'),
-                    'is_me'    => true,
-                ],
+                'message' => $payload,
             ]);
         } catch (\Throwable $e) {
             return response()->json(['success' => false, 'message' => $e->getMessage()]);
@@ -188,5 +179,21 @@ class ChatController extends Controller
         } catch (\Throwable $e) {
             return response()->json(['ok' => false, 'error' => $e->getMessage()]);
         }
+    }
+
+    /**
+     * Admin: delete a chat message
+     */
+    public function deleteMsg($id)
+    {
+        $userlogin = session()->get('userlogin');
+        $isAdmin = is_object($userlogin) ? ($userlogin->isadmin == 1) : (is_array($userlogin) && ($userlogin['isadmin'] ?? 0) == 1);
+
+        if (!$isAdmin) {
+            return response()->json(['success' => false, 'message' => 'Unauthorized']);
+        }
+
+        Chat::where('id', $id)->delete();
+        return response()->json(['success' => true]);
     }
 }

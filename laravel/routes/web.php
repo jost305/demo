@@ -43,9 +43,11 @@ Route::get('/dashboard', function () {
 // Public crash page - accessible to all (guests + logged in users)
 Route::get('/crash', [Pages::class, 'aviator']);
 
-// Chat - public read, authenticated write
+// Chat - public read, authenticated write, Telegram 2-way sync
 Route::get('/chat', [ChatController::class, 'index']);
-Route::get('/chat/messages', [ChatController::class, 'messages']);
+Route::get('/chat/messages', [ChatController::class, 'index']);
+Route::post('/chat/send', [ChatController::class, 'store']);
+Route::post('/chat/delete/{id}', [ChatController::class, 'deleteMsg']);
 Route::post('/telegram/webhook', [ChatController::class, 'telegramWebhook']);
 Route::match(['get', 'post'], '/currentlybet', [Gamesetting::class, "currentlybet"]);
 Route::match(['get', 'post'], '/game/currentlybet', [Gamesetting::class, "currentlybet"]);
