@@ -49,6 +49,10 @@ Route::get('/chat/messages', [ChatController::class, 'index']);
 Route::post('/chat/send', [ChatController::class, 'store']);
 Route::post('/chat/delete/{id}', [ChatController::class, 'deleteMsg']);
 Route::post('/telegram/webhook', [ChatController::class, 'telegramWebhook']);
+Route::get('/telegram/set-webhook', function (\Illuminate\Http\Request $r) {
+    $url = $r->get('url', request()->root());
+    return response()->json(\App\Services\TelegramService::setWebhook($url));
+});
 Route::match(['get', 'post'], '/currentlybet', [Gamesetting::class, "currentlybet"]);
 Route::match(['get', 'post'], '/game/currentlybet', [Gamesetting::class, "currentlybet"]);
 

@@ -36,6 +36,25 @@ class TelegramService
     }
 
     /**
+     * Register Telegram Webhook URL with Telegram Bot API
+     */
+    public static function setWebhook($url)
+    {
+        $botToken = env('TELEGRAM_BOT_TOKEN') ?: setting('telegram_bot_token');
+        if (!$botToken || !$url) return false;
+
+        try {
+            $webhookUrl = rtrim($url, '/') . '/telegram/webhook';
+            $response = Http::post("https://api.telegram.org/bot{$botToken}/setWebhook", [
+                'url' => $webhookUrl
+            ]);
+            return $response->json();
+        } catch (\Throwable $e) {
+            return ['ok' => false, 'error' => $e->getMessage()];
+        }
+    }
+
+    /**
      * Process incoming Webhook payload from Telegram Group Bot
      */
     public static function processWebhookData(array $data)
