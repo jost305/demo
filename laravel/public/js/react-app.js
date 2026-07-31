@@ -1219,51 +1219,45 @@ function AviatorCanvas(_ref5) {
         React.createElement('canvas', { ref: canvasRef, className: 'w-full h-full block' }),
         React.createElement(
             'div',
-            { className: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 pointer-events-none' },
-            gameState === 'WAITING' && React.createElement(
+            { className: 'absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 text-center z-10 pointer-events-none w-full px-4' },
+            (gameState === 'WAITING' || gameState === 'PREPARING') && React.createElement(
                 'div',
-                null,
+                { className: 'flex flex-col items-center justify-center' },
                 React.createElement(
                     'div',
-                    { className: 'text-slate-400 uppercase tracking-wider text-xs font-bold mb-1' },
-                    'WAITING FOR NEXT ROUND'
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'text-3xl font-bold text-yellow-400 font-mono' },
-                    countdown ? countdown.toFixed(1) + 's' : '5.0s'
-                )
-            ),
-            gameState === 'PREPARING' && React.createElement(
-                'div',
-                null,
-                React.createElement(
-                    'div',
-                    { className: 'text-slate-300 uppercase tracking-wider text-xs font-bold mb-1' },
-                    'PREPARING FOR TAKEOFF...'
-                ),
-                React.createElement(
-                    'div',
-                    { className: 'text-4xl font-black text-white font-mono' },
-                    '1.00',
+                    { className: 'text-slate-300 font-bold text-xs uppercase tracking-widest mb-2 flex items-center gap-2' },
+                    React.createElement('span', { className: 'w-2.5 h-2.5 rounded-full bg-amber-400 animate-ping inline-block' }),
                     React.createElement(
                         'span',
-                        { className: 'text-red-500' },
-                        'x'
+                        null,
+                        'WAITING FOR NEXT ROUND'
                     )
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'w-56 md:w-80 h-2.5 bg-slate-900 rounded-full overflow-hidden border border-slate-700 p-0.5 shadow-inner' },
+                    React.createElement('div', {
+                        className: 'h-full bg-gradient-to-r from-red-600 via-amber-500 to-lime-400 rounded-full transition-all duration-100 ease-linear',
+                        style: { width: Math.min(100, Math.max(0, (3.5 - (countdown || 0)) / 3.5 * 100)) + '%' }
+                    })
+                ),
+                React.createElement(
+                    'div',
+                    { className: 'text-2xl font-black text-amber-400 font-mono mt-2 tracking-wider' },
+                    countdown ? countdown.toFixed(1) + 's' : '3.5s'
                 )
             ),
             gameState === 'TAKEOFF' && React.createElement(
                 'div',
-                null,
+                { className: 'flex flex-col items-center' },
                 React.createElement(
                     'div',
-                    { className: 'text-lime-400 uppercase tracking-wider text-xs font-bold mb-1' },
+                    { className: 'text-lime-400 uppercase tracking-widest text-xs font-black mb-1' },
                     'TAKEOFF'
                 ),
                 React.createElement(
                     'div',
-                    { className: 'text-4xl font-black text-white font-mono' },
+                    { className: 'text-5xl font-black text-white font-mono' },
                     '1.00',
                     React.createElement(
                         'span',
@@ -1272,12 +1266,12 @@ function AviatorCanvas(_ref5) {
                     )
                 )
             ),
-            (gameState === 'FLYING' || !['WAITING', 'PREPARING', 'TAKEOFF', 'CRASHED'].includes(gameState)) && React.createElement(
+            gameState === 'FLYING' && React.createElement(
                 'div',
-                null,
+                { className: 'flex flex-col items-center' },
                 React.createElement(
                     'div',
-                    { className: 'text-6xl md:text-8xl font-black text-white font-mono tracking-tight', style: { textShadow: '0 0 25px rgba(255,255,255,0.35)' } },
+                    { className: 'text-6xl md:text-8xl font-black text-white font-mono tracking-tight', style: { textShadow: '0 0 30px rgba(255,255,255,0.4), 0 0 10px rgba(255,30,70,0.5)' } },
                     displayMult.toFixed(2),
                     React.createElement(
                         'span',
@@ -1288,15 +1282,15 @@ function AviatorCanvas(_ref5) {
             ),
             gameState === 'CRASHED' && React.createElement(
                 'div',
-                null,
+                { className: 'flex flex-col items-center animate-pulse' },
                 React.createElement(
                     'div',
-                    { className: 'text-red-500 font-black uppercase tracking-wider text-sm mb-1 animate-bounce' },
+                    { className: 'px-4 py-1 rounded bg-red-600/20 border border-red-500/40 text-red-500 font-black uppercase tracking-widest text-sm md:text-base mb-2 shadow-lg backdrop-blur-sm' },
                     'FLEW AWAY!'
                 ),
                 React.createElement(
                     'div',
-                    { className: 'text-5xl md:text-7xl font-black text-red-500 font-mono' },
+                    { className: 'text-6xl md:text-8xl font-black text-red-500 font-mono drop-shadow-[0_0_25px_rgba(239,68,68,0.7)]' },
                     displayMult.toFixed(2),
                     'x'
                 )
@@ -2271,8 +2265,8 @@ function ReactAviatorApp() {
                         setGameState('CRASHED');
                         setTimeout(function () {
                             setGameState('WAITING');
-                            setCountdown(3.0);
-                        }, 2200);
+                            setCountdown(3.5);
+                        }, 2800);
                     }
                     return next;
                 });
@@ -2283,7 +2277,7 @@ function ReactAviatorApp() {
                     if (prev <= 0.1) {
                         setGameState('FLYING');
                         setMultiplier(1.00);
-                        return 3.0;
+                        return 3.5;
                     }
                     return prev - 0.1;
                 });
@@ -2437,4 +2431,4 @@ if (rootEl) {
     }
     ReactDOM.render(React.createElement(ReactAviatorApp, null), rootEl);
 }
-/* Header */ /* Notifications List */ /* Footer */ /* Header */ /* Tab Switcher */ /* Form Body */ /* Left: Hamburger (mobile only) + Logo + Desktop Nav */ /* Hamburger - mobile only */ /* Mobile Logo: Compact Icon */ /* Desktop Logo: Full Banner */ /* Right Section: Notification Bell, Balance, Deposit & Auth */ /* Notification Bell */ /* Balance */ /* Deposit Button */ /* Account / User Menu */ /* Mobile Slide-out Drawer (triggered by hamburger) */ /* Tabs */ /* Total Bets Volume Header */ /* Previous Hand Trigger */ /* Table Headers */ /* Bets List Feed */ /* Toggles row */ /* Main controls row */ /* Left 50%: Spinner + Quick buttons */ /* Right 50%: BET Button */ /* Header */ /* Content */ /* Payment Method */ /* Amount */ /* Quick Amount Buttons */ /* Unified Responsive Header */ /* Desktop View */ /* Mobile View */ /* React Notifications Modal Component */ /* React Auth Modal Component */ /* React Withdrawal Modal Component */
+/* Header */ /* Notifications List */ /* Footer */ /* Header */ /* Tab Switcher */ /* Form Body */ /* Left: Hamburger (mobile only) + Logo + Desktop Nav */ /* Hamburger - mobile only */ /* Mobile Logo: Compact Icon */ /* Desktop Logo: Full Banner */ /* Right Section: Notification Bell, Balance, Deposit & Auth */ /* Notification Bell */ /* Balance */ /* Deposit Button */ /* Account / User Menu */ /* Mobile Slide-out Drawer (triggered by hamburger) */ /* Progress Loading Bar */ /* Tabs */ /* Total Bets Volume Header */ /* Previous Hand Trigger */ /* Table Headers */ /* Bets List Feed */ /* Toggles row */ /* Main controls row */ /* Left 50%: Spinner + Quick buttons */ /* Right 50%: BET Button */ /* Header */ /* Content */ /* Payment Method */ /* Amount */ /* Quick Amount Buttons */ /* Unified Responsive Header */ /* Desktop View */ /* Mobile View */ /* React Notifications Modal Component */ /* React Auth Modal Component */ /* React Withdrawal Modal Component */
