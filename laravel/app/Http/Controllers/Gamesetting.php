@@ -171,26 +171,37 @@ class Gamesetting extends Controller
     }
     public function currentlybet()
     {
-        // Fetch real active bets placed by logged-in users for current game ID
-        $realBets = Userbit::where("gameid", currentid())
-            ->leftJoin('users', 'users.id', '=', 'userbits.userid')
-            ->select('userbits.id as bitid', 'userbits.userid', 'userbits.amount', 'users.name', 'users.image')
-            ->get();
+        $realBets = collect();
+        try {
+            $realBets = Userbit::where("gameid", (string)currentid())
+                ->leftJoin('users', \Illuminate\Support\Facades\DB::raw('users.id::text'), '=', \Illuminate\Support\Facades\DB::raw('userbits.userid::text'))
+                ->select('userbits.id as bitid', 'userbits.userid', 'userbits.amount', 'users.name', 'users.image')
+                ->get();
+        } catch (\Exception $e) {
+            try {
+                $realBets = Userbit::where("gameid", (string)currentid())->get();
+            } catch (\Exception $ex) {}
+        }
 
         // Fetch registered platform database users from Supabase DB
-        $dbUsers = \App\Models\User::select('id', 'name', 'email', 'image')->take(50)->get();
+        $dbUsers = collect();
+        try {
+            $dbUsers = \App\Models\User::select('id', 'name', 'email', 'image')->take(50)->get();
+        } catch (\Exception $e) {}
 
         $currentGameBet = collect();
 
         // Add real active bets first
         foreach ($realBets as $b) {
+            $uid = is_numeric($b->userid) ? intval($b->userid) : 1;
             $currentGameBet->push([
                 'userid' => $b->userid,
                 'name'   => $b->name ?? ('Player #' . $b->userid),
                 'amount' => floatval($b->amount),
-                'image'  => $b->image ?: ('/images/avtar/av-' . (($b->userid % 72) + 1) . '.png')
+                'image'  => $b->image ?: ('/images/avtar/av-' . (($uid % 72) + 1) . '.png')
             ]);
         }
+
 
         // Add registered DB users from platform database
         foreach ($dbUsers as $u) {

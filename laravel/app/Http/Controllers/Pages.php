@@ -14,6 +14,8 @@ class Pages extends Controller
     public function aviator() {
         $user = session()->has('userlogin') ? user() : null;
         $wallet = $user ? wallet($user->id) : 0;
+        $mybets = $user ? Userbit::where("userid", $user->id)->where('status',1)->orderBy('id','desc')->get() : collect();
+        $allresults = Gameresult::orderBy('id','desc')->take(10)->get();
         
         $page = [
             'user' => $user ? [
@@ -25,8 +27,11 @@ class Pages extends Controller
             'wallet' => $wallet
         ];
         
-        return view('app', compact('page'));
+        return view('crash', compact('page', 'mybets', 'allresults'));
     }
+
+
+
 
     public function deposit() {
         $bank = Bank_detail::where('userid',user('id'))->first();
