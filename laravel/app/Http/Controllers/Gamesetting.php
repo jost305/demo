@@ -180,15 +180,9 @@ class Gamesetting extends Controller
             } catch (\Exception $ex) {}
         }
 
-        // Fetch registered platform database users from Supabase DB
-        $dbUsers = collect();
-        try {
-            $dbUsers = \App\Models\User::select('id', 'name', 'email', 'image')->take(50)->get();
-        } catch (\Exception $e) {}
-
         $currentGameBet = collect();
 
-        // Add real active bets first
+        // Add ONLY real active bets placed by real users
         foreach ($realBets as $b) {
             $uid = is_numeric($b->userid) ? intval($b->userid) : 1;
             $currentGameBet->push([
@@ -197,32 +191,6 @@ class Gamesetting extends Controller
                 'amount' => floatval($b->amount),
                 'image'  => $b->image ?: ('/images/avtar/av-' . (($uid % 72) + 1) . '.png')
             ]);
-        }
-
-
-        // Add registered DB users from platform database
-        foreach ($dbUsers as $u) {
-            if (!$currentGameBet->contains('userid', $u->id)) {
-                $currentGameBet->push([
-                    'userid' => $u->id,
-                    'name'   => $u->name ?? ($u->email ? explode('@', $u->email)[0] : ('Player #' . $u->id)),
-                    'amount' => rand(5, 50),
-                    'image'  => $u->image ?: ('/images/avtar/av-' . (($u->id % 72) + 1) . '.png')
-                ]);
-            }
-        }
-
-        // Fill remaining list if database has few registered users
-        if ($currentGameBet->count() < 30) {
-            for ($i = $currentGameBet->count() + 1; $i <= 35; $i++) {
-                $uid = rand(1000, 9999);
-                $currentGameBet->push([
-                    'userid' => $uid,
-                    'name'   => 'Player #' . $uid,
-                    'amount' => rand(5, 50),
-                    'image'  => '/images/avtar/av-' . rand(1, 72) . '.png'
-                ]);
-            }
         }
 
         $currentGame = array("id" => currentid());

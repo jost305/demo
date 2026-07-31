@@ -354,6 +354,9 @@ function switchWalletModal(target) {
         toModal.show();
     }, 300);
 }
+<!-- Ensure Flutterwave SDK is pre-loaded for 0ms delay popup -->
+<script src="https://checkout.flutterwave.com/v3.js"></script>
+
 function setDepAmt(val) {
     $('#modal_deposit_amount').val(val);
     $('.ax-chip').removeClass('active');
@@ -371,78 +374,81 @@ function submitModalDeposit() {
         return;
     }
 
-    var btn = $('#dep_submit_btn');
-    btn.prop('disabled', true).html('⚡ LOADING...');
+    var userId = '{{ session()->has("userlogin") ? user("id") : "" }}';
+    var userEmail = '{{ session()->has("userlogin") ? (user("email") ?: "user_".user("id")."@flyboy10x.com") : "" }}';
+    var userName = '{{ session()->has("userlogin") ? (user("name") ?: "FlyBoy Player") : "" }}';
+    var userPhone = '{{ session()->has("userlogin") ? (user("mobile") ?: "08000000000") : "" }}';
 
-    $.ajax({
-        url: '/payment/flutterwave/initialize',
-        type: 'POST',
-        data: { _token: '{{ csrf_token() }}', amount: amt },
-        dataType: 'json',
-        success: function(res) {
-            btn.prop('disabled', false).html('⚡ PAY WITH FLUTTERWAVE');
+    if (!userId) {
+        alert('Please log in to deposit funds.');
+        return;
+    }
 
-            if (res && res.status === 'success') {
-                // Close the deposit modal first
-                var depModal = bootstrap.Modal.getInstance(document.getElementById('deposit-modal'));
-                if (depModal) depModal.hide();
+    // Close deposit modal immediately for instant UX feedback
+    var depModal = bootstrap.Modal.getInstance(document.getElementById('deposit-modal'));
+    if (depModal) depModal.hide();
 
-                // Launch Flutterwave Inline payment widget (same-window overlay)
-                FlutterwaveCheckout({
-                    public_key:      res.public_key,
-                    tx_ref:          res.tx_ref,
-                    amount:          res.amount,
-                    currency:        res.currency || 'NGN',
-                    payment_options: 'card,banktransfer,ussd',
-                    customer:        res.customer,
-                    customizations:  res.customizations,
-                    meta:            res.meta,
-                    callback: function(data) {
-                        if (data.status === 'successful') {
-                            // Verify with backend & credit wallet
-                            $.ajax({
-                                url: '/payment/flutterwave/verify',
-                                type: 'POST',
-                                data: {
-                                    _token: '{{ csrf_token() }}',
-                                    transaction_id: data.transaction_id,
-                                    tx_ref: data.tx_ref
-                                },
-                                dataType: 'json',
-                                success: function(vRes) {
-                                    if (vRes && vRes.status === 'success') {
-                                        swal({
-                                            title: "Deposit Successful! 🎉",
-                                            text: "₦" + parseFloat(vRes.amount).toLocaleString('en-NG', {minimumFractionDigits:2}) + " has been credited to your FlyBoy wallet. Start flying!",
-                                            icon: "success",
-                                            button: "LET'S FLY ✈"
-                                        }).then(function() {
-                                            window.location.reload();
-                                        });
-                                    } else {
-                                        swal("Verification Pending", (vRes && vRes.message) || "Your payment was received but verification is pending. Contact support if balance is not updated within 5 minutes.", "warning");
-                                    }
-                                },
-                                error: function() {
-                                    swal("Verification Error", "Payment was received but could not be verified automatically. Please contact support.", "error");
-                                }
+    var txRef = 'FLB_DEP_' + Date.now() + '_' + userId;
+    var pubKey = '{{ env("FLUTTERWAVE_V3_PUBLIC_KEY", "FLWPUBK-1faa84fd49970155810050784292e926-X") }}';
+
+    // Launch Flutterwave Inline widget INSTANTLY (0ms delay)
+    FlutterwaveCheckout({
+        public_key: pubKey,
+        tx_ref: txRef,
+        amount: amt,
+        currency: 'NGN',
+        payment_options: 'card,banktransfer,ussd',
+        customer: {
+            email: userEmail,
+            phone_number: userPhone,
+            name: userName
+        },
+        customizations: {
+            title: 'FlyBoy 10x',
+            description: '₦' + amt.toLocaleString() + ' Wallet Deposit',
+            logo: window.location.origin + '/images/flyboy10x_logo.png'
+        },
+        meta: {
+            user_id: userId
+        },
+        callback: function(data) {
+            if (data.status === 'successful') {
+                // Verify with backend & credit wallet database
+                $.ajax({
+                    url: '/payment/flutterwave/verify',
+                    type: 'POST',
+                    data: {
+                        _token: '{{ csrf_token() }}',
+                        transaction_id: data.transaction_id,
+                        tx_ref: data.tx_ref || txRef,
+                        amount: amt
+                    },
+                    dataType: 'json',
+                    success: function(vRes) {
+                        if (vRes && vRes.status === 'success') {
+                            swal({
+                                title: "Deposit Successful! 🎉",
+                                text: "₦" + parseFloat(vRes.amount || amt).toLocaleString('en-NG', {minimumFractionDigits:2}) + " has been credited to your FlyBoy wallet. Start flying!",
+                                icon: "success",
+                                button: "LET'S FLY ✈"
+                            }).then(function() {
+                                window.location.reload();
                             });
+                        } else {
+                            swal("Verification Pending", (vRes && vRes.message) || "Your payment was received. Balance will update shortly.", "warning");
                         }
                     },
-                    onclose: function() {
-                        // Widget closed without completing — no action needed
+                    error: function() {
+                        swal("Verification Error", "Payment was completed. Contact support if balance is not updated.", "info");
                     }
                 });
-            } else {
-                alert((res && res.message) || 'Failed to initialize payment. Please try again.');
             }
         },
-        error: function(xhr) {
-            btn.prop('disabled', false).html('⚡ PAY WITH FLUTTERWAVE');
-            var err = xhr.responseJSON && xhr.responseJSON.message ? xhr.responseJSON.message : 'Please log in to deposit funds.';
-            alert(err);
+        onclose: function() {
+            // Widget closed by user
         }
     });
 }
 </script>
+
 
