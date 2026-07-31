@@ -70,17 +70,17 @@ function admin($parameter)
 function wallet($userid, $type = "string")
 {
     if (!$userid) {
-        return $type == "num" ? 0 : "0";
+        return $type == "num" ? 0 : "0.00";
     }
     $amount = Wallet::where('userid', $userid)->first();
-    if ($amount && $amount->amount > 0) {
+    if ($amount && floatval($amount->amount) > 0) {
         if ($type == "num") {
-            return $amount->amount;
+            return (float) $amount->amount;
         } else {
-            return number_format($amount->amount);
+            return number_format((float) $amount->amount, 2);
         }
     } else {
-        return 0;
+        return $type == "num" ? 0 : "0.00";
     }
 }
 function setting($parameter)

@@ -11,7 +11,7 @@
             {{-- Wallet pill --}}
             <div class="ax-wallet-pill">
                 <span class="ax-wallet-icon material-symbols-outlined">account_balance_wallet</span>
-                <span class="ax-wallet-amount" id="header_wallet_balance">₦{{ wallet(user('id')) }}</span>
+                <span class="ax-wallet-amount" id="header_wallet_balance">₦ {{ number_format(floatval(wallet(user('id'), 'num')), 2) }}</span>
                 <button type="button" class="ax-deposit-btn" data-bs-toggle="modal" data-bs-target="#deposit-modal" title="Deposit funds">+</button>
             </div>
 
@@ -35,7 +35,7 @@
                         </div>
                         <div class="ax-pm-balance">
                             <div class="ax-pm-bal-label">Balance</div>
-                            <div class="ax-pm-bal-amount">₦{{ wallet(user('id')) }}</div>
+                            <div class="ax-pm-bal-amount" id="profile_wallet_balance">₦ {{ number_format(floatval(wallet(user('id'), 'num')), 2) }}</div>
                         </div>
                     </div>
 

@@ -128,8 +128,10 @@ $(document).ready(function () {
     } else {
         music.pause();
     }
-    $("#wallet_balance").text(currency_symbol + wallet_balance); // Show Wallet Balance
-    $("#header_wallet_balance").text(currency_symbol + wallet_balance); // Show Header Wallet Balance
+    $("#wallet_balance").text(currency_symbol + " " + wallet_balance);
+    $("#header_wallet_balance").text(currency_symbol + " " + wallet_balance);
+    $("#profile_wallet_balance").text(currency_symbol + " " + wallet_balance);
+    $(".ax-pm-bal-amount").text(currency_symbol + " " + wallet_balance);
 });
 
 function info_data(intialData) {
@@ -265,11 +267,17 @@ function cash_out_now(element, section_no, increment = '') {
         success: function (result) {
             if (result.isSuccess) {
                 if (result.data.wallet_balance != '' && result.data.wallet_balance != NaN && result.data.wallet_balance != 'NaN') {
-                    $("#wallet_balance").text(currency_symbol + result.data.wallet_balance);
-                    $("#header_wallet_balance").text(currency_symbol + result.data.wallet_balance); // Show Header Wallet Balance
+                    var formattedBal = currency_symbol + ' ' + result.data.wallet_balance;
+                    $("#wallet_balance").text(formattedBal);
+                    $("#header_wallet_balance").text(formattedBal);
+                    $("#profile_wallet_balance").text(formattedBal);
+                    $(".ax-pm-bal-amount").text(formattedBal);
                 } else {
-                    $("#wallet_balance").text(currency_symbol + '0.00');
-                    $("#header_wallet_balance").text(currency_symbol + '0.00'); // Show Header Wallet Balance
+                    var zeroBal = currency_symbol + ' 0.00';
+                    $("#wallet_balance").text(zeroBal);
+                    $("#header_wallet_balance").text(zeroBal);
+                    $("#profile_wallet_balance").text(zeroBal);
+                    $(".ax-pm-bal-amount").text(zeroBal);
                 }
                 if (section_no == 0) {
                     $("#main_bet_section").find("#bet_button").show();
@@ -1005,11 +1013,17 @@ function place_bet_now() {
             if (result.isSuccess) {
 
                 if (result.data.wallet_balance != '' && result.data.wallet_balance != NaN && result.data.wallet_balance != 'NaN') {
-                    $("#wallet_balance").text(currency_symbol + result.data.wallet_balance);
-                    $("#header_wallet_balance").text(currency_symbol + result.data.wallet_balance); // Show Header Wallet Balance
+                    var formattedBal = currency_symbol + ' ' + result.data.wallet_balance;
+                    $("#wallet_balance").text(formattedBal);
+                    $("#header_wallet_balance").text(formattedBal);
+                    $("#profile_wallet_balance").text(formattedBal);
+                    $(".ax-pm-bal-amount").text(formattedBal);
                 } else {
-                    $("#wallet_balance").text(currency_symbol + '0.00');
-                    $("#header_wallet_balance").text(currency_symbol + '0.00'); // Show Header Wallet Balance
+                    var zeroBal = currency_symbol + ' 0.00';
+                    $("#wallet_balance").text(zeroBal);
+                    $("#header_wallet_balance").text(zeroBal);
+                    $("#profile_wallet_balance").text(zeroBal);
+                    $(".ax-pm-bal-amount").text(zeroBal);
                 }
 
                 if (bet_array.length == 1) {

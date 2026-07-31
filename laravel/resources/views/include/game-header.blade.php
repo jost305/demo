@@ -37,7 +37,7 @@
                         </div>
                         <div class="ax-pm-balance">
                             <div class="ax-pm-bal-label">Balance</div>
-                            <div class="ax-pm-bal-amount">₦ {{ number_format(floatval(wallet(user('id'))), 2) }}</div>
+                            <div class="ax-pm-bal-amount" id="profile_wallet_balance">₦ {{ number_format(floatval(wallet(user('id'), 'num')), 2) }}</div>
                         </div>
                     </div>
 
