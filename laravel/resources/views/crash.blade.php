@@ -486,12 +486,13 @@
     <div class="load-txt">
         <div class="loading-game-1">
             <div class="center-loading text-white text-center">
-                <img src="images/flyboy_plane.png?v={{ env('APP_VERSION', time()) }}" class="loader-plane-img" alt="FlyBoy Plane" />
+                <img src="images/p.png?v={{ env('APP_VERSION', time()) }}" class="loader-plane-img" alt="Aviator Plane" />
                 <div class="secondary-font waiting-text">WAITING FOR NEXT ROUND</div>
                 <div class="line-loader mt-2">
                     <div class="fill-line"></div>
                 </div>
             </div>
+
         </div>
     </div>
 
@@ -730,16 +731,17 @@
                     <!-- <div class="counter-num" id="auto_increment_number" style="display: none;">1.00<span>X</span></div> -->
                     <div class="loading-game">
                         <div class="center-loading text-white text-center game-centeral-loading">
-                            <img src="images/flyboy_plane.png?v={{ env('APP_VERSION', time()) }}" class="loader-plane-img" alt="FlyBoy Plane" />
+                            <img src="images/p.png?v={{ env('APP_VERSION', time()) }}" class="loader-plane-img" alt="Aviator Plane" />
                             <div class="secondary-font waiting-text">WAITING FOR NEXT ROUND</div>
                             <div class="line-loader mt-2">
                                 <div class="fill-line"></div>
                             </div>
                         </div>
                         <div class="bottom-left-plane">
-                            <img class="plane-static" src="images/flyboy_plane.png?v={{ env('APP_VERSION', time()) }}" />
+                            <img class="plane-static" src="images/p.png?v={{ env('APP_VERSION', time()) }}" />
                         </div>
                     </div>
+
 
                     <img src="images/bg-rotate-old.svg" class="rotateimage rotatebg" />
                     <canvas id="myCanvas" height=400 width="1900"></canvas>
