@@ -1565,6 +1565,9 @@
     <!--====== Login and registration js ======-->
     <script src="/user/login.js"></script>
 
+    <!--====== Real-time In-App & Web Push Notifications js ======-->
+    <script src="/js/notifications.js"></script>
+
     <!--====== Toastr js ======-->
     <script src="/js/toastr.min.js"></script>
 

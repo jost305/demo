@@ -56,6 +56,10 @@ Route::get('/register', function () {
 Route::get('/login', function () {
     return redirect('/crash?auth=login');
 });
+
+// Notifications API
+Route::get('/notifications/unread', [\App\Http\Controllers\NotificationController::class, 'unread']);
+Route::post('/notifications/mark-read', [\App\Http\Controllers\NotificationController::class, 'markRead']);
 // Auth Login
 Route::post('/auth/login', [Authentication::class, "login"]);
 Route::post('/auth/register', [Authentication::class, "register"]);
