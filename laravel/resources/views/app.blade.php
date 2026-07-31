@@ -51,8 +51,9 @@
     <!-- Include Auth Modals -->
     @include('include.auth-modals')
 
-    <!-- Load Compiled Main React Application Script -->
-    <script src="/js/react-app.js"></script>
+    <!-- Load Main React Application Script -->
+    <script type="text/babel" src="/js/react-app.js?v={{ time() }}"></script>
+
 </body>
 </html>
 

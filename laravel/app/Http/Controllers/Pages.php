@@ -29,7 +29,8 @@ class Pages extends Controller
             'wallet' => $wallet
         ];
         
-        return view('crash', compact('page', 'mybets', 'allresults'));
+        return view('app', compact('page'));
+
     }
 
     public function deposit() {
