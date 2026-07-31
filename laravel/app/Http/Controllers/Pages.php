@@ -12,10 +12,12 @@ use Carbon\Carbon;
 class Pages extends Controller
 {
     public function aviator() {
-        $user = session()->has('userlogin') ? user() : null;
-        $wallet = $user ? wallet($user->id) : 0;
-        $mybets = $user ? Userbit::where("userid", $user->id)->where('status',1)->orderBy('id','desc')->get() : collect();
-        $allresults = Gameresult::orderBy('id','desc')->take(10)->get();
+        $userSession = session()->get('userlogin');
+        $userId = is_object($userSession) ? $userSession->id : (is_array($userSession) ? ($userSession['id'] ?? null) : null);
+        $user = $userId ? User::find($userId) : null;
+        $wallet = $userId ? wallet($userId) : 0;
+        $mybets = $userId ? Userbit::where("userid", (string)$userId)->where('status', 1)->orderBy('id', 'desc')->get() : collect();
+        $allresults = Gameresult::orderBy('id', 'desc')->take(10)->get();
         
         $page = [
             'user' => $user ? [
@@ -30,15 +32,12 @@ class Pages extends Controller
         return view('crash', compact('page', 'mybets', 'allresults'));
     }
 
-
-
-
     public function deposit() {
-        $bank = Bank_detail::where('userid',user('id'))->first();
+        $bank = Bank_detail::where('userid', user('id'))->first();
         if (!$bank) {
             $bank = array();
         }
-        return view('deposite',compact('bank'));
+        return view('deposite', compact('bank'));
     }
 
     public function amount_transfer()
@@ -51,8 +50,10 @@ class Pages extends Controller
     }
 
     public function leaderboard() {
-        $user = session()->has('userlogin') ? user() : null;
-        $wallet = $user ? wallet($user->id) : 0;
+        $userSession = session()->get('userlogin');
+        $userId = is_object($userSession) ? $userSession->id : (is_array($userSession) ? ($userSession['id'] ?? null) : null);
+        $user = $userId ? User::find($userId) : null;
+        $wallet = $userId ? wallet($userId) : 0;
         
         $page = [
             'user' => $user ? [
@@ -67,6 +68,7 @@ class Pages extends Controller
 
         return view('app', compact('page'));
     }
+
 
     public function level_management() {
         $mypromocode = user('id');
