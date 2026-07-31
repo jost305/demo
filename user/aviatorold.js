@@ -1616,50 +1616,32 @@ let visibility_timer = 0;
 let visibility_interval;
 
 $(window).focus(function () {
-    // console.log('focused');
-    // console.log(focus_timer);
-    if (focus_timer > 10) {
-        location.reload();
-    } else {
-        focus_timer = 0;
-        clearInterval(focus_interval);
-    }
+    focus_timer = 0;
+    if (focus_interval) clearInterval(focus_interval);
 });
 
 let window_blur = 0;
 $(window).blur(function () {
-    // console.log('blur');
     const music = document.getElementById("background_Audio");
     window_blur = 1;
-    music.pause();
-    focus_interval = setInterval(function () {
-        focus_timer = parseInt(focus_timer + 1);
-    }, 1000);
+    if (music && music.pause) music.pause();
+    focus_timer = 0;
 });
-
 
 $(window).focus(function () {
-    // console.log('blur');
     window_blur = 0;
     const music = document.getElementById("background_Audio");
-    music.play();
-
+    if (music && music.play && $("#music").prop("checked") == true) {
+        music.play().catch(function() {});
+    }
 });
+
 document.addEventListener('visibilitychange', function (event) {
     if (document.hidden) {
-        // console.log('not visible');
-        visibility_interval = setInterval(function () {
-            visibility_timer = parseInt(visibility_timer + 1);
-        }, 1000);
+        visibility_timer = 0;
     } else {
-        // console.log(visibility_timer);
-        // console.log('is visible');
-        if (visibility_timer > 10) {
-            location.reload();
-        } else {
-            visibility_timer = 0;
-            clearInterval(visibility_interval);
-        }
+        visibility_timer = 0;
+        if (visibility_interval) clearInterval(visibility_interval);
     }
 });
 
