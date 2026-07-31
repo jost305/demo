@@ -1116,30 +1116,54 @@ function AviatorCanvas(_ref5) {
                 ctx.fillStyle = pathGrad;
                 ctx.fill();
 
-                // Draw Plane Sprite Sheet & Propeller / Flame Animation (sprite2 & sprite3)
+                // Draw Plane Sprite Sheet or Vector Plane at tip of red curve
                 if (gameState !== 'CRASHED') {
                     animFrameRef.current += 1;
-                    var activeSprite = sprite3Ref.current && sprite3Ref.current.complete ? sprite3Ref.current : sprite2Ref.current && sprite2Ref.current.complete ? sprite2Ref.current : planeImgRef.current;
+                    var activeSprite = sprite3Ref.current && sprite3Ref.current.complete && sprite3Ref.current.naturalWidth > 0 ? sprite3Ref.current : sprite2Ref.current && sprite2Ref.current.complete && sprite2Ref.current.naturalWidth > 0 ? sprite2Ref.current : planeImgRef.current && planeImgRef.current.complete && planeImgRef.current.naturalWidth > 0 ? planeImgRef.current : null;
 
                     ctx.save();
                     ctx.translate(endX, endY);
                     ctx.rotate(-Math.PI / 14); // Tilt plane upwards
 
-                    if (activeSprite && activeSprite.complete) {
-                        var isSpriteSheet = activeSprite.width > activeSprite.height * 1.7;
+                    var planeDrawn = false;
+                    if (activeSprite) {
+                        var fw = activeSprite.naturalWidth || activeSprite.width || 100;
+                        var fh = activeSprite.naturalHeight || activeSprite.height || 50;
+                        var isSpriteSheet = fw > fh * 1.7;
                         var numFrames = isSpriteSheet ? 2 : 1;
-                        var frameWidth = isSpriteSheet ? activeSprite.width / numFrames : activeSprite.width;
-                        var frameHeight = activeSprite.height;
+                        var frameWidth = isSpriteSheet ? fw / numFrames : fw;
+                        var frameHeight = fh;
                         var currentFrame = isSpriteSheet ? Math.floor(animFrameRef.current / 5) % numFrames : 0;
                         var destWidth = 85;
-                        var destHeight = frameHeight / frameWidth * destWidth;
+                        var destHeight = frameWidth > 0 && !isNaN(frameHeight / frameWidth) ? frameHeight / frameWidth * destWidth : 45;
 
-                        if (isSpriteSheet) {
-                            ctx.drawImage(activeSprite, currentFrame * frameWidth, 0, frameWidth, frameHeight, -destWidth + 4, -destHeight + 4, destWidth, destHeight);
-                        } else {
-                            ctx.drawImage(activeSprite, -destWidth + 4, -destHeight + 4, destWidth, destHeight);
+                        if (!isNaN(destWidth) && !isNaN(destHeight) && destWidth > 0 && destHeight > 0) {
+                            if (isSpriteSheet) {
+                                ctx.drawImage(activeSprite, currentFrame * frameWidth, 0, frameWidth, frameHeight, -destWidth + 10, -destHeight / 2, destWidth, destHeight);
+                            } else {
+                                ctx.drawImage(activeSprite, -destWidth + 10, -destHeight / 2, destWidth, destHeight);
+                            }
+                            planeDrawn = true;
                         }
                     }
+
+                    // Reliable fallback vector plane drawing if image sprite is loading or absent
+                    if (!planeDrawn) {
+                        ctx.fillStyle = '#ff1e46';
+                        ctx.beginPath();
+                        ctx.moveTo(12, 0);
+                        ctx.lineTo(-38, -16);
+                        ctx.lineTo(-24, 0);
+                        ctx.lineTo(-38, 16);
+                        ctx.closePath();
+                        ctx.fill();
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath();
+                        ctx.arc(2, 0, 3.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
                     ctx.restore();
                 }
             }

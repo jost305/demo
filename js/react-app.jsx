@@ -708,39 +708,66 @@ function AviatorCanvas({ gameState, multiplier, countdown }) {
                 ctx.fillStyle = pathGrad;
                 ctx.fill();
 
-                // Draw Plane Sprite Sheet & Propeller / Flame Animation (sprite2 & sprite3)
+                // Draw Plane Sprite Sheet or Vector Plane at tip of red curve
                 if (gameState !== 'CRASHED') {
                     animFrameRef.current += 1;
-                    const activeSprite = sprite3Ref.current && sprite3Ref.current.complete 
-                        ? sprite3Ref.current 
-                        : (sprite2Ref.current && sprite2Ref.current.complete ? sprite2Ref.current : planeImgRef.current);
+                    const activeSprite = (sprite3Ref.current && sprite3Ref.current.complete && sprite3Ref.current.naturalWidth > 0)
+                        ? sprite3Ref.current
+                        : ((sprite2Ref.current && sprite2Ref.current.complete && sprite2Ref.current.naturalWidth > 0)
+                            ? sprite2Ref.current
+                            : ((planeImgRef.current && planeImgRef.current.complete && planeImgRef.current.naturalWidth > 0) ? planeImgRef.current : null));
 
                     ctx.save();
                     ctx.translate(endX, endY);
                     ctx.rotate(-Math.PI / 14); // Tilt plane upwards
 
-                    if (activeSprite && activeSprite.complete) {
-                        const isSpriteSheet = activeSprite.width > activeSprite.height * 1.7;
+                    let planeDrawn = false;
+                    if (activeSprite) {
+                        const fw = activeSprite.naturalWidth || activeSprite.width || 100;
+                        const fh = activeSprite.naturalHeight || activeSprite.height || 50;
+                        const isSpriteSheet = fw > fh * 1.7;
                         const numFrames = isSpriteSheet ? 2 : 1;
-                        const frameWidth = isSpriteSheet ? activeSprite.width / numFrames : activeSprite.width;
-                        const frameHeight = activeSprite.height;
+                        const frameWidth = isSpriteSheet ? fw / numFrames : fw;
+                        const frameHeight = fh;
                         const currentFrame = isSpriteSheet ? Math.floor(animFrameRef.current / 5) % numFrames : 0;
                         const destWidth = 85;
-                        const destHeight = (frameHeight / frameWidth) * destWidth;
+                        const destHeight = (frameWidth > 0 && !isNaN(frameHeight / frameWidth)) ? (frameHeight / frameWidth) * destWidth : 45;
 
-                        if (isSpriteSheet) {
-                            ctx.drawImage(
-                                activeSprite,
-                                currentFrame * frameWidth, 0, frameWidth, frameHeight,
-                                -destWidth + 4, -destHeight + 4, destWidth, destHeight
-                            );
-                        } else {
-                            ctx.drawImage(activeSprite, -destWidth + 4, -destHeight + 4, destWidth, destHeight);
+                        if (!isNaN(destWidth) && !isNaN(destHeight) && destWidth > 0 && destHeight > 0) {
+                            if (isSpriteSheet) {
+                                ctx.drawImage(
+                                    activeSprite,
+                                    currentFrame * frameWidth, 0, frameWidth, frameHeight,
+                                    -destWidth + 10, -destHeight / 2, destWidth, destHeight
+                                );
+                            } else {
+                                ctx.drawImage(activeSprite, -destWidth + 10, -destHeight / 2, destWidth, destHeight);
+                            }
+                            planeDrawn = true;
                         }
                     }
+
+                    // Reliable fallback vector plane drawing if image sprite is loading or absent
+                    if (!planeDrawn) {
+                        ctx.fillStyle = '#ff1e46';
+                        ctx.beginPath();
+                        ctx.moveTo(12, 0);
+                        ctx.lineTo(-38, -16);
+                        ctx.lineTo(-24, 0);
+                        ctx.lineTo(-38, 16);
+                        ctx.closePath();
+                        ctx.fill();
+
+                        ctx.fillStyle = '#ffffff';
+                        ctx.beginPath();
+                        ctx.arc(2, 0, 3.5, 0, Math.PI * 2);
+                        ctx.fill();
+                    }
+
                     ctx.restore();
                 }
             }
+
 
             animId = requestAnimationFrame(render);
         };
