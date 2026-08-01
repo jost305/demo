@@ -21,6 +21,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Gameresult;
 use App\Models\Setting;
+use App\Models\User;
 use App\Models\Userbit;
 use App\Services\PlatformNotificationService;
 use Illuminate\Http\Request;
@@ -52,6 +53,11 @@ class Gamesetting extends Controller
         $new = Setting::where('category', 'game_status')->update(['value' => '0']);
         $r->session()->put('gamegenerate','1');
         return response()->json(array("id" => currentid()));
+    }
+
+    public function currentid(Request $r)
+    {
+        return response()->json(["id" => currentid()]);
     }
     
     public function increamentor(Request $r)
@@ -165,6 +171,8 @@ class Gamesetting extends Controller
 		}
         $response = array("isSuccess" => $status, "data" => $data, "message" => $message);
         return response()->json($response);
+    }
+
     public function currentlybet()
     {
         $currentGameBet = collect();

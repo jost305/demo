@@ -135,6 +135,7 @@ Route::group(['middleware' => ['isUser']], function () {
     Route::post('/game/existence', [Gamesetting::class, "game_existence"]);
     Route::post('/game/crash_plane', [Gamesetting::class, "crash_plane"]);
     Route::post('/game/new_game_generated', [Gamesetting::class, "new_game_generated"]);
+    Route::post('/game/currentid', [Gamesetting::class, "currentid"]);
     Route::post('/game/increamentor', [Gamesetting::class, "increamentor"]);
     Route::post('/game/game_over', [Gamesetting::class, "game_over"]);
     Route::post('/game/add_bet', [Gamesetting::class, "betNow"]);
