@@ -17,16 +17,13 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
-    <!--====== Google Fonts: Roboto + Material Icons ======-->
-    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <!--====== Google Fonts: Noto Sans + Material Icons ======-->
+    <link href="https://fonts.googleapis.com/css2?family=Noto+Sans:wght@300;400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet"
         href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block" />
 
     <!--====== jQuery (loaded early in head for inline scripts) ======-->
     <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>
-
-    <!--====== mCustomScrollbar CSS ======-->
-    <link rel="stylesheet" href="../../css/jquery.mCustomScrollbar.min.css" />
 
     <!--====== Pretty Checkbox CSS ======-->
     <link rel="stylesheet" href="css/pretty-checkbox.min.css" />
@@ -651,6 +648,323 @@
         </div>
     </div>
 
+    <style>
+        /* ═══════════════════════════════════════════════════
+           BET HISTORY — PIXEL-PERFECT REDESIGN
+           Matches reference: two-tab dark panel, flat rows,
+           colored multipliers, no uppercase headers
+           ═══════════════════════════════════════════════════ */
+
+        /* Sidebar container */
+        .left-sidebar {
+            background: #0b0c10 !important;
+            border: 1px solid #17191f !important;
+            border-radius: 10px !important;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden !important;
+            align-self: flex-start !important;
+            height: calc(100vh - 120px) !important;
+            margin-right: 10px;
+        }
+
+        /* Chat Sidebar Constraint (Fixes chatroom elongating / forces sticky input) */
+        .ax-chat-sidebar {
+            width: 320px !important;
+            height: calc(100vh - 120px) !important;
+            display: flex;
+            flex-direction: column;
+            overflow: hidden !important;
+            align-self: flex-start !important;
+        }
+
+        /* Nuke old contents-blocks */
+        .left-sidebar .contents-blocks {
+            background: transparent !important;
+            background-image: none !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            height: 100% !important;
+            flex: 1;
+        }
+
+        /* Tabs */
+        .left-sidebar .tabs-navs {
+            padding: 4px 12px !important;
+            border-bottom: 1px solid #17191f !important;
+            height: auto !important;
+            min-height: 0 !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+        }
+        .left-sidebar .tabs-navs .nav-pills {
+            display: flex !important;
+            flex-direction: row !important;
+            padding: 0 !important;
+            margin: 0 !important;
+            list-style: none !important;
+            gap: 16px !important;
+            border: none !important;
+            border-radius: 0 !important;
+            width: auto !important;
+        }
+        .left-sidebar .tabs-navs .nav-pills .nav-item {
+            flex: none !important;
+            margin: 0 !important;
+        }
+        .left-sidebar .tabs-navs .nav-pills .nav-link {
+            display: block !important;
+            width: auto !important;
+            height: auto !important;
+            text-align: center !important;
+            padding: 4px 8px !important;
+            font-size: 12px !important;
+            font-weight: 600 !important;
+            color: #94a3b8 !important; /* slate-400 */
+            background: transparent !important;
+            border: none !important;
+            border-bottom: 2px solid transparent !important;
+            border-radius: 0 !important;
+            transition: color 0.2s, border-color 0.2s;
+            cursor: pointer;
+            z-index: 1 !important;
+        }
+        .left-sidebar .tabs-navs .nav-pills .nav-link.active {
+            color: #a3e635 !important; /* lime-400 */
+            background: transparent !important;
+            border-bottom: 2px solid #a3e635 !important;
+            box-shadow: none !important;
+        }
+        .left-sidebar .tabs-navs .nav-pills .nav-link:hover:not(.active) {
+            color: #f8fafc !important; /* white */
+        }
+        .left-sidebar .tabs-navs .active-line { display: none !important; }
+
+        /* Stats bar: TOTAL BETS only now */
+        .left-sidebar #pills-allbets > .d-flex {
+            display: flex !important;
+            flex-direction: column !important;
+            align-items: stretch !important;
+            justify-content: flex-start !important;
+            padding: 0 !important;
+            gap: 0 !important;
+        }
+
+        /* Total Bets Section */
+        .left-sidebar .bets-count {
+            padding: 8px 12px !important;
+            border-bottom: 1px solid #17191f !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            color: #94a3b8 !important; /* slate-400 */
+            letter-spacing: 0 !important;
+            text-transform: uppercase !important;
+            line-height: 1 !important;
+        }
+        .left-sidebar .bets-count #total_bets {
+            display: block !important;
+            font-size: 18px !important; /* text-lg */
+            font-weight: 700 !important; /* font-bold */
+            color: #a3e635 !important; /* lime-400 */
+            letter-spacing: 0 !important;
+            line-height: 1.2 !important;
+            margin-top: 4px !important;
+        }
+
+        /* Hidden badge override */
+        .left-sidebar .custom-badge.hide { display: none !important; }
+
+        /* Previous hand buttons */
+        .left-sidebar .previous-history {
+            height: auto !important;
+            border-radius: 0 !important;
+            border: none !important;
+            background: transparent !important;
+            color: #94a3b8 !important; /* slate-400 */
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            padding: 0 !important;
+            display: inline-flex !important;
+            align-items: center !important;
+            gap: 8px !important;
+            white-space: nowrap !important;
+            transition: color 0.15s !important;
+        }
+        .left-sidebar .previous-history:hover {
+            color: #f8fafc !important; /* white */
+        }
+        .left-sidebar .previous-history.hide {
+            display: none !important;
+        }
+        .left-sidebar .previous-history.selected {
+            color: #ef4444 !important; /* red-500 */
+        }
+        .left-sidebar .previous-history .material-symbols-outlined {
+            font-size: 14px !important;
+        }
+
+        /* Column headers */
+        .left-sidebar .list-header {
+            display: flex !important;
+            align-items: center !important;
+            height: 32px !important;
+            padding: 0 14px !important;
+            margin: 0 !important;
+            margin-bottom: 2px !important;
+            font-size: 12px !important;
+            font-weight: 500 !important;
+            color: #4a5070 !important;
+            letter-spacing: 0 !important;
+            text-transform: none !important;
+            border-bottom: 1px solid #17191f !important;
+            background: transparent !important;
+        }
+
+        /* Column widths — must prevent "Cash out" wrapping */
+        .left-sidebar .list-header .column-1,
+        .left-sidebar .list-items .column-1 {
+            width: 37% !important;
+            min-width: 0;
+            text-align: left !important;
+            box-sizing: border-box;
+        }
+        .left-sidebar .list-header .column-2,
+        .left-sidebar .list-items .column-2 {
+            width: 20% !important;
+            text-align: center !important;
+            box-sizing: border-box;
+        }
+        .left-sidebar .list-header .column-3,
+        .left-sidebar .list-items .column-3 {
+            width: 17% !important;
+            text-align: center !important;
+            box-sizing: border-box;
+        }
+        .left-sidebar .list-header .column-4,
+        .left-sidebar .list-items .column-4 {
+            width: 26% !important;
+            text-align: right !important;
+            box-sizing: border-box;
+            white-space: nowrap !important;
+        }
+
+        /* Row items — flat, zero card styling */
+        .left-sidebar .list-items {
+            display: flex !important;
+            align-items: center !important;
+            justify-content: space-between !important;
+            padding: 0 14px !important;
+            height: 42px !important;
+            margin: 0 !important;
+            border-radius: 0 !important;
+            background: transparent !important;
+            background-image: none !important;
+            border: none !important;
+            border-bottom: 1px solid rgba(255,255,255,0.04) !important;
+            font-size: 13px;
+            font-weight: 500;
+            color: #d0d6f0;
+            transition: background 0.1s;
+        }
+        .left-sidebar .list-items:hover {
+            background: rgba(255,255,255,0.03) !important;
+        }
+        .left-sidebar .list-items.active {
+            background: rgba(34,197,94,0.05) !important;
+            border-bottom-color: rgba(34,197,94,0.06) !important;
+        }
+
+        /* Avatar */
+        .left-sidebar .column-1.users {
+            display: flex !important;
+            align-items: center !important;
+            margin-left: 0 !important;
+            font-size: 12.5px;
+            font-weight: 600;
+            color: #e8ecf8;
+            overflow: hidden;
+            white-space: nowrap;
+            text-overflow: ellipsis;
+        }
+        .left-sidebar .column-1.users .avatar,
+        .left-sidebar .column-1.users1 .avatar {
+            min-width: 30px !important;
+            max-width: 30px !important;
+            min-height: 30px !important;
+            max-height: 30px !important;
+            border-radius: 50% !important;
+            border: 1.5px solid rgba(255,255,255,0.12) !important;
+            margin-right: 8px !important;
+            object-fit: cover;
+            flex-shrink: 0;
+        }
+
+        /* Bet amount — strip old pill button look */
+        .left-sidebar .column-2 .btn {
+            display: inline !important;
+            border: none !important;
+            background: transparent !important;
+            font-size: 13px !important;
+            font-weight: 500 !important;
+            color: #d0d6f0 !important;
+            padding: 0 !important;
+            height: auto !important;
+            border-radius: 0 !important;
+            line-height: inherit !important;
+            white-space: nowrap;
+        }
+
+        /* Multiplier badges: bg3 ≤2x, bg1 2–10x, bg2 >10x */
+        .left-sidebar .custom-badge {
+            display: inline !important;
+            background: transparent !important;
+            border: none !important;
+            border-radius: 0 !important;
+            padding: 0 !important;
+            min-width: 0 !important;
+            font-size: 13px !important;
+            font-weight: 700 !important;
+        }
+        .left-sidebar .custom-badge.bg3 { color: #38bdf8 !important; } /* sky blue ≤2x */
+        .left-sidebar .custom-badge.bg1 { color: #4ade80 !important; } /* green 2–10x */
+        .left-sidebar .custom-badge.bg2 { color: #c084fc !important; } /* violet >10x */
+
+        /* Inactive columns 3 & 4 (dash text) */
+        .left-sidebar .list-items .column-3,
+        .left-sidebar .list-items .column-4 {
+            color: #5a5f78;
+        }
+        /* Active row: green cash-out */
+        .left-sidebar .list-items.active .column-4 {
+            color: #22c55e !important;
+            font-weight: 600 !important;
+        }
+        .left-sidebar .list-items.active .column-3 {
+            color: inherit;
+        }
+
+        /* Scrollable list body */
+        .left-sidebar .list-body {
+            overflow-y: auto !important;
+            max-height: calc(100vh - 200px);
+            scrollbar-width: thin;
+            scrollbar-color: #1e2230 transparent;
+        }
+        .left-sidebar .list-body::-webkit-scrollbar { width: 3px; }
+        .left-sidebar .list-body::-webkit-scrollbar-thumb {
+            background: #1e2230;
+            border-radius: 3px;
+        }
+
+        /* My Bets: date in col-1 */
+        #pills-mybets .column-1.fw-normal {
+            font-weight: 400 !important;
+            font-size: 12px;
+            color: #5a5f78;
+        }
+    </style>
     <div class="main-container">
         <!--====== Left Sidebar Start ======-->
         <div class="left-sidebar">
@@ -668,56 +982,38 @@
                     </li>
                     <span class="active-line"></span>
                 </ul>
+                <div class="d-flex align-items-center">
+                    <button class="btn btn-transparent previous-history d-flex align-items-center"
+                        id="current_hand_btn" onclick="previous_hand(1);">
+                        <span class="material-symbols-outlined f-18 me-1 history-icos">history</span>
+                        <span class="material-symbols-outlined f-18 me-1 close-icos">close</span>
+                        Previous hand
+                    </button>
+                    <button class="btn btn-transparent previous-history selected d-flex align-items-center hide"
+                        id="previous_hand_btn" onclick="previous_hand(2);">
+                        <span class="material-symbols-outlined f-18 me-1 history-icos">history</span>
+                        <span class="material-symbols-outlined f-18 me-1 close-icos">close</span>
+                        Previous hand
+                    </button>
+                </div>
             </div>
             <div class="contents-blocks">
                 <div class="tab-content" id="pills-tabContent">
                     <div class="tab-pane fade show active" id="pills-allbets" role="tabpanel"
                         aria-labelledby="pills-allbets-tab">
                         <div class="d-flex align-items-center justify-content-between">
-                            <div class="bets-count secondary-font f-14">TOTAL BETS : <span class="text-success"
+                            <div class="bets-count secondary-font f-14">TOTAL BETS<span class="text-success"
                                     id="total_bets">0</span></div>
                             <div class="custom-badge mx-auto hide" id="prev_win_multi">0.00x</div>
-                            <div class="">
-                                <button class="btn btn-transparent previous-history d-flex align-items-center"
-                                    id="current_hand_btn" onclick="previous_hand(1);">
-                                    <span class="material-symbols-outlined f-18 me-1 history-icos">
-                                        history
-                                    </span>
-                                    <span class="material-symbols-outlined f-18 me-1 close-icos">
-                                        close
-                                    </span>
-                                    Previous hand
-                                </button>
-                                <button
-                                    class="btn btn-transparent previous-history selected d-flex align-items-center hide"
-                                    id="previous_hand_btn" onclick="previous_hand(2);">
-                                    <span class="material-symbols-outlined f-18 me-1 history-icos">
-                                        history
-                                    </span>
-                                    <span class="material-symbols-outlined f-18 me-1 close-icos">
-                                        close
-                                    </span>
-                                    Previous hand
-                                </button>
-                            </div>
                         </div>
                         <div class="list-data-tbl mt-2">
                             <div class="list-header">
-                                <div class="column-1">
-                                    User
-                                </div>
-                                <div class="column-2">
-                                    Bet
-                                </div>
-                                <div class="column-3">
-                                    Mult.
-                                </div>
-                                <div class="column-4">
-                                    Cash out
-                                </div>
+                                <div class="column-1">User</div>
+                                <div class="column-2">Bet</div>
+                                <div class="column-3">Mult.</div>
+                                <div class="column-4">Cash out</div>
                             </div>
                             <div class="list-body scroll-div list-body0" id="all_bets"> </div>
-
                             <div class="list-body scroll-div list-body0 hide" id="prev_bets"> </div>
                         </div>
                     </div>
@@ -725,18 +1021,10 @@
                     <div class="tab-pane fade" id="pills-mybets" role="tabpanel" aria-labelledby="pills-mybets-tab">
                         <div class="list-data-tbl mt-2">
                             <div class="list-header">
-                                <div class="column-1">
-                                    Date
-                                </div>
-                                <div class="column-2">
-                                    Bet
-                                </div>
-                                <div class="column-3">
-                                    Mult.
-                                </div>
-                                <div class="column-4">
-                                    Cash out
-                                </div>
+                                <div class="column-1">Date</div>
+                                <div class="column-2">Bet</div>
+                                <div class="column-3">Mult.</div>
+                                <div class="column-4">Cash out</div>
                                 <div class="ps-2"></div>
                             </div>
                             <div class="list-body scroll-div list-body1" id="my_bet_list">
@@ -752,17 +1040,14 @@
                                             </button>
                                         </div>
                                         <div class="column-3">
-
                                             <div class="bg3 custom-badge mx-auto">
                                                 {{ number_format($item->cashout_multiplier, 2) }}x</div>
-
                                         </div>
                                         <div class="column-4 fw-normal">
                                             {{ number_format($item->amount * $item->cashout_multiplier, 2) }}₦
                                         </div>
                                     </div>
                                 @endforeach
-
                             </div>
                         </div>
                     </div>
@@ -771,6 +1056,7 @@
             </div>
         </div>
         <!--====== Left Sidebar End ======-->
+
         <!--====== Right Sidebar Start ======-->
         <div class="right-sidebar">
             <div class="game-play">
@@ -1543,7 +1829,6 @@
 
     <!--====== Slimscroll js ======-->
     <!--<script src="/js/jquery.mCustomScrollbar.js"></script>-->
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/malihu-custom-scrollbar-plugin/3.1.5/jquery.mCustomScrollbar.concat.min.js"></script>
 
 
     <!--====== Country Selection js ======-->
@@ -1728,7 +2013,7 @@
             title: "Deposit Successful! 🎉",
             text: "Your wallet has been credited" + (amtTxt ? " with " + amtTxt : "") + ". Start flying!",
             icon: "success",
-            button: "LET'S FLY ✈"
+            button: "Fly and win all day! ✈"
         });
     });
     </script>

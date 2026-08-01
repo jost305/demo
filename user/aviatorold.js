@@ -928,6 +928,11 @@ function bet_now(element, section_no) {
         $(".error-toaster2").addClass('show');
         errorToastrStageTimeOut();
     } else {
+        if (!member_id || member_id === '') {
+            if (typeof switchAuthTab === 'function') switchAuthTab('login');
+            $('#auth-modal').modal('show');
+            return;
+        }
         var bet_type = $(element).parent().parent().parent().find(".navigation #bet_type").val(); // 0 - Normal, 1 - Auto
         // var bet_amount = parseFloat($(element).parent().parent().find(".bet-block .spinner #bet_amount").val());
         let bet_amount = $(element).parent().parent().find(".bet-block .spinner #bet_amount").val();
@@ -997,6 +1002,11 @@ function cancle_now(element, section_no) {
 }
 
 function place_bet_now() {
+    if (!member_id || member_id === '') {
+        if (typeof switchAuthTab === 'function') switchAuthTab('login');
+        $('#auth-modal').modal('show');
+        return;
+    }
     for(let i=0;i < bet_array.length; i++){
         bet_array[i].game_id = current_game_data.id;
     }
@@ -1581,19 +1591,6 @@ $(".main_bet_btn").on('click', function () {
         }
     }
 });
-
-function check_login_status() {
-    $.ajax({
-        url: 'is_login',
-        type: "POST",
-        dataType: "json",
-        success: function (result) {
-            if (result.isSuccess == false) {
-                window.location.href = 'login';
-            }
-        }
-    });
-}
 
 function gameLoadingTimer() {
     let timer_no = 1;

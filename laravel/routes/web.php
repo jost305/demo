@@ -147,11 +147,13 @@ Route::group(['middleware' => ['isUser']], function () {
 
     // Flutterwave Payment Routes
     Route::post('/payment/flutterwave/initialize', [\App\Http\Controllers\FlutterwaveController::class, 'initialize']);
+    Route::post('/payment/opay/create', [\App\Http\Controllers\OPayController::class, 'create']);
 });
 
 Route::get('/payment/flutterwave/callback', [\App\Http\Controllers\FlutterwaveController::class, 'callback']);
 Route::post('/payment/flutterwave/webhook', [\App\Http\Controllers\FlutterwaveController::class, 'webhook']);
 Route::post('/payment/flutterwave/verify', [\App\Http\Controllers\FlutterwaveController::class, 'verify']);
+Route::get('/payment/opay/callback', [\App\Http\Controllers\OPayController::class, 'callback']);
 
 
 Route::match(['get', 'post'], '/currentlybet', [Gamesetting::class, "currentlybet"]);

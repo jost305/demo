@@ -1,26 +1,14 @@
 body {
     /* font-family: 'Open Sans', sans-serif; */
-    font-family: 'Roboto', sans-serif;
+    font-family: 'Noto Sans', sans-serif;
     font-size: 14px;
     overflow: auto;
     /*background: rgb(221, 228, 236);*/
     background: #101011;
 }
 
-@font-face {
-    font-family: 'ALK Sanet';
-    src: url('../fonts/ALKSanet.woff2') format('woff2'),
-        url('../fonts/ALKSanet.woff') format('woff'),
-        url('../fonts/ALKSanet.ttf') format('truetype'),
-        url('../fonts/ALKSanet.svg#ALKSanet') format('svg');
-    font-weight: normal;
-    font-style: normal;
-    font-display: swap;
-}
-
 .secondary-font {
-    /* font-family: 'Oswald', sans-serif; */
-    font-family: 'ALK Sanet';
+    font-family: 'Noto Sans', sans-serif;
 }
 .btn-danger {
     background: #f7001f;

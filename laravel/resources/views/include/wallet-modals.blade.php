@@ -253,6 +253,10 @@
                         <span class="fs-5 d-block mb-1">💳</span>
                         Flutterwave (Cards, USSD, Bank Transfer)
                     </div>
+                    <div class="ax-pay-method" onclick="selectPayMethod(this,'opay')">
+                        <span class="fs-5 d-block mb-1">🟠</span>
+                        OPay (Hosted Checkout)
+                    </div>
                 </div>
                 <input type="hidden" id="dep_modal_gateway" value="flutterwave">
 
@@ -368,6 +372,7 @@ window.selectPayMethod = function(el, gatewayId) {
     document.querySelectorAll('.ax-pay-method').forEach(function(m){ m.classList.remove('selected'); });
     if (el) $(el).addClass('selected');
     $('#dep_modal_gateway').val(gatewayId);
+    $('#dep_submit_btn').text(gatewayId === 'opay' ? '⚡ PAY WITH OPAY' : '⚡ PAY WITH FLUTTERWAVE');
 };
 window.submitModalDeposit = function() {
     var amt = parseFloat($('#modal_deposit_amount').val());
@@ -386,12 +391,35 @@ window.submitModalDeposit = function() {
         return;
     }
 
-    // Close deposit modal immediately for instant UX feedback
     var depModal = bootstrap.Modal.getInstance(document.getElementById('deposit-modal'));
     if (depModal) depModal.hide();
 
+    var gateway = $('#dep_modal_gateway').val();
+    if (gateway === 'opay') {
+        $.ajax({
+            url: '/payment/opay/create',
+            type: 'POST',
+            data: {
+                _token: '{{ csrf_token() }}',
+                amount: amt
+            },
+            dataType: 'json',
+            success: function(res) {
+                if (res && res.status === 'success' && res.cashierUrl) {
+                    window.location.href = res.cashierUrl;
+                } else {
+                    swal("OPay Error", (res && res.message) || 'Unable to start OPay payment. Please try again.', 'error');
+                }
+            },
+            error: function() {
+                swal("OPay Error", "Unable to start OPay payment. Please try again.", "error");
+            }
+        });
+        return;
+    }
+
     var txRef = 'FLB_DEP_' + Date.now() + '_' + userId;
-    var pubKey = '{{ env("FLUTTERWAVE_V3_PUBLIC_KEY", "FLWPUBK-1faa84fd49970155810050784292e926-X") }}';
+    var pubKey = '{{ env("FLUTTERWAVE_V3_PUBLIC_KEY", "FLWPUBK-1faa84fd49970155810055810050784292e926-X") }}';
 
     // Launch Flutterwave Inline widget INSTANTLY (0ms delay)
     FlutterwaveCheckout({

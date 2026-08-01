@@ -33,7 +33,7 @@
   --ax-text-muted: #545766;
 
   /* Typography */
-  --ax-font-family: 'Roboto', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+  --ax-font-family: 'Noto Sans', -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
   --ax-radius-sm: 6px;
   --ax-radius-md: 10px;
   --ax-radius-lg: 14px;

@@ -43,12 +43,15 @@ $(document).ready(function () {
     //         theme: "dark-3"
     //     });
     // }
-    setTimeout(function () {
-        $(".niceCountryInputMenuDropdownContent").mCustomScrollbar({
-            //scrollInertia: 50,
-            theme: "dark-3"
-        });
-    }, 500);
+    // mCustomScrollbar removed for native browser scrolling and smaller payload.
+    // If custom scrollbars are required later, re-enable via CSS-only styling instead.
+
+    // setTimeout(function () {
+    //     $(".niceCountryInputMenuDropdownContent").mCustomScrollbar({
+    //         //scrollInertia: 50,
+    //         theme: "dark-3"
+    //     });
+    // }, 500);
 
     //$(".cc-picker").click(function () {
     //    setTimeout(function () {
@@ -60,10 +63,10 @@ $(document).ready(function () {
     //});
     
 
-    $(".options").mCustomScrollbar({
-        scrollInertia: 50,
-        theme: "dark-3"
-    });
+    // $(".options").mCustomScrollbar({
+    //     scrollInertia: 50,
+    //     theme: "dark-3"
+    // });
     // $(".tabs-navs .nav-item").click(function () {
     //     $(this).parent().parent().find(".nav-item").removeClass('active');
     //     //$(".tabs-navs .nav-item").removeClass('active');
@@ -125,11 +128,7 @@ $(document).ready(function () {
     });    
 });
 $(window).resize(function () {
-    $(".list-body").mCustomScrollbar("destroy");
-    $(".list-body").mCustomScrollbar({
-        scrollInertia: 50,
-        theme: "dark-3"
-    });
+    // Native browser scrolling used instead of custom mCustomScrollbar.
 });
 
 $(function () {

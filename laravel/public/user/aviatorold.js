@@ -1,12 +1,9 @@
 $('body').addClass('overflow-hidden');
 
 function scrollFunction() {
-    $(".list-body").mCustomScrollbar({
-        scrollInertia: 50,
-        theme: "dark-3"
-    });
+    // custom scrollbar removed; native browser scrolling is used instead.
 }
-scrollFunction();
+// scrollFunction();
 
 
 document.addEventListener("visibilitychange", function () {
@@ -276,7 +273,7 @@ function cash_out_now(element, section_no, increment = '') {
                     $("#main_bet_section").find("#cancle_button").hide();
                     $("#main_bet_section").find("#cancle_button #waiting").hide();
                     $("#main_bet_section").find("#cashout_button").hide();
-                    
+
                     $("#my_bet_list #my_bet_section_0").addClass('active');
                     $("#my_bet_list #my_bet_section_0 .column-3").html('<div class="' + get_multiplier_badge_class(incrementor) + ' custom-badge mx-auto">' + incrementor + 'x</div>');
                     $("#my_bet_list #my_bet_section_0 .column-4").html(result.data.cash_out_amount + currency_symbol);
@@ -303,7 +300,7 @@ function cash_out_now(element, section_no, increment = '') {
                     $("#extra_bet_section").find("#cancle_button").hide();
                     $("#extra_bet_section").find("#cancle_button #waiting").hide();
                     $("#extra_bet_section").find("#cashout_button").hide();
-                    
+
                     $("#my_bet_list #my_bet_section_1").addClass('active');
                     $("#my_bet_list #my_bet_section_1 .column-3").html('<div class="' + get_multiplier_badge_class(incrementor) + ' custom-badge mx-auto">' + incrementor + 'x</div>');
                     $("#my_bet_list #my_bet_section_1 .column-4").html(result.data.cash_out_amount + currency_symbol);
@@ -377,143 +374,143 @@ function crash_plane(inc_no) {
         extra_cash_out = 0;
     }, 1000);
 
-    
+
 
     // if (bet_array.length == 2) {
-        if (bet_array[0] && bet_array[0].is_bet != undefined) {
-            if (bet_array[0].section_no == 0) {
-                if (is_main_auto_bet_checked) {
-                    $("#main_bet_section").find("#bet_button").hide();
-                    $("#main_bet_section").find("#cancle_button").show();
-                    $("#main_bet_section").find("#cancle_button #waiting").show();
-                    $("#main_bet_section").find("#cashout_button").hide();
-                    $("#main_bet_section .controls").removeClass('bet-border-yellow');
-                    $("#main_bet_section .controls").addClass('bet-border-red');
-                } else {
-                    $("#main_bet_section").find("#bet_button").show();
-                    $("#main_bet_section").find("#cancle_button").hide();
-                    $("#main_bet_section").find("#cancle_button #waiting").hide();
-                    $("#main_bet_section").find("#cashout_button").hide();
-                    $("#main_bet_section .controls").removeClass('bet-border-red');
-                    $("#main_bet_section .controls").removeClass('bet-border-yellow');
+    if (bet_array[0] && bet_array[0].is_bet != undefined) {
+        if (bet_array[0].section_no == 0) {
+            if (is_main_auto_bet_checked) {
+                $("#main_bet_section").find("#bet_button").hide();
+                $("#main_bet_section").find("#cancle_button").show();
+                $("#main_bet_section").find("#cancle_button #waiting").show();
+                $("#main_bet_section").find("#cashout_button").hide();
+                $("#main_bet_section .controls").removeClass('bet-border-yellow');
+                $("#main_bet_section .controls").addClass('bet-border-red');
+            } else {
+                $("#main_bet_section").find("#bet_button").show();
+                $("#main_bet_section").find("#cancle_button").hide();
+                $("#main_bet_section").find("#cancle_button #waiting").hide();
+                $("#main_bet_section").find("#cashout_button").hide();
+                $("#main_bet_section .controls").removeClass('bet-border-red');
+                $("#main_bet_section .controls").removeClass('bet-border-yellow');
 
-                    // Main Bet
-                    $(".main_bet_amount").prop('disabled', false);
-                    $("#main_plus_btn").prop('disabled', false);
-                    $("#main_minus_btn").prop('disabled', false);
-                    $(".main_amount_btn").prop('disabled', false);
-                    $("#main_checkout").prop('disabled', false);
-                    if ($("#main_checkout").prop('checked')) {
-                        $("#main_incrementor").prop('disabled', false);
-                    }
+                // Main Bet
+                $(".main_bet_amount").prop('disabled', false);
+                $("#main_plus_btn").prop('disabled', false);
+                $("#main_minus_btn").prop('disabled', false);
+                $(".main_amount_btn").prop('disabled', false);
+                $("#main_checkout").prop('disabled', false);
+                if ($("#main_checkout").prop('checked')) {
+                    $("#main_incrementor").prop('disabled', false);
                 }
-
-                $("#main_bet_id").val('');
-                $("#main_bet_section").find("#cash_out_amount").text('');
-
-
-                $("#main_auto_bet").prop('disabled', false);
-            } else if (bet_array[0].section_no == 1) {
-                if (is_extra_auto_bet_checked) {
-                    $("#extra_bet_section").find("#bet_button").hide();
-                    $("#extra_bet_section").find("#cancle_button").show();
-                    $("#extra_bet_section").find("#cancle_button #waiting").show();
-                    $("#extra_bet_section").find("#cashout_button").hide();
-                    $("#extra_bet_section .controls").removeClass('bet-border-yellow');
-                    $("#extra_bet_section .controls").addClass('bet-border-red');
-                } else {
-                    $("#extra_bet_section").find("#bet_button").show();
-                    $("#extra_bet_section").find("#cancle_button").hide();
-                    $("#extra_bet_section").find("#cancle_button #waiting").hide();
-                    $("#extra_bet_section").find("#cashout_button").hide();
-                    $("#extra_bet_section .controls").removeClass('bet-border-red');
-                    $("#extra_bet_section .controls").removeClass('bet-border-yellow');
-
-                    // Extra Bet
-                    $(".extra_bet_amount").prop('disabled', false);
-                    $("#extra_minus_btn").prop('disabled', false);
-                    $("#extra_plus_btn").prop('disabled', false);
-                    $(".extra_amount_btn").prop('disabled', false);
-                    $("#extra_checkout").prop('disabled', false);
-                    if ($("#extra_checkout").prop('checked')) {
-                        $("#extra_incrementor").prop('disabled', false);
-                    }
-                }
-
-                $("#extra_bet_id").val('');
-                $("#extra_bet_section").find("#cash_out_amount").text('');
-
-
-                $("#extra_auto_bet").prop('disabled', false);
             }
-        }
-        if (bet_array[1] && bet_array[1].is_bet != undefined) {
-            if (bet_array[1].section_no == 0) {
-                if (is_main_auto_bet_checked) {
-                    $("#main_bet_section").find("#bet_button").hide();
-                    $("#main_bet_section").find("#cancle_button").show();
-                    $("#main_bet_section").find("#cancle_button #waiting").show();
-                    $("#main_bet_section").find("#cashout_button").hide();
-                    $("#main_bet_section .controls").removeClass('bet-border-yellow');
-                    $("#main_bet_section .controls").addClass('bet-border-red');
-                } else {
-                    $("#main_bet_section").find("#bet_button").show();
-                    $("#main_bet_section").find("#cancle_button").hide();
-                    $("#main_bet_section").find("#cancle_button #waiting").hide();
-                    $("#main_bet_section").find("#cashout_button").hide();
-                    $("#main_bet_section .controls").removeClass('bet-border-red');
-                    $("#main_bet_section .controls").removeClass('bet-border-yellow');
 
-                    // Main Bet
-                    $(".main_bet_amount").prop('disabled', false);
-                    $("#main_plus_btn").prop('disabled', false);
-                    $("#main_minus_btn").prop('disabled', false);
-                    $(".main_amount_btn").prop('disabled', false);
-                    $("#main_checkout").prop('disabled', false);
-                    if ($("#main_checkout").prop('checked')) {
-                        $("#main_incrementor").prop('disabled', false);
-                    }
+            $("#main_bet_id").val('');
+            $("#main_bet_section").find("#cash_out_amount").text('');
+
+
+            $("#main_auto_bet").prop('disabled', false);
+        } else if (bet_array[0].section_no == 1) {
+            if (is_extra_auto_bet_checked) {
+                $("#extra_bet_section").find("#bet_button").hide();
+                $("#extra_bet_section").find("#cancle_button").show();
+                $("#extra_bet_section").find("#cancle_button #waiting").show();
+                $("#extra_bet_section").find("#cashout_button").hide();
+                $("#extra_bet_section .controls").removeClass('bet-border-yellow');
+                $("#extra_bet_section .controls").addClass('bet-border-red');
+            } else {
+                $("#extra_bet_section").find("#bet_button").show();
+                $("#extra_bet_section").find("#cancle_button").hide();
+                $("#extra_bet_section").find("#cancle_button #waiting").hide();
+                $("#extra_bet_section").find("#cashout_button").hide();
+                $("#extra_bet_section .controls").removeClass('bet-border-red');
+                $("#extra_bet_section .controls").removeClass('bet-border-yellow');
+
+                // Extra Bet
+                $(".extra_bet_amount").prop('disabled', false);
+                $("#extra_minus_btn").prop('disabled', false);
+                $("#extra_plus_btn").prop('disabled', false);
+                $(".extra_amount_btn").prop('disabled', false);
+                $("#extra_checkout").prop('disabled', false);
+                if ($("#extra_checkout").prop('checked')) {
+                    $("#extra_incrementor").prop('disabled', false);
                 }
-
-                $("#main_bet_id").val('');
-                $("#main_bet_section").find("#cash_out_amount").text('');
-
-
-                $("#main_auto_bet").prop('disabled', false);
-            } else if (bet_array[1].section_no == 1) {
-                if (is_extra_auto_bet_checked) {
-                    $("#extra_bet_section").find("#bet_button").hide();
-                    $("#extra_bet_section").find("#cancle_button").show();
-                    $("#extra_bet_section").find("#cancle_button #waiting").show();
-                    $("#extra_bet_section").find("#cashout_button").hide();
-                    $("#extra_bet_section .controls").removeClass('bet-border-yellow');
-                    $("#extra_bet_section .controls").addClass('bet-border-red');
-                } else {
-                    $("#extra_bet_section").find("#bet_button").show();
-                    $("#extra_bet_section").find("#cancle_button").hide();
-                    $("#extra_bet_section").find("#cancle_button #waiting").hide();
-                    $("#extra_bet_section").find("#cashout_button").hide();
-                    $("#extra_bet_section .controls").removeClass('bet-border-red');
-                    $("#extra_bet_section .controls").removeClass('bet-border-yellow');
-
-                    // Extra Bet
-                    $(".extra_bet_amount").prop('disabled', false);
-                    $("#extra_minus_btn").prop('disabled', false);
-                    $("#extra_plus_btn").prop('disabled', false);
-                    $(".extra_amount_btn").prop('disabled', false);
-                    $("#extra_checkout").prop('disabled', false);
-                    if ($("#extra_checkout").prop('checked')) {
-                        $("#extra_incrementor").prop('disabled', false);
-                    }
-                }
-
-                $("#extra_bet_id").val('');
-                $("#extra_bet_section").find("#cash_out_amount").text('');
-
-
-                $("#extra_auto_bet").prop('disabled', false);
             }
+
+            $("#extra_bet_id").val('');
+            $("#extra_bet_section").find("#cash_out_amount").text('');
+
+
+            $("#extra_auto_bet").prop('disabled', false);
         }
+    }
+    if (bet_array[1] && bet_array[1].is_bet != undefined) {
+        if (bet_array[1].section_no == 0) {
+            if (is_main_auto_bet_checked) {
+                $("#main_bet_section").find("#bet_button").hide();
+                $("#main_bet_section").find("#cancle_button").show();
+                $("#main_bet_section").find("#cancle_button #waiting").show();
+                $("#main_bet_section").find("#cashout_button").hide();
+                $("#main_bet_section .controls").removeClass('bet-border-yellow');
+                $("#main_bet_section .controls").addClass('bet-border-red');
+            } else {
+                $("#main_bet_section").find("#bet_button").show();
+                $("#main_bet_section").find("#cancle_button").hide();
+                $("#main_bet_section").find("#cancle_button #waiting").hide();
+                $("#main_bet_section").find("#cashout_button").hide();
+                $("#main_bet_section .controls").removeClass('bet-border-red');
+                $("#main_bet_section .controls").removeClass('bet-border-yellow');
+
+                // Main Bet
+                $(".main_bet_amount").prop('disabled', false);
+                $("#main_plus_btn").prop('disabled', false);
+                $("#main_minus_btn").prop('disabled', false);
+                $(".main_amount_btn").prop('disabled', false);
+                $("#main_checkout").prop('disabled', false);
+                if ($("#main_checkout").prop('checked')) {
+                    $("#main_incrementor").prop('disabled', false);
+                }
+            }
+
+            $("#main_bet_id").val('');
+            $("#main_bet_section").find("#cash_out_amount").text('');
+
+
+            $("#main_auto_bet").prop('disabled', false);
+        } else if (bet_array[1].section_no == 1) {
+            if (is_extra_auto_bet_checked) {
+                $("#extra_bet_section").find("#bet_button").hide();
+                $("#extra_bet_section").find("#cancle_button").show();
+                $("#extra_bet_section").find("#cancle_button #waiting").show();
+                $("#extra_bet_section").find("#cashout_button").hide();
+                $("#extra_bet_section .controls").removeClass('bet-border-yellow');
+                $("#extra_bet_section .controls").addClass('bet-border-red');
+            } else {
+                $("#extra_bet_section").find("#bet_button").show();
+                $("#extra_bet_section").find("#cancle_button").hide();
+                $("#extra_bet_section").find("#cancle_button #waiting").hide();
+                $("#extra_bet_section").find("#cashout_button").hide();
+                $("#extra_bet_section .controls").removeClass('bet-border-red');
+                $("#extra_bet_section .controls").removeClass('bet-border-yellow');
+
+                // Extra Bet
+                $(".extra_bet_amount").prop('disabled', false);
+                $("#extra_minus_btn").prop('disabled', false);
+                $("#extra_plus_btn").prop('disabled', false);
+                $(".extra_amount_btn").prop('disabled', false);
+                $("#extra_checkout").prop('disabled', false);
+                if ($("#extra_checkout").prop('checked')) {
+                    $("#extra_incrementor").prop('disabled', false);
+                }
+            }
+
+            $("#extra_bet_id").val('');
+            $("#extra_bet_section").find("#cash_out_amount").text('');
+
+
+            $("#extra_auto_bet").prop('disabled', false);
+        }
+    }
     // }
 }
 
@@ -799,7 +796,7 @@ function update_bet_list(bets, target, appendType = '') {
             var badgeColor = 'bg2';
         }
         if (parseFloat(bets[i].cashout_multiplier) > 0) {
-            var cashOut = Math.round(bets[i].cashout_multiplier*bets[i].amount) + currency_symbol;
+            var cashOut = Math.round(bets[i].cashout_multiplier * bets[i].amount) + currency_symbol;
             var multiplication = '<div class="' + badgeColor + ' custom-badge mx-auto">' + bets[i].cashout_multiplier + 'x</div>';
         } else {
             var cashOut = '-';
@@ -920,6 +917,11 @@ function bet_now(element, section_no) {
         $(".error-toaster2").addClass('show');
         errorToastrStageTimeOut();
     } else {
+        if (!member_id || member_id === '') {
+            if (typeof switchAuthTab === 'function') switchAuthTab('login');
+            $('#auth-modal').modal('show');
+            return;
+        }
         var bet_type = $(element).parent().parent().parent().find(".navigation #bet_type").val(); // 0 - Normal, 1 - Auto
         // var bet_amount = parseFloat($(element).parent().parent().find(".bet-block .spinner #bet_amount").val());
         let bet_amount = $(element).parent().parent().find(".bet-block .spinner #bet_amount").val();
@@ -950,7 +952,7 @@ function bet_now(element, section_no) {
                     $(element).parent().parent().find("#cancle_button #waiting").hide();
                 }, 500);
             }
-            
+
             bet_array.push({ bet_type: bet_type, bet_amount: bet_amount, section_no: section_no });
         }
     }
@@ -971,11 +973,11 @@ function cancle_now(element, section_no) {
 
         if (bet_array.length == 1) {
             bet_array = [];
-        } 
+        }
         if (bet_array.length == 2 && section_no == 0) {
             if (bet_array[0].section_no == 0) {
                 bet_array.splice(0, 1); // Remove Perticular Bet
-            } 
+            }
             if (bet_array[0].section_no == 1) {
                 bet_array.splice(1, 1); // Remove Perticular Bet
             }
@@ -989,7 +991,12 @@ function cancle_now(element, section_no) {
 }
 
 function place_bet_now() {
-    for(let i=0;i < bet_array.length; i++){
+    if (!member_id || member_id === '') {
+        if (typeof switchAuthTab === 'function') switchAuthTab('login');
+        $('#auth-modal').modal('show');
+        return;
+    }
+    for (let i = 0; i < bet_array.length; i++) {
         bet_array[i].game_id = current_game_data.id;
     }
 
@@ -1040,24 +1047,24 @@ function place_bet_now() {
                     if (bet_array[0].section_no == 0) {
                         $("#main_bet_id").val(result.data.return_bets[0].bet_id);
                         $("#extra_bet_id").val(result.data.return_bets[1].bet_id);
-                    bet_array[0].is_bet = 1;
+                        bet_array[0].is_bet = 1;
                     }
 
                     if (bet_array[0].section_no == 1) {
                         $("#main_bet_id").val(result.data.return_bets[1].bet_id);
                         $("#extra_bet_id").val(result.data.return_bets[0].bet_id);
-                    bet_array[0].is_bet = 1;
+                        bet_array[0].is_bet = 1;
                     }
                     if (bet_array[1].section_no == 0) {
                         $("#main_bet_id").val(result.data.return_bets[0].bet_id);
                         $("#extra_bet_id").val(result.data.return_bets[1].bet_id);
-                    bet_array[1].is_bet = 1;
+                        bet_array[1].is_bet = 1;
                     }
 
                     if (bet_array[1].section_no == 1) {
                         $("#main_bet_id").val(result.data.return_bets[1].bet_id);
                         $("#extra_bet_id").val(result.data.return_bets[0].bet_id);
-                    bet_array[1].is_bet = 1;
+                        bet_array[1].is_bet = 1;
                     }
                 }
             } else {
@@ -1568,19 +1575,6 @@ $(".main_bet_btn").on('click', function () {
     }
 });
 
-function check_login_status() {
-    $.ajax({
-        url: 'is_login',
-        type: "POST",
-        dataType: "json",
-        success: function (result) {
-            if (result.isSuccess == false) {
-                window.location.href = 'login';
-            }
-        }
-    });
-}
-
 function gameLoadingTimer() {
     let timer_no = 1;
     var game_loading_timer = setInterval(function () {
@@ -1605,7 +1599,10 @@ $(window).focus(function () {
     // console.log('focused');
     // console.log(focus_timer);
     if (focus_timer > 10) {
-        location.reload();
+        // Avoid forcing a full page reload on tab focus; refresh game state only.
+        if (typeof gamegenerate === 'function') {
+            gamegenerate();
+        }
     } else {
         focus_timer = 0;
         clearInterval(focus_interval);
@@ -1641,7 +1638,10 @@ document.addEventListener('visibilitychange', function (event) {
         // console.log(visibility_timer);
         // console.log('is visible');
         if (visibility_timer > 10) {
-            location.reload();
+            // Avoid forcing a full page reload when returning to the tab; refresh game state only.
+            if (typeof gamegenerate === 'function') {
+                gamegenerate();
+            }
         } else {
             visibility_timer = 0;
             clearInterval(visibility_interval);
