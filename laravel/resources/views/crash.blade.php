@@ -1939,6 +1939,25 @@
     });
     $(".load-txt").hide();
     gamegenerate();
+
+    // Ensure left sidebar All Bets / My Bets behave as client-side tab panels only
+    document.querySelectorAll('#pills-tab button[data-bs-toggle="pill"]').forEach(function(tabBtn){
+        tabBtn.addEventListener('click', function(evt){
+            evt.preventDefault();
+            var target = document.querySelector(this.dataset.bsTarget);
+            if (!target) return;
+            document.querySelectorAll('#pills-tab button[data-bs-toggle="pill"]').forEach(function(btn){
+                btn.classList.remove('active');
+                btn.setAttribute('aria-selected', 'false');
+            });
+            document.querySelectorAll('#pills-tabContent .tab-pane').forEach(function(pane){
+                pane.classList.remove('show','active');
+            });
+            this.classList.add('active');
+            this.setAttribute('aria-selected', 'true');
+            target.classList.add('show','active');
+        });
+    });
     // setInterval(()=>{
     //     $.ajax({
     //     url: '/game/existence',

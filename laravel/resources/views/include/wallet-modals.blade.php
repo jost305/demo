@@ -229,135 +229,145 @@
 }
 </style>
 
-<!-- ========== DEPOSIT MODAL ========== -->
+<!-- ========== WALLET MODAL ========== -->
 <div class="modal fade ax-modal" id="deposit-modal" tabindex="-1" aria-labelledby="depositModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title" id="depositModalLabel">
-                    <span class="material-symbols-outlined align-middle me-1" style="color:#00e676;font-size:16px;">add_circle</span>
-                    DEPOSIT FUNDS
+                    <span class="material-symbols-outlined align-middle me-1" id="walletModalIcon" style="color:#00e676;font-size:16px;">add_circle</span>
+                    <span id="walletModalTitle">DEPOSIT FUNDS</span>
                 </h5>
                 <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
             </div>
             <div class="modal-body">
                 <!-- Tabs -->
                 <div class="ax-wallet-tabs">
-                    <button type="button" class="ax-wallet-tab active">DEPOSIT</button>
-                    <button type="button" class="ax-wallet-tab" onclick="switchWalletModal('withdraw')">WITHDRAW</button>
-                </div>
-                <!-- Payment Method -->
-                <div class="ax-section-label">SELECT PAYMENT METHOD</div>
-                <div class="ax-pay-grid">
-                    <div class="ax-pay-method selected" onclick="selectPayMethod(this,'flutterwave')">
-                        <span class="fs-5 d-block mb-1">💳</span>
-                        Flutterwave (Cards, USSD, Bank Transfer)
-                    </div>
-                    <div class="ax-pay-method" onclick="selectPayMethod(this,'opay')">
-                        <span class="fs-5 d-block mb-1">🟠</span>
-                        OPay (Hosted Checkout)
-                    </div>
-                </div>
-                <input type="hidden" id="dep_modal_gateway" value="flutterwave">
-
-                <!-- Amount -->
-                <div class="ax-section-label">ENTER DEPOSIT AMOUNT (NGN ₦)</div>
-                <div class="ax-amount-row">
-                    <span class="ax-amount-symbol">₦</span>
-                    <input type="number" class="ax-amount-input" id="modal_deposit_amount" value="500" min="100" step="1" placeholder="Min ₦100">
-                </div>
-                <div class="ax-chips">
-                    <div class="ax-chip active" onclick="setDepAmt(500, this)">₦500</div>
-                    <div class="ax-chip" onclick="setDepAmt(1000, this)">₦1,000</div>
-                    <div class="ax-chip" onclick="setDepAmt(2000, this)">₦2,000</div>
-                    <div class="ax-chip" onclick="setDepAmt(5000, this)">₦5,000</div>
+                    <button type="button" class="ax-wallet-tab active" data-wallet-tab="deposit">DEPOSIT</button>
+                    <button type="button" class="ax-wallet-tab" data-wallet-tab="withdraw">WITHDRAW</button>
                 </div>
 
-                <button type="button" class="ax-cta-green" id="dep_submit_btn" onclick="submitModalDeposit()">
-                    ⚡ PAY WITH FLUTTERWAVE
-                </button>
-            </div>
-        </div>
-    </div>
-</div>
-
-<!-- ========== WITHDRAW MODAL ========== -->
-<div class="modal fade ax-modal" id="withdraw-modal" tabindex="-1" aria-labelledby="withdrawModalLabel" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title" id="withdrawModalLabel">
-                    <span class="material-symbols-outlined align-middle me-1" style="color:#ff1e46;font-size:16px;">account_balance_wallet</span>
-                    WITHDRAW FUNDS
-                </h5>
-                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
-            </div>
-            <div class="modal-body">
-                <!-- Tabs -->
-                <div class="ax-wallet-tabs">
-                    <button type="button" class="ax-wallet-tab" onclick="switchWalletModal('deposit')">DEPOSIT</button>
-                    <button type="button" class="ax-wallet-tab active">WITHDRAW</button>
-                </div>
-
-                <form action="/insert/withdrawal" method="POST">
-                    @csrf
-                    <div class="ax-balance-banner">
-                        <div>
-                            <div class="ax-balance-label">AVAILABLE BALANCE</div>
-                            <div class="ax-balance-value">₦ {{ number_format(floatval(wallet(user('id'))), 2) }}</div>
+                <div class="wallet-tab-content">
+                    <div class="wallet-tab-pane show active" data-wallet-tab="deposit">
+                        <!-- Payment Method -->
+                        <div class="ax-section-label">SELECT PAYMENT METHOD</div>
+                        <div class="ax-pay-grid">
+                            <div class="ax-pay-method selected" onclick="selectPayMethod(this,'flutterwave')">
+                                <img src="{{ asset('images/flutterwave-logo-png_seeklogo-457606.png') }}" alt="Flutterwave logo">
+                                Flutterwave (Cards, USSD, Bank Transfer)
+                            </div>
+                            <div class="ax-pay-method" onclick="selectPayMethod(this,'opay')">
+                                <img src="{{ asset('images/OPay_id6sbCso4N_1.svg') }}" alt="OPay logo">
+                                OPay (Hosted Checkout)
+                            </div>
                         </div>
+                        <input type="hidden" id="dep_modal_gateway" value="flutterwave">
+
+                        <!-- Amount -->
+                        <div class="ax-section-label">ENTER DEPOSIT AMOUNT (NGN ₦)</div>
+                        <div class="ax-amount-row">
+                            <span class="ax-amount-symbol">₦</span>
+                            <input type="number" class="ax-amount-input" id="modal_deposit_amount" value="500" min="100" step="1" placeholder="Min ₦100">
+                        </div>
+                        <div class="ax-chips">
+                            <div class="ax-chip active" onclick="setDepAmt(500, this)">₦500</div>
+                            <div class="ax-chip" onclick="setDepAmt(1000, this)">₦1,000</div>
+                            <div class="ax-chip" onclick="setDepAmt(2000, this)">₦2,000</div>
+                            <div class="ax-chip" onclick="setDepAmt(5000, this)">₦5,000</div>
+                        </div>
+
+                        <button type="button" class="ax-cta-green" id="dep_submit_btn" onclick="submitModalDeposit()">
+                            ⚡ PAY WITH FLUTTERWAVE
+                        </button>
                     </div>
 
-                    <div class="mb-3">
-                        <label class="ax-field-label">WITHDRAWAL AMOUNT (₦)</label>
-                        <input type="number" name="amount" class="ax-input" min="100" placeholder="Min 100" required>
-                    </div>
+                    <div class="wallet-tab-pane" data-wallet-tab="withdraw">
+                        <form action="/insert/withdrawal" method="POST">
+                            @csrf
+                            <div class="ax-balance-banner">
+                                <div>
+                                    <div class="ax-balance-label">AVAILABLE BALANCE</div>
+                                    <div class="ax-balance-value">₦ {{ number_format(floatval(wallet(user('id'))), 2) }}</div>
+                                </div>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="ax-field-label">NIGERIAN BANK NAME</label>
-                        <select name="bank_name" class="ax-input" required>
-                            <option value="GTBank">GTBank (Guaranty Trust Bank)</option>
-                            <option value="Access Bank">Access Bank</option>
-                            <option value="Zenith Bank">Zenith Bank</option>
-                            <option value="First Bank">First Bank of Nigeria</option>
-                            <option value="UBA">United Bank for Africa (UBA)</option>
-                            <option value="Kuda Bank">Kuda Microfinance Bank</option>
-                            <option value="OPay">OPay Digital Services</option>
-                            <option value="PalmPay">PalmPay</option>
-                            <option value="Moniepoint">Moniepoint Microfinance Bank</option>
-                            <option value="Fidelity Bank">Fidelity Bank</option>
-                        </select>
-                    </div>
+                            <div class="mb-3">
+                                <label class="ax-field-label">WITHDRAWAL AMOUNT (₦)</label>
+                                <input type="number" name="amount" class="ax-input" min="100" placeholder="Min 100" required>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="ax-field-label">ACCOUNT NUMBER (NUBAN)</label>
-                        <input type="text" name="account_no" class="ax-input" maxlength="10" placeholder="10-digit NUBAN" required>
-                    </div>
+                            <div class="mb-3">
+                                <label class="ax-field-label">NIGERIAN BANK NAME</label>
+                                <select name="bank_name" class="ax-input" required>
+                                    <option value="GTBank">GTBank (Guaranty Trust Bank)</option>
+                                    <option value="Access Bank">Access Bank</option>
+                                    <option value="Zenith Bank">Zenith Bank</option>
+                                    <option value="First Bank">First Bank of Nigeria</option>
+                                    <option value="UBA">United Bank for Africa (UBA)</option>
+                                    <option value="Kuda Bank">Kuda Microfinance Bank</option>
+                                    <option value="OPay">OPay Digital Services</option>
+                                    <option value="PalmPay">PalmPay</option>
+                                    <option value="Moniepoint">Moniepoint Microfinance Bank</option>
+                                    <option value="Fidelity Bank">Fidelity Bank</option>
+                                </select>
+                            </div>
 
-                    <div class="mb-3">
-                        <label class="ax-field-label">ACCOUNT HOLDER NAME</label>
-                        <input type="text" name="holdername" class="ax-input" placeholder="Full Account Name" required>
-                    </div>
+                            <div class="mb-3">
+                                <label class="ax-field-label">ACCOUNT NUMBER (NUBAN)</label>
+                                <input type="text" name="account_no" class="ax-input" maxlength="10" placeholder="10-digit NUBAN" required>
+                            </div>
 
-                    <button type="submit" class="ax-cta-red">
-                        💳 SUBMIT WITHDRAWAL
-                    </button>
-                </form>
+                            <div class="mb-3">
+                                <label class="ax-field-label">ACCOUNT HOLDER NAME</label>
+                                <input type="text" name="holdername" class="ax-input" placeholder="Full Account Name" required>
+                            </div>
+
+                            <button type="submit" class="ax-cta-red">
+                                💳 SUBMIT WITHDRAWAL
+                            </button>
+                        </form>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
 </div>
 
 <script>
-window.switchWalletModal = function(target) {
-    var from = target === 'withdraw' ? 'deposit' : 'withdraw';
-    var fromModal = bootstrap.Modal.getInstance(document.getElementById(from + '-modal'));
-    if (fromModal) fromModal.hide();
-    setTimeout(function() {
-        var toModal = new bootstrap.Modal(document.getElementById(target + '-modal'));
-        toModal.show();
-    }, 300);
+window.openWalletModal = function(tab) {
+    var modalEl = document.getElementById('deposit-modal');
+    var modal = new bootstrap.Modal(modalEl);
+    modal.show();
+    if (tab) {
+        window.switchWalletTab(tab);
+    }
 };
+window.switchWalletTab = function(target) {
+    document.querySelectorAll('.ax-wallet-tab').forEach(function(btn){
+        btn.classList.toggle('active', btn.dataset.walletTab === target);
+    });
+    document.querySelectorAll('.wallet-tab-pane').forEach(function(pane){
+        var isActive = pane.dataset.walletTab === target;
+        pane.classList.toggle('show', isActive);
+        pane.classList.toggle('active', isActive);
+    });
+    var title = document.getElementById('walletModalTitle');
+    var icon = document.getElementById('walletModalIcon');
+    if (target === 'withdraw') {
+        title.textContent = 'WITHDRAW FUNDS';
+        icon.textContent = 'account_balance_wallet';
+    } else {
+        title.textContent = 'DEPOSIT FUNDS';
+        icon.textContent = 'add_circle';
+    }
+};
+window.addEventListener('DOMContentLoaded', function() {
+    document.querySelectorAll('.ax-wallet-tab[data-wallet-tab]').forEach(function(btn){
+        btn.addEventListener('click', function(){
+            window.switchWalletTab(this.dataset.walletTab);
+        });
+    });
+});
 </script>
 <!-- Ensure Flutterwave SDK is pre-loaded for 0ms delay popup -->
 <script src="https://checkout.flutterwave.com/v3.js"></script>
