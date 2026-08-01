@@ -86,12 +86,14 @@ function setCanvasState(state, multiplier) {
     switch (state) {
         case 'IDLE':
             $('.loading-game').addClass('show');
+            $('body').addClass('splash-active');
             $('.flew_away_section').hide();
             $('#auto_increment_number_div').hide();
             $('.bottom-left-plane').show();
             break;
         case 'PREPARING':
             $('.loading-game').addClass('show');
+            $('body').addClass('splash-active');
             $('.flew_away_section').hide();
             $('#auto_increment_number_div').hide();
             $('.bottom-left-plane').show();
@@ -182,7 +184,7 @@ function setVariable(is_plan = '') {
     imgTag.onerror = function () {
         planeImageReady = false;
     };
-    imgTag.src = "/images/flyboy10x_icon.png";
+    imgTag.src = "/images/p.png?v=" + (window.__aviatorAssetVersion || Date.now());
 
     // load overlay spritesheet (propeller/flame) - keep as fallback animated raster
     overlayImg = new Image();
@@ -221,7 +223,6 @@ function setVariable(is_plan = '') {
         checkuplinedownlinecount = 150;
     }
 
-    imgTag.src = "./images/p.png?v=" + (window.__aviatorAssetVersion || Date.now());
     diffy = calcheight * 70;
     diffx1 = canvasWidth - (calcwidth * 60)
 
@@ -501,22 +502,7 @@ function draw(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ct
         } catch(e) {}
     }
 
-    // Reliable Fallback Vector Red Jet Plane
-    ctx.save();
-    ctx.fillStyle = '#ff1e46';
-    ctx.beginPath();
-    ctx.moveTo(drawX + drawWidth, drawY + drawHeight / 2);
-    ctx.lineTo(drawX, drawY);
-    ctx.lineTo(drawX + drawWidth * 0.35, drawY + drawHeight / 2);
-    ctx.lineTo(drawX, drawY + drawHeight);
-    ctx.closePath();
-    ctx.fill();
-
-    ctx.fillStyle = '#ffffff';
-    ctx.beginPath();
-    ctx.arc(drawX + drawWidth * 0.7, drawY + drawHeight / 2, 3, 0, Math.PI * 2);
-    ctx.fill();
-    ctx.restore();
+    // Use the intended plane asset only; avoid drawing a fallback vector shape.
 }
 
 function GameObject(spritesheet, x, y, width, height, timePerFrame, numberOfFrames, ctx, scale = 1) {
@@ -553,11 +539,7 @@ function drawBezierSplit(ctx, x0, y0, x1, y1, x2, y2, t0, t1, imgTag) {
             ctx.moveTo(x0, y0);
             ctx.quadraticCurveTo(x1, y1, x2, y2);
             GameObject(imgTag, x2 - imgxposition, y2 - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = '#F00B3E';
-            ctx.stroke();
             ctx.closePath();
-            fillShape(x2, y2, x0, y0, x1, y1, t1);
             startfirstinterval();
             animationHorizontalDots();
         }
@@ -590,11 +572,7 @@ function drawBezierSplit(ctx, x0, y0, x1, y1, x2, y2, t0, t1, imgTag) {
             ctx.moveTo(nx0, ny0);
             ctx.quadraticCurveTo(nx1, ny1, nx2, ny2);
             GameObject(imgTag, nx2 - imgxposition, ny2 - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
-            ctx.lineWidth = 5;
-            ctx.strokeStyle = '#F00B3E';
-            ctx.stroke();
             ctx.closePath();
-            fillShape(nx2, ny2, nx0, ny0, nx1, ny1, 0);
         }
     }
 
@@ -630,17 +608,6 @@ function upplane(x0, y0, x1, y1, x2, y2) {
     ctx.moveTo(x0, y0);
     ctx.quadraticCurveTo(x1, y1, DecreaseX, IncreaseY);
     GameObject(imgTag, DecreaseX - imgxposition, IncreaseY - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = '#F00B3E';
-    ctx.stroke();
-    ctx.closePath();
-    ctx.beginPath();
-    ctx.moveTo(x0, y0);
-    ctx.quadraticCurveTo(x1, y1, DecreaseX, IncreaseY);
-    ctx.lineTo(DecreaseX + 3, IncreaseY);
-    ctx.lineTo(DecreaseX, y0);
-    ctx.fillStyle = "rgba(104,1,14,0.8)";
-    ctx.fill();
     ctx.closePath();
 }
 
@@ -656,18 +623,6 @@ function downplane(x0, y0, x1, y1, x2, y2) {
     ctx.moveTo(x0, y0);
     ctx.quadraticCurveTo(x1, y1, IncreaseX, DecreaseY);
     GameObject(imgTag, IncreaseX - imgxposition, DecreaseY - imgyposition, imgwidth, imgheight, 300, 1, ctx, getPlaneScale());
-    ctx.lineWidth = 5;
-    ctx.strokeStyle = '#F00B3E';
-    ctx.stroke();
-    ctx.stroke();
-    ctx.closePath();
-    ctx.beginPath();
-    ctx.moveTo(x0, y0);
-    ctx.quadraticCurveTo(x1, y1, IncreaseX, DecreaseY);
-    ctx.lineTo(IncreaseX + 3, DecreaseY);
-    ctx.lineTo(IncreaseX, y0);
-    ctx.fillStyle = "rgba(104,1,14,0.8)";
-    ctx.fill();
     ctx.closePath();
 }
 
@@ -675,25 +630,3 @@ function lerp(v0, v1, t) {
     return (1.0 - t) * v0 + t * v1;
 }
 
-function fillShape(nx2, ny2, nx0, ny0, nx1, ny1, t1) {
-    if (t1 == 1.0) {
-        ctx.beginPath();
-        ctx.moveTo(nx0, ny0);
-        ctx.quadraticCurveTo(nx1, ny1, nx2, ny2);
-        ctx.lineTo(nx2 + 3, ny2);
-        ctx.lineTo(nx2 + 3, y0);
-        ctx.fillStyle = "rgba(104,1,14,0.8)";
-        ctx.fill();
-        ctx.closePath();
-    }
-    else {
-        ctx.beginPath();
-        ctx.moveTo(nx0, ny0);
-        ctx.quadraticCurveTo(nx1, ny1, nx2, ny2);
-        ctx.lineTo(nx2, ny2);
-        ctx.lineTo(nx2, y0);
-        ctx.fillStyle = "rgba(104,1,14,0.8)";
-        ctx.fill();
-        ctx.closePath();
-    }
-}

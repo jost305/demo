@@ -39,6 +39,7 @@ function gamegenerate() {
     setTimeout(() => {
         $("#auto_increment_number_div").hide();
         $('.loading-game').addClass('show');
+        $('body').addClass('splash-active');
         setTimeout(() => {
             // $("#auto_increment_number_div").show();
             hide_loading_game();
@@ -151,7 +152,7 @@ function gamegenerate() {
                         });
                 }
             });
-        }, 5000);
+        }, 2500);
     }, 1500);
 }
 

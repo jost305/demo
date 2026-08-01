@@ -956,8 +956,9 @@ function bet_now(element, section_no) {
         if (bet_amount >= min_bet_amount && bet_amount <= max_bet_amount) {
             $(element).parent().parent().find("#bet_button").hide();
             $(element).parent().parent().find("#cancle_button").show();
-            $(element).parent().parent().find("#cancle_button #waiting").show();
-
+            $('.loading-game').addClass('show');
+            $('body').addClass('splash-active');
+            $('.flew_away_section').hide();
             if (is_game_generated == 1) {
                 setTimeout(() => {
                     $(element).parent().parent().find("#cancle_button #waiting").hide();
@@ -1666,6 +1667,7 @@ function extra_incrementor_change(new_value) {
 }
 function hide_loading_game() {
     $('.loading-game').removeClass('show');
+    $('body').removeClass('splash-active');
 }
 // khushbu for when come from minimize refresh page
 $(window).bind("pageshow", function (event) {

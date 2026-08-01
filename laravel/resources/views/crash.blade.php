@@ -1114,7 +1114,7 @@
                     <div class="loading-game">
                         <div class="center-loading text-white text-center game-centeral-loading">
                             <img src="images/p.png?v={{ env('APP_VERSION', time()) }}" class="loader-plane-img" alt="Aviator Plane" />
-                            <div class="secondary-font waiting-text">WAITING FOR NEXT ROUND</div>
+                            <div class="secondary-font waiting-text">Loading</div>
                             <div class="line-loader mt-2">
                                 <div class="fill-line"></div>
                             </div>

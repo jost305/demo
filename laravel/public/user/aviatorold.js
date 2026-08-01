@@ -114,6 +114,7 @@ var multiplier_limit = 0;
 var stop_position = 0;
 
 $('.loading-game').addClass('show');
+$('body').addClass('splash-active');
 // gameLoadingTimer();
 
 $(document).ready(function () {
@@ -540,6 +541,8 @@ function new_game_generated() {
     $('body').removeClass('overflow-hidden');
     document.getElementById('auto_increment_number').innerText = '1.00x';
     // $('.loading-game').addClass('show');
+    // ensure body splash state set when loading shown
+    $('body').addClass('splash-active');
     //khushbu
     $('.loading-game').addClass('show');
     // setTimeout(hide_loading_game(), 10000);
@@ -1581,6 +1584,7 @@ function gameLoadingTimer() {
         if (timer_no <= 5) {
             if (timer_no == 1) {
                 $('.loading-game').addClass('show');
+                $('body').addClass('splash-active');
             }
             timer_no++;
         } else {
@@ -1673,6 +1677,7 @@ function extra_incrementor_change(new_value) {
 }
 function hide_loading_game() {
     $('.loading-game').removeClass('show');
+    $('body').removeClass('splash-active');
 }
 // khushbu for when come from minimize refresh page
 $(window).bind("pageshow", function (event) {

@@ -693,6 +693,14 @@ a, button, [role="button"], .ax-nav-item {
 
 
 .ax-bottom-nav {
+  display: flex !important;
+}
+
+/* When the splash loader is active, hide top header and bottom nav for a clean splash screen */
+body.splash-active .ax-header {
+  display: none !important;
+}
+body.splash-active .ax-bottom-nav {
   display: none !important;
 }
 
@@ -755,6 +763,14 @@ a, button, [role="button"], .ax-nav-item {
   }
 
   .ax-bottom-nav {
+    display: none !important;
+  }
+
+  /* When the splash loader is active, hide top header and bottom nav for a clean splash screen */
+  body.splash-active .ax-header {
+    display: none !important;
+  }
+  body.splash-active .ax-bottom-nav {
     display: none !important;
   }
 }
